@@ -2,25 +2,11 @@ const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const app = express();
 
-// Парсим JSON для Webhook
+// Парсим JSON для Webhook (на будущее)
 app.use(express.json());
 
 const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE'; // Замени на токен от BotFather
-const WEBHOOK_URL = 'http://5.129.220.137/bot' + TOKEN; // Замени на IP
-const bot = new TelegramBot(TOKEN, { polling: false });
-
-// Устанавливаем Webhook
-bot.setWebHook(WEBHOOK_URL).then(() => {
-    console.log(`Webhook set to ${WEBHOOK_URL}`);
-}).catch(err => {
-    console.error('Error setting webhook:', err);
-});
-
-// Обработка Webhook
-app.post('/bot' + TOKEN, (req, res) => {
-    bot.processUpdate(req.body);
-    res.sendStatus(200);
-});
+const bot = new TelegramBot(TOKEN, { polling: true }); // Включаем polling
 
 // Обработка команды /start
 bot.onText(/\/start/, (msg) => {
