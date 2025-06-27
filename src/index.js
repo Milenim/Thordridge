@@ -4,22 +4,22 @@ const app = express();
 
 app.use(express.json());
 
-const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE'; // Твой токен
-const bot = new TelegramBot(TOKEN, { polling: true });
+const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
+const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
+const bot = new TelegramBot(TOKEN, { polling: false });
 
-console.log('Bot started with polling');
-
-// Логируем все входящие сообщения
-bot.on('message', (msg) => {
-    console.log('Received message:', JSON.stringify(msg, null, 2));
+bot.setWebHook(WEBHOOK_URL).then(() => {
+    console.log(`Webhook set to ${WEBHOOK_URL}`);
+}).catch(err => {
+    console.error('Error setting webhook:', JSON.stringify(err, null, 2));
 });
 
-// Логируем ошибки polling
-bot.on('polling_error', (err) => {
-    console.error('Polling error:', JSON.stringify(err, null, 2));
+app.post('/bot' + TOKEN, (req, res) => {
+    console.log('Received webhook update:', JSON.stringify(req.body, null, 2));
+    bot.processUpdate(req.body);
+    res.sendStatus(200);
 });
 
-// Обработка команды /start
 bot.onText(/\/start/, (msg) => {
     console.log('Received /start from:', msg.chat.id);
     bot.sendMessage(msg.chat.id, 'Welcome to Thordridge!', {
@@ -27,7 +27,7 @@ bot.onText(/\/start/, (msg) => {
             inline_keyboard: [[
                 {
                     text: 'Open Game',
-                    web_app: { url: 'http://5.129.220.137' }
+                    web_app: { url: 'https://thornridge.ru' }
                 }
             ]]
         }
@@ -38,7 +38,6 @@ bot.onText(/\/start/, (msg) => {
     });
 });
 
-// API для проверки
 app.get('/api', (req, res) => {
     res.json({ message: 'API is working!' });
 });
