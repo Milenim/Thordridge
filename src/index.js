@@ -2,18 +2,21 @@ const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const app = express();
 
-// Парсим JSON для Webhook (на будущее)
 app.use(express.json());
 
 const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE'; // Твой токен
 const bot = new TelegramBot(TOKEN, { polling: true });
 
-// Логируем запуск бота
 console.log('Bot started with polling');
 
-// Обработка всех входящих обновлений для отладки
+// Логируем все входящие сообщения
 bot.on('message', (msg) => {
-    console.log('Received message:', msg);
+    console.log('Received message:', JSON.stringify(msg, null, 2));
+});
+
+// Логируем ошибки polling
+bot.on('polling_error', (err) => {
+    console.error('Polling error:', JSON.stringify(err, null, 2));
 });
 
 // Обработка команды /start
@@ -31,7 +34,7 @@ bot.onText(/\/start/, (msg) => {
     }).then(() => {
         console.log('Sent /start response to:', msg.chat.id);
     }).catch(err => {
-        console.error('Error sending /start response:', err);
+        console.error('Error sending /start response:', JSON.stringify(err, null, 2));
     });
 });
 
