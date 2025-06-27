@@ -5,12 +5,20 @@ const app = express();
 // Парсим JSON для Webhook (на будущее)
 app.use(express.json());
 
-const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE'; // Замени на токен от BotFather
-const bot = new TelegramBot(TOKEN, { polling: true }); // Включаем polling
+const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE'; // Твой токен
+const bot = new TelegramBot(TOKEN, { polling: true });
+
+// Логируем запуск бота
+console.log('Bot started with polling');
+
+// Обработка всех входящих обновлений для отладки
+bot.on('message', (msg) => {
+    console.log('Received message:', msg);
+});
 
 // Обработка команды /start
 bot.onText(/\/start/, (msg) => {
-    console.log('Received /start from:', msg.chat.id); // Логируем для отладки
+    console.log('Received /start from:', msg.chat.id);
     bot.sendMessage(msg.chat.id, 'Welcome to Thordridge!', {
         reply_markup: {
             inline_keyboard: [[
@@ -20,8 +28,10 @@ bot.onText(/\/start/, (msg) => {
                 }
             ]]
         }
+    }).then(() => {
+        console.log('Sent /start response to:', msg.chat.id);
     }).catch(err => {
-        console.error('Error sending message:', err);
+        console.error('Error sending /start response:', err);
     });
 });
 
