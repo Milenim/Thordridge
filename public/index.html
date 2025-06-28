@@ -3,55 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Терновая гряда: Создание персонажа</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <title>Терновая гряда D&D</title>
     <style>
         body {
-            margin: 0;
             font-family: 'Cinzel', serif;
-            background: url('/assets/background.jpg') no-repeat center center fixed;
+            background-image: url('background.jpg');
             background-size: cover;
-            color: #fff;
+            background-position: center;
+            background-attachment: fixed;
+            color: #d4af37;
+            margin: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            overflow: auto;
         }
         .container {
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.7);
             padding: 20px;
-            border: 2px solid #d4af37;
             border-radius: 10px;
-            max-width: 400px;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
             width: 100%;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            animation: fadeIn 1s ease-in;
+            max-width: 500px;
+            animation: fadeIn 0.5s ease-in;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        h1 {
-            text-align: center;
-            color: #d4af37;
-            font-size: 24px;
+        .form-group {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         label {
-            display: block;
-            margin: 10px 0 5px;
-            color: #d4af37;
+            margin-bottom: 0;
         }
-        input, select {
+        input[type="text"], select {
             width: 100%;
-            max-width: 300px;
             padding: 8px;
             margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid #d4af37;
+            color: #d4af37;
             border-radius: 5px;
-            background: #222;
-            color: #fff;
             font-family: 'Cinzel', serif;
-            box-sizing: border-box;
+        }
+        .icon {
+            width: 24px;
+            height: 24px;
+            fill: #d4af37;
         }
         .stat-group {
             display: flex;
@@ -60,221 +64,154 @@
             margin-bottom: 10px;
         }
         .stat-value {
-            width: 40px;
+            width: 50px;
             text-align: center;
-            background: #222;
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid #d4af37;
             border-radius: 5px;
             padding: 5px;
         }
-        .stat-button {
-            width: 30px;
-            height: 30px;
-            background: #d4af37;
-            border: none;
-            border-radius: 50%;
-            color: #000;
-            font-size: 16px;
-            cursor: pointer;
-            transition: transform 0.1s, background 0.2s;
-        }
-        .stat-button:hover:not(:disabled) {
-            background: #e6c74c;
-            transform: scale(1.1);
-        }
-        .stat-button:active:not(:disabled) {
-            transform: scale(0.95);
-        }
-        .stat-button:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-        button[type="submit"] {
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
+        button {
+            padding: 8px 15px;
             background: #d4af37;
             border: none;
             border-radius: 5px;
-            color: #000;
-            font-family: 'Cinzel', serif;
-            font-size: 16px;
+            color: #1a1a1a;
             cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
         }
-        button[type="submit"]:hover {
-            background: #e6c74c;
+        button:hover {
             transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
         }
-        button[type="submit"]:active {
-            transform: scale(0.98);
+        button:active {
+            transform: scale(0.95);
         }
-        #points {
-            text-align: center;
-            color: #d4af37;
-            margin-bottom: 10px;
+        #submitBtn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .animated-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: inherit;
+            z-index: -1;
+            animation: bgShift 10s infinite linear;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0 0; }
+            50% { background-position: 50px 50px; }
+            100% { background-position: 0 0; }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 </head>
 <body>
+    <div class="animated-bg"></div>
     <div class="container">
-        <h1>Создание персонажа</h1>
         <form id="characterForm">
-            <label for="name">Имя персонажа</label>
-            <input type="text" id="name" placeholder="Введите имя" required>
-            
-            <label for="race">Раса</label>
-            <select id="race" required>
-                <option value="" disabled selected>Выберите расу</option>
-                <option value="Человек">Человек</option>
-                <option value="Эльф">Эльф</option>
-                <option value="Дварф">Дварф</option>
-                <option value="Гном">Гном</option>
-                <option value="Тифлинг">Тифлинг</option>
-                <option value="Полурослик">Полурослик</option>
-                <option value="Драконорожденный">Драконорожденный</option>
-                <option value="Орк">Орк</option>
-            </select>
-
-            <label for="class">Класс</label>
-            <select id="class" required>
-                <option value="" disabled selected>Выберите класс</option>
-                <option value="Воин">Воин</option>
-                <option value="Варвар">Варвар</option>
-                <option value="Монах">Монах</option>
-                <option value="Чародей">Чародей</option>
-                <option value="Друид">Друид</option>
-                <option value="Волшебник">Волшебник</option>
-                <option value="Жрец">Жрец</option>
-                <option value="Паладин">Паладин</option>
-                <option value="Колдун">Колдун</option>
-                <option value="Следопыт">Следопыт</option>
-                <option value="Плут">Плут</option>
-            </select>
-
-            <label>Характеристики (Осталось очков: <span id="points">15</span>)</label>
-            <div class="stat-group">
-                <label>Сила</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('strength', -1)">-</button>
-                    <span id="strength-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('strength', 1)">+</button>
-                </div>
+            <div class="form-group">
+                <label for="name">Имя персонажа:</label>
+                <input type="text" id="name" required>
             </div>
-            <div class="stat-group">
-                <label>Ловкость</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('dexterity', -1)">-</button>
-                    <span id="dexterity-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('dexterity', 1)">+</button>
-                </div>
+            <div class="form-group">
+                <label for="race">Раса:</label>
+                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg>
+                <select id="race">
+                    <option value="Человек">Человек</option>
+                    <option value="Эльф">Эльф</option>
+                    <option value="Дварф">Дварф</option>
+                    <option value="Гном">Гном</option>
+                    <option value="Тифлинг">Тифлинг</option>
+                    <option value="Полурослик">Полурослик</option>
+                    <option value="Драконорожденный">Драконорожденный</option>
+                    <option value="Орк">Орк</option>
+                </select>
             </div>
-            <div class="stat-group">
-                <label>Телосложение</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('constitution', -1)">-</button>
-                    <span id="constitution-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('constitution', 1)">+</button>
-                </div>
+            <div class="form-group">
+                <label for="class">Класс:</label>
+                <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" /></svg>
+                <select id="class">
+                    <option value="Воин">Воин</option>
+                    <option value="Варвар">Варвар</option>
+                    <option value="Монах">Монах</option>
+                    <option value="Чародей">Чародей</option>
+                    <option value="Друид">Друид</option>
+                    <option value="Волшебник">Волшебник</option>
+                    <option value="Жрец">Жрец</option>
+                    <option value="Паладин">Паладин</option>
+                    <option value="Колдун">Колдун</option>
+                    <option value="Следопыт">Следопыт</option>
+                    <option value="Плут">Плут</option>
+                </select>
             </div>
-            <div class="stat-group">
-                <label>Мудрость</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('wisdom', -1)">-</button>
-                    <span id="wisdom-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('wisdom', 1)">+</button>
-                </div>
+            <div class="form-group">
+                <label>Характеристики (15 очков):</label>
+                <div class="stat-group"><span>Сила:</span><button type="button" onclick="changeStat('strength', -1)">-</button><span class="stat-value" id="strength">8</span><button type="button" onclick="changeStat('strength', 1)">+</button></div>
+                <div class="stat-group"><span>Ловкость:</span><button type="button" onclick="changeStat('dexterity', -1)">-</button><span class="stat-value" id="dexterity">8</span><button type="button" onclick="changeStat('dexterity', 1)">+</button></div>
+                <div class="stat-group"><span>Телосложение:</span><button type="button" onclick="changeStat('constitution', -1)">-</button><span class="stat-value" id="constitution">8</span><button type="button" onclick="changeStat('constitution', 1)">+</button></div>
+                <div class="stat-group"><span>Мудрость:</span><button type="button" onclick="changeStat('wisdom', -1)">-</button><span class="stat-value" id="wisdom">8</span><button type="button" onclick="changeStat('wisdom', 1)">+</button></div>
+                <div class="stat-group"><span>Интеллект:</span><button type="button" onclick="changeStat('intelligence', -1)">-</button><span class="stat-value" id="intelligence">8</span><button type="button" onclick="changeStat('intelligence', 1)">+</button></div>
+                <div class="stat-group"><span>Харизма:</span><button type="button" onclick="changeStat('charisma', -1)">-</button><span class="stat-value" id="charisma">8</span><button type="button" onclick="changeStat('charisma', 1)">+</button></div>
+                <p>Осталось очков: <span id="pointsLeft">15</span></p>
             </div>
-            <div class="stat-group">
-                <label>Интеллект</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('intelligence', -1)">-</button>
-                    <span id="intelligence-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('intelligence', 1)">+</button>
-                </div>
-            </div>
-            <div class="stat-group">
-                <label>Харизма</label>
-                <div>
-                    <button type="button" class="stat-button" onclick="changeStat('charisma', -1)">-</button>
-                    <span id="charisma-value" class="stat-value">8</span>
-                    <button type="button" class="stat-button" onclick="changeStat('charisma', 1)">+</button>
-                </div>
-            </div>
-
-            <button type="submit">Создать персонажа</button>
+            <button type="submit" id="submitBtn">Создать персонажа</button>
         </form>
     </div>
-
     <script>
-        const form = document.getElementById('characterForm');
-        const pointsDisplay = document.getElementById('points');
-        const stats = ['strength', 'dexterity', 'constitution', 'wisdom', 'intelligence', 'charisma'];
-        let availablePoints = 15;
+        let pointsLeft = 15;
+        const maxStat = 20;
+        const minStat = 8;
 
-        function updatePoints() {
-            let totalSpent = 0;
-            stats.forEach(stat => {
-                const value = parseInt(document.getElementById(`${stat}-value`).textContent) || 8;
-                totalSpent += value - 8;
-            });
-            availablePoints = 15 - totalSpent;
-            pointsDisplay.textContent = availablePoints;
-
-            // Update button states
-            stats.forEach(stat => {
-                const minusBtn = document.querySelector(`button[onclick="changeStat('${stat}', -1)"]`);
-                const plusBtn = document.querySelector(`button[onclick="changeStat('${stat}', 1)"]`);
-                const value = parseInt(document.getElementById(`${stat}-value`).textContent);
-                minusBtn.disabled = value <= 8;
-                plusBtn.disabled = availablePoints <= 0 || value >= 20;
-            });
+        function changeStat(stat, delta) {
+            const value = parseInt(document.getElementById(stat).textContent);
+            const newValue = value + delta;
+            if (newValue >= minStat && newValue <= maxStat && pointsLeft - delta >= 0) {
+                document.getElementById(stat).textContent = newValue;
+                pointsLeft -= delta;
+                document.getElementById('pointsLeft').textContent = pointsLeft;
+            }
         }
 
-        window.changeStat = function(stat, change) {
-            const valueElement = document.getElementById(`${stat}-value`);
-            let value = parseInt(valueElement.textContent);
-            value += change;
-            if (value < 8 || value > 20) return;
-            valueElement.textContent = value;
-            updatePoints();
-        };
-
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('characterForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (availablePoints > 0) {
-                alert('Распределите все доступные очки характеристик!');
+            const name = document.getElementById('name').value;
+            const race = document.getElementById('race').value;
+            const className = document.getElementById('class').value;
+            const stats = {
+                strength: parseInt(document.getElementById('strength').textContent),
+                dexterity: parseInt(document.getElementById('dexterity').textContent),
+                constitution: parseInt(document.getElementById('constitution').textContent),
+                wisdom: parseInt(document.getElementById('wisdom').textContent),
+                intelligence: parseInt(document.getElementById('intelligence').textContent),
+                charisma: parseInt(document.getElementById('charisma').textContent)
+            };
+
+            if (pointsLeft !== 0) {
+                alert('Распределите ровно 15 очков!');
                 return;
             }
 
-            const character = {
-                name: document.getElementById('name').value,
-                race: document.getElementById('race').value,
-                class: document.getElementById('class').value,
-                stats: {
-                    strength: parseInt(document.getElementById('strength-value').textContent),
-                    dexterity: parseInt(document.getElementById('dexterity-value').textContent),
-                    constitution: parseInt(document.getElementById('constitution-value').textContent),
-                    wisdom: parseInt(document.getElementById('wisdom-value').textContent),
-                    intelligence: parseInt(document.getElementById('intelligence-value').textContent),
-                    charisma: parseInt(document.getElementById('charisma-value').textContent)
-                }
-            };
+            const response = await fetch('/api/character', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, race, class: className, stats })
+            });
 
-            try {
-                const response = await fetch('/api/character', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(character)
-                });
-                const result = await response.json();
-                alert(result.message);
-            } catch (error) {
-                alert('Ошибка при создании персонажа: ' + error.message);
+            const data = await response.json();
+            alert(data.message);
+            if (response.ok) {
+                document.getElementById('characterForm').reset();
+                document.querySelectorAll('.stat-value').forEach(el => el.textContent = '8');
+                pointsLeft = 15;
+                document.getElementById('pointsLeft').textContent = pointsLeft;
             }
         });
-
-        updatePoints();
     </script>
 </body>
 </html>
