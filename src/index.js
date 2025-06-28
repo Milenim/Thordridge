@@ -20,13 +20,13 @@ const validRaces = [
 ];
 
 // MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge', {
+mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => {
-    console.error('Error connecting to MongoDB:', err);
+    console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
 });
 
 // Character schema
@@ -85,6 +85,7 @@ app.get('/api', (req, res) => {
 
 app.post('/api/character', async (req, res) => {
     try {
+        console.log('Received character data:', JSON.stringify(req.body, null, 2));
         const { name, race, class: charClass, stats } = req.body;
 
         // Validate input
@@ -111,7 +112,8 @@ app.post('/api/character', async (req, res) => {
         }
 
         // Get next ID
-        const lastCharacter = await Character.findOne().sort({ id: -1 });
+        const lastCharacter = await Character.findOne().sort({ id: -1 }).exec();
+        console.log('Last character:', lastCharacter);
         const id = lastCharacter ? lastCharacter.id + 1 : 1;
 
         // Create new character
@@ -126,10 +128,11 @@ app.post('/api/character', async (req, res) => {
 
         // Save to MongoDB
         await newCharacter.save();
+        console.log('Character saved:', newCharacter);
 
         res.json({ message: `Персонаж создан: ${name} (${race}, ${charClass})` });
     } catch (err) {
-        console.error('Error saving character:', err);
+        console.error('Error saving character:', JSON.stringify(err, null, 2));
         res.status(500).json({ message: 'Ошибка сервера при создании персонажа' });
     }
 });
