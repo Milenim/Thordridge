@@ -1,29 +1,101 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thornridge: D&D Adventure</title>
+    <title>Thordridge D&D</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Cinzel', serif; /* Фэнтезийный шрифт */
+            background: url('assets/background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #e0d8c3; /* Светлый текст для тёмного фона */
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px #000;
+            color: #d4a017; /* Золотистый заголовок */
+        }
+        .form-container {
+            background: rgba(0, 0, 0, 0.7); /* Полупрозрачный тёмный фон */
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #d4a017;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.8);
+            max-width: 400px;
+            width: 90%;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #d4a017;
+            border-radius: 5px;
+            background: #2b2b2b;
+            color: #e0d8c3;
+            font-size: 1em;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #d4a017;
+            color: #1a1a1a;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #e6b800;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #e0d8c3;
+        }
+        @media (max-width: 600px) {
+            h1 { font-size: 2em; }
+            .form-container { width: 95%; }
+        }
+    </style>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Thornridge: Эпическое приключение</h1>
-        <p>Добро пожаловать, искатель приключений! Готов ли ты отправиться в мир магии и опасностей?</p>
-        <button onclick="startAdventure()">Начать приключение</button>
+    <h1>Thordridge D&D</h1>
+    <div class="form-container">
+        <form id="character-form">
+            <input type="text" id="name" placeholder="Character Name" required>
+            <select id="class" required>
+                <option value="">Select Class</option>
+                <option value="Warrior">Warrior</option>
+                <option value="Mage">Mage</option>
+                <option value="Rogue">Rogue</option>
+            </select>
+            <button type="submit">Create Character</button>
+        </form>
+        <div id="result"></div>
     </div>
     <script>
-        // Подключаем Telegram Web App
-        const tg = window.Telegram.WebApp;
-        tg.ready(); // Инициализируем Web App
-
-        // Функция для кнопки "Начать приключение"
-        function startAdventure() {
-            alert("Ты начинаешь своё приключение! Скоро нейросеть сгенерирует твою историю...");
-            // В будущем тут будет вызов нейросети для генерации приключения
-            tg.showAlert("Приключение началось! (Это пока заглушка)");
-        }
+        document.getElementById('character-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const charClass = document.getElementById('class').value;
+            const response = await fetch('/api/character', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, class: charClass })
+            });
+            const result = await response.json();
+            document.getElementById('result').innerText = JSON.stringify(result);
+        });
     </script>
 </body>
 </html>

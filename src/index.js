@@ -42,6 +42,11 @@ app.get('/api', (req, res) => {
     res.json({ message: 'API is working!' });
 });
 
+app.post('/api/character', (req, res) => {
+    const { name, class: charClass } = req.body;
+    res.json({ message: `Character created: ${name} (${charClass})` });
+});
+
 app.listen(3000, () => {
     console.log('Server running on port 3000');
 });
