@@ -1,12 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thordridge D&D</title>
+    <title>Thornridge: D&D Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>Welcome to Thordridge D&D</h1>
-    <p>Web App is working!</p>
+    <div class="container">
+        <h1>Thornridge: Эпическое приключение</h1>
+        <p>Добро пожаловать, искатель приключений! Готов ли ты отправиться в мир магии и опасностей?</p>
+        <button onclick="startAdventure()">Начать приключение</button>
+    </div>
+    <script>
+        // Подключаем Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.ready(); // Инициализируем Web App
+
+        // Функция для кнопки "Начать приключение"
+        function startAdventure() {
+            alert("Ты начинаешь своё приключение! Скоро нейросеть сгенерирует твою историю...");
+            // В будущем тут будет вызов нейросети для генерации приключения
+            tg.showAlert("Приключение началось! (Это пока заглушка)");
+        }
+    </script>
 </body>
 </html>

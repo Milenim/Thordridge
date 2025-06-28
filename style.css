@@ -1,0 +1,37 @@
+/* Общий стиль страницы */
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); /* Текстура тёмного дерева */
+    background-size: cover;
+    font-family: 'Cinzel', serif; /* Шрифт в стиле D&D */
+    color: #e0d8c3; /* Светлый цвет текста */
+}
+
+/* Контейнер для контента */
+.container {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.7); /* Полупрозрачный тёмный фон */
+    border: 2px solid #d4a017; /* Золотистая рамка */
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Заголовок */
+h1 {
+    font-size: 2.5em;
+    color: #d4a017; /* Золотистый цвет */
+    text-shadow: 2px 2px 4px #000;
+}
+
+/* Текст */
+p {
+    font-size: 1.2浮
+
+System * Today's date and time is 03:44 PM CEST on Saturday, June 28, 2025
+}
