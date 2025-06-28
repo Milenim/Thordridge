@@ -25,6 +25,11 @@
             max-width: 400px;
             width: 100%;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         h1 {
             text-align: center;
@@ -38,6 +43,7 @@
         }
         input, select {
             width: 100%;
+            max-width: 300px;
             padding: 8px;
             margin-bottom: 10px;
             border: 1px solid #d4af37;
@@ -45,17 +51,47 @@
             background: #222;
             color: #fff;
             font-family: 'Cinzel', serif;
-        }
-        input[type="number"] {
-            width: 60px;
+            box-sizing: border-box;
         }
         .stat-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 10px;
         }
-        button {
+        .stat-value {
+            width: 40px;
+            text-align: center;
+            background: #222;
+            border: 1px solid #d4af37;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .stat-button {
+            width: 30px;
+            height: 30px;
+            background: #d4af37;
+            border: none;
+            border-radius: 50%;
+            color: #000;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+        .stat-button:hover:not(:disabled) {
+            background: #e6c74c;
+            transform: scale(1.1);
+        }
+        .stat-button:active:not(:disabled) {
+            transform: scale(0.95);
+        }
+        .stat-button:disabled {
+            background: #666;
+            cursor: not-allowed;
+        }
+        button[type="submit"] {
             width: 100%;
+            max-width: 300px;
             padding: 10px;
             background: #d4af37;
             border: none;
@@ -64,9 +100,14 @@
             font-family: 'Cinzel', serif;
             font-size: 16px;
             cursor: pointer;
+            transition: background 0.2s, transform 0.1s;
         }
-        button:hover {
+        button[type="submit"]:hover {
             background: #e6c74c;
+            transform: scale(1.05);
+        }
+        button[type="submit"]:active {
+            transform: scale(0.98);
         }
         #points {
             text-align: center;
@@ -82,6 +123,19 @@
             <label for="name">Имя персонажа</label>
             <input type="text" id="name" placeholder="Введите имя" required>
             
+            <label for="race">Раса</label>
+            <select id="race" required>
+                <option value="" disabled selected>Выберите расу</option>
+                <option value="Человек">Человек</option>
+                <option value="Эльф">Эльф</option>
+                <option value="Дварф">Дварф</option>
+                <option value="Гном">Гном</option>
+                <option value="Тифлинг">Тифлинг</option>
+                <option value="Полурослик">Полурослик</option>
+                <option value="Драконорожденный">Драконорожденный</option>
+                <option value="Орк">Орк</option>
+            </select>
+
             <label for="class">Класс</label>
             <select id="class" required>
                 <option value="" disabled selected>Выберите класс</option>
@@ -101,27 +155,51 @@
             <label>Характеристики (Осталось очков: <span id="points">15</span>)</label>
             <div class="stat-group">
                 <label>Сила</label>
-                <input type="number" id="strength" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('strength', -1)">-</button>
+                    <span id="strength-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('strength', 1)">+</button>
+                </div>
             </div>
             <div class="stat-group">
                 <label>Ловкость</label>
-                <input type="number" id="dexterity" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('dexterity', -1)">-</button>
+                    <span id="dexterity-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('dexterity', 1)">+</button>
+                </div>
             </div>
             <div class="stat-group">
                 <label>Телосложение</label>
-                <input type="number" id="constitution" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('constitution', -1)">-</button>
+                    <span id="constitution-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('constitution', 1)">+</button>
+                </div>
             </div>
             <div class="stat-group">
                 <label>Мудрость</label>
-                <input type="number" id="wisdom" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('wisdom', -1)">-</button>
+                    <span id="wisdom-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('wisdom', 1)">+</button>
+                </div>
             </div>
             <div class="stat-group">
                 <label>Интеллект</label>
-                <input type="number" id="intelligence" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('intelligence', -1)">-</button>
+                    <span id="intelligence-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('intelligence', 1)">+</button>
+                </div>
             </div>
             <div class="stat-group">
                 <label>Харизма</label>
-                <input type="number" id="charisma" value="8" min="8" max="20" required>
+                <div>
+                    <button type="button" class="stat-button" onclick="changeStat('charisma', -1)">-</button>
+                    <span id="charisma-value" class="stat-value">8</span>
+                    <button type="button" class="stat-button" onclick="changeStat('charisma', 1)">+</button>
+                </div>
             </div>
 
             <button type="submit">Создать персонажа</button>
@@ -137,34 +215,33 @@
         function updatePoints() {
             let totalSpent = 0;
             stats.forEach(stat => {
-                const value = parseInt(document.getElementById(stat).value) || 8;
+                const value = parseInt(document.getElementById(`${stat}-value`).textContent) || 8;
                 totalSpent += value - 8;
             });
             availablePoints = 15 - totalSpent;
             pointsDisplay.textContent = availablePoints;
-            if (availablePoints < 0) {
-                pointsDisplay.style.color = 'red';
-            } else {
-                pointsDisplay.style.color = '#d4af37';
-            }
+
+            // Update button states
+            stats.forEach(stat => {
+                const minusBtn = document.querySelector(`button[onclick="changeStat('${stat}', -1)"]`);
+                const plusBtn = document.querySelector(`button[onclick="changeStat('${stat}', 1)"]`);
+                const value = parseInt(document.getElementById(`${stat}-value`).textContent);
+                minusBtn.disabled = value <= 8;
+                plusBtn.disabled = availablePoints <= 0 || value >= 20;
+            });
         }
 
-        stats.forEach(stat => {
-            const input = document.getElementById(stat);
-            input.addEventListener('input', () => {
-                let value = parseInt(input.value) || 8;
-                if (value < 8) input.value = 8;
-                if (value > 20) input.value = 20;
-                updatePoints();
-            });
-        });
+        window.changeStat = function(stat, change) {
+            const valueElement = document.getElementById(`${stat}-value`);
+            let value = parseInt(valueElement.textContent);
+            value += change;
+            if (value < 8 || value > 20) return;
+            valueElement.textContent = value;
+            updatePoints();
+        };
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (availablePoints < 0) {
-                alert('Вы превысили лимит очков характеристик!');
-                return;
-            }
             if (availablePoints > 0) {
                 alert('Распределите все доступные очки характеристик!');
                 return;
@@ -172,14 +249,15 @@
 
             const character = {
                 name: document.getElementById('name').value,
+                race: document.getElementById('race').value,
                 class: document.getElementById('class').value,
                 stats: {
-                    strength: parseInt(document.getElementById('strength').value),
-                    dexterity: parseInt(document.getElementById('dexterity').value),
-                    constitution: parseInt(document.getElementById('constitution').value),
-                    wisdom: parseInt(document.getElementById('wisdom').value),
-                    intelligence: parseInt(document.getElementById('intelligence').value),
-                    charisma: parseInt(document.getElementById('charisma').value)
+                    strength: parseInt(document.getElementById('strength-value').textContent),
+                    dexterity: parseInt(document.getElementById('dexterity-value').textContent),
+                    constitution: parseInt(document.getElementById('constitution-value').textContent),
+                    wisdom: parseInt(document.getElementById('wisdom-value').textContent),
+                    intelligence: parseInt(document.getElementById('intelligence-value').textContent),
+                    charisma: parseInt(document.getElementById('charisma-value').textContent)
                 }
             };
 
@@ -195,6 +273,8 @@
                 alert('Ошибка при создании персонажа: ' + error.message);
             }
         });
+
+        updatePoints();
     </script>
 </body>
 </html>

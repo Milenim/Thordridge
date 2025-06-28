@@ -1,7 +1,6 @@
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
-const fs = require('fs').promises;
-const path = require('path');
+const mongoose = require('mongoose');
 const app = express();
 
 app.use(express.json());
@@ -10,30 +9,46 @@ app.use(express.static('public'));
 const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
 const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
-const DATA_DIR = path.join(__dirname, '../data');
-const CHARACTERS_FILE = path.join(DATA_DIR, 'characters.json');
 
 const validClasses = [
     'Воин', 'Варвар', 'Монах', 'Чародей', 'Друид', 'Волшебник',
     'Жрец', 'Паладин', 'Колдун', 'Следопыт', 'Плут'
 ];
+const validRaces = [
+    'Человек', 'Эльф', 'Дварф', 'Гном', 'Тифлинг',
+    'Полурослик', 'Драконорожденный', 'Орк'
+];
 
-// Ensure data directory and file exist
-async function initDataFile() {
-    try {
-        await fs.mkdir(DATA_DIR, { recursive: true });
-        try {
-            await fs.access(CHARACTERS_FILE);
-        } catch {
-            await fs.writeFile(CHARACTERS_FILE, JSON.stringify([]));
-        }
-    } catch (err) {
-        console.error('Error initializing data file:', err);
-    }
-}
+// MongoDB connection
+mongoose.connect('mongodb://localhost:27017/thordridge', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to MongoDB');
+}).catch(err => {
+    console.error('Error connecting to MongoDB:', err);
+});
 
-initDataFile();
+// Character schema
+const characterSchema = new mongoose.Schema({
+    id: { type: Number, unique: true },
+    name: { type: String, required: true },
+    race: { type: String, required: true },
+    class: { type: String, required: true },
+    stats: {
+        strength: { type: Number, required: true },
+        dexterity: { type: Number, required: true },
+        constitution: { type: Number, required: true },
+        wisdom: { type: Number, required: true },
+        intelligence: { type: Number, required: true },
+        charisma: { type: Number, required: true }
+    },
+    createdAt: { type: Date, default: Date.now }
+});
 
+const Character = mongoose.model('Character', characterSchema);
+
+// Set webhook
 bot.setWebHook(WEBHOOK_URL).then(() => {
     console.log(`Webhook set to ${WEBHOOK_URL}`);
 }).catch(err => {
@@ -70,11 +85,14 @@ app.get('/api', (req, res) => {
 
 app.post('/api/character', async (req, res) => {
     try {
-        const { name, class: charClass, stats } = req.body;
+        const { name, race, class: charClass, stats } = req.body;
 
         // Validate input
         if (!name || typeof name !== 'string' || name.trim().length === 0) {
             return res.status(400).json({ message: 'Имя персонажа обязательно' });
+        }
+        if (!validRaces.includes(race)) {
+            return res.status(400).json({ message: 'Недопустимая раса персонажа' });
         }
         if (!validClasses.includes(charClass)) {
             return res.status(400).json({ message: 'Недопустимый класс персонажа' });
@@ -92,26 +110,24 @@ app.post('/api/character', async (req, res) => {
             return res.status(400).json({ message: 'Сумма добавленных очков характеристик должна равняться 15' });
         }
 
-        // Read existing characters
-        const characters = JSON.parse(await fs.readFile(CHARACTERS_FILE));
-
-        // Generate unique ID
-        const id = characters.length > 0 ? Math.max(...characters.map(c => c.id)) + 1 : 1;
+        // Get next ID
+        const lastCharacter = await Character.findOne().sort({ id: -1 });
+        const id = lastCharacter ? lastCharacter.id + 1 : 1;
 
         // Create new character
-        const newCharacter = {
+        const newCharacter = new Character({
             id,
             name: name.trim(),
+            race,
             class: charClass,
             stats,
-            createdAt: new Date().toISOString()
-        };
+            createdAt: new Date()
+        });
 
-        // Save character
-        characters.push(newCharacter);
-        await fs.writeFile(CHARACTERS_FILE, JSON.stringify(characters, null, 2));
+        // Save to MongoDB
+        await newCharacter.save();
 
-        res.json({ message: `Персонаж создан: ${name} (${charClass})` });
+        res.json({ message: `Персонаж создан: ${name} (${race}, ${charClass})` });
     } catch (err) {
         console.error('Error saving character:', err);
         res.status(500).json({ message: 'Ошибка сервера при создании персонажа' });
