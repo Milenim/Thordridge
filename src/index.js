@@ -20,7 +20,7 @@ const validRaces = [
 ];
 
 // MongoDB connection
-mongoose.connect('mongodb://localhost:27017/thordridge', {
+mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
