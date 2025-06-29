@@ -14,17 +14,12 @@
             margin: 0;
             padding: 20px;
             min-height: 100vh;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'), url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            background-size: cover, 50px 50px;
-            background-position: center, 0 0;
-            background-repeat: no-repeat, repeat;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
             font-family: 'Cinzel', serif;
             color: #e0d8c3;
-            animation: bgShift 50s linear infinite;
-        }
-        @keyframes bgShift {
-            0% { background-position: center, 0 0; }
-            100% { background-position: center, 50px 50px; }
         }
         .main-container {
             display: flex;
@@ -133,7 +128,7 @@
             margin: 10px 0;
         }
         .error {
- color: #ff6b6b;
+            color: #ff6b6b;
             font-size: 1em;
             margin: 10px 0;
         }
@@ -307,7 +302,7 @@
                     <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
                     <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
                     <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
-                </div>
+                </ocl>
                 <div class="stat-container">
                     <label for="constitution">Телосложение:</label>
                     <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
