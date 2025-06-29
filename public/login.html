@@ -108,16 +108,14 @@
 <body>
     <div class="container">
         <h1>Терновая гряда D&D</h1>
-        <form id="loginForm">
-            <label for="name">Имя персонажа:</label>
-            <input type="text" id="name" name="name" placeholder="Введите имя персонажа">
-            <button type="submit" onclick="createNewCharacter()">Создать нового персонажа</button>
+        <div id="loginForm">
+            <button onclick="createNewCharacter()">Создать нового персонажа</button>
             <label for="existingCharacter">Выбрать существующего персонажа:</label>
             <select id="existingCharacter" name="existingCharacter">
                 <option value="">Выберите персонажа</option>
             </select>
-            <button type="submit" onclick="selectCharacter()">Войти</button>
-        </form>
+            <button onclick="selectCharacter()">Войти</button>
+        </div>
         <div id="error" class="error"></div>
     </div>
     <script>
@@ -140,15 +138,10 @@
         }
 
         function createNewCharacter() {
-            const name = document.getElementById('name').value.trim();
-            if (name) {
-                window.location.href = `/index.html?name=${encodeURIComponent(name)}`;
-            } else {
-                document.getElementById('error').textContent = 'Введите имя персонажа';
-            }
+            window.location.href = '/index.html';
         }
 
-        async function selectCharacter() {
+        function selectCharacter() {
             const characterId = document.getElementById('existingCharacter').value;
             if (characterId) {
                 window.location.href = `/gameplay.html?characterId=${characterId}`;

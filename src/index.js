@@ -79,7 +79,7 @@ bot.onText(/\/start/, (msg) => {
             inline_keyboard: [[
                 {
                     text: 'Открыть игру',
-                    web_app: { url: 'https://thornridge.ru' }
+                    web_app: { url: 'https://thornridge.ru/login.html' }
                 },
                 {
                     text: 'Посмотреть персонажей',
