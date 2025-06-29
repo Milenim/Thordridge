@@ -134,7 +134,7 @@ app.post('/api/character', async (req, res) => {
         await newCharacter.save();
         console.log('Character saved:', newCharacter);
 
-        res.json({ message: `Персонаж создан: ${name} (${race}, ${charClass})` });
+        res.json({ message: `Персонаж создан: ${name} (${race}, ${charClass})`, characterId: id });
     } catch (err) {
         console.error('Error saving character:', JSON.stringify(err, null, 2));
         res.status(500).json({ message: 'Ошибка сервера при создании персонажа' });

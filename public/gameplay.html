@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Терновая гряда: Геймплей</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: url('/bg.jpg') center/cover;
+            animation: bgShift 30s linear infinite;
+            font-family: 'Cinzel', serif;
+            color: #d4af37;
+            margin: 0;
+            padding: 0;
+        }
+        @keyframes bgShift {
+            0% { background-position: 0 0; }
+            100% { background-position: 50px 50px; }
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #d4af37;
+            border-radius: 10px;
+        }
+        .panel {
+            flex: 1;
+            padding: 20px;
+            margin: 0 10px;
+        }
+        .character-panel, .actions-panel {
+            flex: 0 0 250px;
+        }
+        .scene-panel {
+            flex: 2;
+        }
+        .event-log {
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #d4af37;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        button {
+            background: #d4af37;
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            transition: box-shadow 0.3s;
+        }
+        button:hover {
+            box-shadow: 0 0 10px #d4af37;
+        }
+        h1, h2 {
+            text-align: center;
+            text-shadow: 0 0 5px #d4af37;
+        }
+    </style>
+</head>
+<body>
+    <h1>Терновая гряда: Геймплей</h1>
+    <div class="container">
+        <div class="character-panel">
+            <h2>Персонаж</h2>
+            <div id="character-info"></div>
+        </div>
+        <div class="scene-panel">
+            <h2>Сцена</h2>
+            <div id="scene-description"></div>
+            <div id="actions"></div>
+        </div>
+        <div class="actions-panel">
+            <h2>Действия</h2>
+            <div id="action-buttons"></div>
+        </div>
+    </div>
+    <div class="event-log" id="event-log"></div>
+    <script>
+        async function loadGameplay() {
+            try {
+                const response = await fetch('/api/gameplay', { method: 'GET' });
+                const data = await response.json();
+                document.getElementById('character-info').innerHTML = `
+                    <p><strong>Имя:</strong> ${data.character.name}</p>
+                    <p><strong>Раса:</strong> ${data.character.race}</p>
+                    <p><strong>Класс:</strong> ${data.character.class}</p>
+                    <p><strong>Здоровье:</strong> ${data.character.hp}</p>
+                `;
+                document.getElementById('scene-description').innerText = data.scene.description;
+                const actionsDiv = document.getElementById('action-buttons');
+                actionsDiv.innerHTML = data.scene.choices.map(choice => 
+                    `<button onclick="performAction('${choice.action}')">${choice.text}</button>`
+                ).join('');
+            } catch (error) {
+                console.error('Ошибка загрузки сцены:', error);
+            }
+        }
+
+        async function performAction(action) {
+            try {
+                const response = await fetch('/api/gameplay', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action })
+                });
+                const data = await response.json();
+                document.getElementById('scene-description').innerText = data.scene.description;
+                document.getElementById('action-buttons').innerHTML = data.scene.choices.map(choice => 
+                    `<button onclick="performAction('${choice.action}')">${choice.text}</button>`
+                ).join('');
+                document.getElementById('event-log').innerHTML += `<p>${data.outcome}</p>`;
+            } catch (error) {
+                console.error('Ошибка выполнения действия:', error);
+            }
+        }
+
+        loadGameplay();
+    </script>
+</body>
+</html>

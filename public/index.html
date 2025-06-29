@@ -380,7 +380,7 @@
             `,
             'Монах': `
                 <strong>Монах</strong><br>
-                <strong>Описание:</strong> Монахи — мастера боевых искусств, использующие ловкость и внутреннюю энергию (ки). Они тренируются в монастырях.<br>
+                <strong>Описание:</strong> Монахи — мастера боевых искусств, использующие ловкость и домашнюю энергию (ки). Они тренируются в монастырях.<br>
                 <strong>Ключевая характеристика:</strong> Ловкость и Мудрость.<br>
                 <strong>Особенности:</strong> Бездоспешный бой, Поражающий удар на 3 уровне.<br>
                 <strong>Роль:</strong> Урон, контроль.<br>
@@ -389,7 +389,7 @@
                 <strong>Чародей</strong><br>
                 <strong>Описание:</strong> Чародеи рождаются с врождённой магической силой, которую используют инстинктивно. Их магия часто связана с кровью или судьбой.<br>
                 <strong>Ключевая характеристика:</strong> Харизма.<br>
-                <strong>Особенности:</strong> Гибкие чары, Метамагические возможности на 3 уровне.<br>
+                <strong>Особенности:</strong> Гибкие чарыів
                 <strong>Роль:</strong> Урон, поддержка.<br>
             `,
             'Друид': `
@@ -531,6 +531,57 @@
         window.onload = function() {
             const buttons = document.querySelectorAll('.stat-container button');
             buttons.forEach(button => button.disabled = true);
+
+            // Обработчик отправки формы
+            document.getElementById('characterForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value.trim();
+                const race = document.getElementById('race').value;
+                const charClass = document.getElementById('class').value;
+                const stats = {
+                    strength: parseInt(document.getElementById('strength').value),
+                    dexterity: parseInt(document.getElementById('dexterity').value),
+                    constitution: parseInt(document.getElementById('constitution').value),
+                    wisdom: parseInt(document.getElementById('wisdom').value),
+                    intelligence: parseInt(document.getElementById('intelligence').value),
+                    charisma: parseInt(document.getElementById('charisma').value)
+                };
+
+                if (!name || !race || !charClass) {
+                    document.getElementById('error').textContent = 'Заполните все поля: имя, раса, класс';
+                    return;
+                }
+
+                if (points !== 0) {
+                    document.getElementById('error').textContent = 'Распределите все 15 очков характеристик';
+                    return;
+                }
+
+                const characterData = {
+                    name,
+                    race,
+                    class: charClass,
+                    stats
+                };
+
+                try {
+                    const response = await fetch('/api/character', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(characterData)
+                    });
+                    const result = await response.json();
+                    if (response.ok) {
+                        alert(result.message);
+                        window.location.href = `/gameplay.html?characterId=${result.characterId}`;
+                    } else {
+                        document.getElementById('error').textContent = result.message;
+                    }
+                } catch (err) {
+                    console.error('Error creating character:', err);
+                    document.getElementById('error').textContent = 'Ошибка при создании персонажа';
+                }
+            });
         };
     </script>
 </body>
