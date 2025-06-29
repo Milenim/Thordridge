@@ -21,15 +21,17 @@
             background-size: cover;
             font-family: 'Cinzel', serif;
             color: #e0d8c3;
+            position: relative;
         }
         .main-container {
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 40px; /* Увеличен gap для большего расстояния между окнами */
+            gap: 40px;
             max-width: 1200px;
             width: 100%;
             margin: 0 auto;
+            position: relative;
         }
         .container {
             background: rgba(0, 0, 0, 0.7);
@@ -40,18 +42,21 @@
             text-align: center;
         }
         .form-container {
-            flex: 0 0 400px; /* Фиксированная ширина для точного центрирования */
-            margin: 0 auto;
-            position: relative;
+            flex: 0 0 400px;
+            position: absolute;
             left: 50%;
             transform: translateX(-50%);
+            z-index: 2;
         }
         .race-info {
             flex: 0 0 500px;
+            position: absolute;
+            right: 0;
+            margin-left: 450px; /* Сдвиг правее, чтобы не налезало */
+            z-index: 1;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
-            margin-left: 60px; /* Сдвиг правее для лучшего расположения */
         }
         .race-info p {
             font-size: 1em;
@@ -60,7 +65,11 @@
         }
         .race-info strong {
             color: #d4a017;
-            font-size: 2.5em; /* Название расы остаётся большим */
+            font-size: 2.5em; /* Название расы */
+        }
+        .race-info strong:not(:first-child) {
+            font-size: 1.2em; /* Ключевые фразы (Увеличение характеристик и т.д.) */
+            color: #d4a017;
         }
         .form-container input,
         .form-container select {
