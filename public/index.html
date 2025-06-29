@@ -36,6 +36,13 @@
             padding: 20px;
             text-align: center;
         }
+        .class-info {
+            flex: 0 0 500px; /* Фиксированная ширина */
+            margin-right: auto; /* Прижимание к левому краю */
+            text-align: left;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
         .form-container {
             flex: 0 0 400px; /* Фиксированная ширина */
             margin: 0 auto; /* Точное центрирование */
@@ -47,16 +54,16 @@
             overflow-y: auto;
             max-height: 80vh;
         }
-        .race-info p {
+        .class-info p, .race-info p {
             font-size: 1em;
             line-height: 1.5;
             margin: 10px 0;
         }
-        .race-info strong {
+        .class-info strong, .race-info strong {
             color: #d4a017;
-            font-size: 2.5em; /* Название расы */
+            font-size: 2.5em; /* Название класса/расы */
         }
-        .race-info strong:not(:first-child) {
+        .class-info strong:not(:first-child), .race-info strong:not(:first-child) {
             font-size: 1.2em; /* Ключевые фразы */
             color: #d4a017;
         }
@@ -134,15 +141,21 @@
                 flex-direction: column;
                 align-items: center;
             }
-            .race-info {
+            .class-info, .race-info {
                 margin-top: 20px;
-                margin-left: 0; /* Убираем прижимание к правому краю на узких экранах */
+                margin-left: 0;
+                margin-right: 0;
             }
         }
     </style>
 </head>
 <body>
     <div class="main-container">
+        <div class="container class-info">
+            <div id="classDescription">
+                <p>Выберите класс, чтобы увидеть его описание.</p>
+            </div>
+        </div>
         <div class="container form-container">
             <h1>Создание персонажа</h1>
             <form id="characterForm">
@@ -162,8 +175,8 @@
                 </select>
 
                 <label for="class">Класс:</label>
-                <select id="class" name="class" required>
-                    <option value="">Выберите класс</option>
+                <select id="class" name="class" required onchange="applyClassDescription()">
+                    <option value="" selected>Выберите класс</option>
                     <option value="Воин">Воин</option>
                     <option value="Варвар">Варвар</option>
                     <option value="Монах">Монах</option>
@@ -338,6 +351,86 @@
             }
         };
 
+        const classDescriptions = {
+            'Воин': `
+                <strong>Воин</strong><br>
+                <strong>Описание:</strong> Воины — мастера боя, владеющие различным оружием и доспехами. Они могут быть рыцарями, наёмниками или защитниками.<br>
+                <strong>Ключевая характеристика:</strong> Сила или Ловкость.<br>
+                <strong>Особенности:</strong> Боевой стиль (например, Двуручное оружие или Защита), Вторая атака на 5 уровне.<br>
+                <strong>Роль:</strong> Фронтовая линия, танк или урон.<br>
+            `,
+            'Варвар': `
+                <strong>Варвар</strong><br>
+                <strong>Описание:</strong> Варвары черпают силу из ярости, становясь практически непробиваемыми в бою. Они часто приходят из диких земель.<br>
+                <strong>Ключевая характеристика:</strong> Сила.<br>
+                <strong>Особенности:</strong> Ярость, Неразрушимость на 5 уровне.<br>
+                <strong>Роль:</strong> Фронтовая линия, урон.<br>
+            `,
+            'Монах': `
+                <strong>Монах</strong><br>
+                <strong>Описание:</strong> Монахи — мастера боевых искусств, использующие ловкость и внутреннюю энергию (ки). Они тренируются в монастырях.<br>
+                <strong>Ключевая характеристика:</strong> Ловкость и Мудрость.<br>
+                <strong>Особенности:</strong> Бездоспешный бой, Поражающий удар на 3 уровне.<br>
+                <strong>Роль:</strong> Урон, контроль.<br>
+            `,
+            'Чародей': `
+                <strong>Чародей</strong><br>
+                <strong>Описание:</strong> Чародеи рождаются с врождённой магической силой, которую используют инстинктивно. Их магия часто связана с кровью или судьбой.<br>
+                <strong>Ключевая характеристика:</strong> Харизма.<br>
+                <strong>Особенности:</strong> Гибкие чары, Метамагические возможности на 3 уровне.<br>
+                <strong>Роль:</strong> Урон, поддержка.<br>
+            `,
+            'Друид': `
+                <strong>Друид</strong><br>
+                <strong>Описание:</strong> Друиды черпают силу из природы, способны превращаться в животных и использовать природную магию.<br>
+                <strong>Ключевая характеристика:</strong> Мудрость.<br>
+                <strong>Особенности:</strong> Дикая форма, Круг друида на 2 уровне.<br>
+                <strong>Роль:</strong> Поддержка, контроль, исцеление.<br>
+            `,
+            'Волшебник': `
+                <strong>Волшебник</strong><br>
+                <strong>Описание:</strong> Волшебники изучают магию через книги и исследования, владея широким спектром заклинаний.<br>
+                <strong>Ключевая характеристика:</strong> Интеллект.<br>
+                <strong>Особенности:</strong> Арканальная традиция на 2 уровне, Подготовка заклинаний.<br>
+                <strong>Роль:</strong> Урон, контроль, поддержка.<br>
+            `,
+            'Жрец': `
+                <strong>Жрец</strong><br>
+                <strong>Описание:</strong> Жрецы служат божественным силам, используя магию для исцеления и защиты союзников.<br>
+                <strong>Ключевая характеристика:</strong> Мудрость.<br>
+                <strong>Особенности:</strong> Домен божества на 1 уровне, Канал божественности.<br>
+                <strong>Роль:</strong> Исцеление, поддержка.<br>
+            `,
+            'Паладин': `
+                <strong>Паладин</strong><br>
+                <strong>Описание:</strong> Паладины — святые воины, связывающие боевые навыки с божественной магией и клятвами.<br>
+                <strong>Ключевая характеристика:</strong> Сила и Харизма.<br>
+                <strong>Особенности:</strong> Божественная магия, Священная клятва на 3 уровне.<br>
+                <strong>Роль:</strong> Фронтовая линия, поддержка.<br>
+            `,
+            'Колдун': `
+                <strong>Колдун</strong><br>
+                <strong>Описание:</strong> Колдуны заключают сделки с могущественными сущностями, получая магию в обмен на службу.<br>
+                <strong>Ключевая характеристика:</strong> Харизма.<br>
+                <strong>Особенности:</strong> Магический покров, Мистические аруаны на 2 уровне.<br>
+                <strong>Роль:</strong> Урон, контроль.<br>
+            `,
+            'Следопыт': `
+                <strong>Следопыт</strong><br>
+                <strong>Описание:</strong> Следопыты — мастера выживания и охоты, эффективные против определённых врагов.<br>
+                <strong>Ключевая характеристика:</strong> Ловкость и Мудрость.<br>
+                <strong>Особенности:</strong> Избранный враг, Стиль боя на 2 уровне.<br>
+                <strong>Роль:</strong> Урон, разведка.<br>
+            `,
+            'Плут': `
+                <strong>Плут</strong><br>
+                <strong>Описание:</strong> Плуты полагаются на хитрость, ловкость и скрытность, часто действуя из тени.<br>
+                <strong>Ключевая характеристика:</strong> Ловкость.<br>
+                <strong>Особенности:</strong> Мастер скрытности, Удар исподтишка на 3 уровне.<br>
+                <strong>Роль:</strong> Урон, разведка.<br>
+            `
+        };
+
         function applyRaceBonuses() {
             const raceSelect = document.getElementById('race');
             const race = raceSelect.value;
@@ -396,6 +489,17 @@
                 descriptionDiv.innerHTML = raceBonuses[race].description;
             } else {
                 descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
+            }
+        }
+
+        function applyClassDescription() {
+            const classSelect = document.getElementById('class');
+            const className = classSelect.value;
+            const descriptionDiv = document.getElementById('classDescription');
+            if (classDescriptions[className]) {
+                descriptionDiv.innerHTML = classDescriptions[className];
+            } else {
+                descriptionDiv.innerHTML = '<p>Выберите класс, чтобы увидеть его описание.</p>';
             }
         }
 
