@@ -29,6 +29,22 @@ mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?aut
     console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
 });
 
+body {
+    font-family: 'Cinzel', serif;
+    background-image: url('background.jpg'); /* Замени на имя твоего файла */
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: #d4af37;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: auto;
+}
+
 // Character schema
 const characterSchema = new mongoose.Schema({
     id: { type: Number, unique: true },

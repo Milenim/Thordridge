@@ -7,7 +7,7 @@
     <style>
         body {
             font-family: 'Cinzel', serif;
-            background-image: url('/assets/background.jpg') no-repeat center center fixed;
+            background-image: url('background.jpg'); /* Укажи точное имя файла твоего фона */
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
@@ -35,12 +35,10 @@
         }
         .form-group {
             margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
         }
         label {
-            margin-bottom: 0;
+            display: block;
+            margin-bottom: 5px;
         }
         input[type="text"], select {
             width: 100%;
@@ -52,16 +50,12 @@
             border-radius: 5px;
             font-family: 'Cinzel', serif;
         }
-        .icon {
-            width: 24px;
-            height: 24px;
-            fill: #d4af37;
-        }
         .stat-group {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 10px;
+            width: 100%; /* Убедимся, что группа занимает всю ширину */
         }
         .stat-value {
             width: 50px;
@@ -121,7 +115,6 @@
             </div>
             <div class="form-group">
                 <label for="race">Раса:</label>
-                <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /></svg>
                 <select id="race">
                     <option value="Человек">Человек</option>
                     <option value="Эльф">Эльф</option>
@@ -135,7 +128,6 @@
             </div>
             <div class="form-group">
                 <label for="class">Класс:</label>
-                <svg class="icon" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" /></svg>
                 <select id="class">
                     <option value="Воин">Воин</option>
                     <option value="Варвар">Варвар</option>
