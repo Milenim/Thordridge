@@ -3,126 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Терновая гряда: Геймплей</title>
+    <title>Терновая гряда D&D - Геймплей</title>
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            background: url('/bg.jpg') center/cover;
-            animation: bgShift 30s linear infinite;
-            font-family: 'Cinzel', serif;
-            color: #d4af37;
             margin: 0;
-            padding: 0;
+            padding: 20px;
+            min-height: 100vh;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            background-size: cover;
+            font-family: 'Cinzel', serif;
+            color: #e0d8c3;
+            animation: bgShift 50s linear infinite;
         }
         @keyframes bgShift {
             0% { background-position: 0 0; }
             100% { background-position: 50px 50px; }
         }
-        .container {
+        .main-container {
             display: flex;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #d4af37;
+            justify-content: center;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            gap: 20px;
+            height: calc(100vh - 40px);
+        }
+        .container {
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            border: 5px solid #d4a017;
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
+            box-shadow: 0 0 15px rgba(212, 160, 23, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.7);
             border-radius: 10px;
-        }
-        .panel {
-            flex: 1;
             padding: 20px;
-            margin: 0 10px;
+            overflow: hidden;
         }
-        .character-panel, .actions-panel {
-            flex: 0 0 250px;
+        .sidebar-left {
+            flex: 0 0 25%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
         }
-        .scene-panel {
-            flex: 2;
-        }
-        .event-log {
-            margin-top: 20px;
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.8);
-            border: 1px solid #d4af37;
-            max-height: 150px;
+        .character-info, .inventory {
+            flex: 1;
+            text-align: left;
             overflow-y: auto;
         }
-        button {
-            background: #d4af37;
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            cursor: pointer;
-            transition: box-shadow 0.3s;
+        .scene {
+            flex: 0 0 50%;
+            text-align: left;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
         }
-        button:hover {
-            box-shadow: 0 0 10px #d4af37;
+        .sidebar-right {
+            flex: 0 0 25%;
+            text-align: left;
+            overflow-y: auto;
         }
-        h1, h2 {
+        .actions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50%;
             text-align: center;
-            text-shadow: 0 0 5px #d4af37;
+        }
+        h2 {
+            font-size: 1.8em;
+            color: #d4a017;
+            text-shadow: 2px 2px 4px #000;
+            margin-top: 0;
+        }
+        p, li {
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+        .actions button {
+            width: 100%;
+            padding: 10px;
+            background: #d4a017;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 5px 0;
+        }
+        .actions button:hover {
+            box-shadow: 0 0 10px #d4a017;
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+        @media (max-width: 1200px) {
+            .main-container {
+                flex-direction: column;
+                height: auto;
+            }
+            .sidebar-left, .scene, .sidebar-right {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+            .actions {
+                position: static;
+                transform: none;
+                width: 100%;
+                margin-top: 20px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Терновая гряда: Геймплей</h1>
-    <div class="container">
-        <div class="character-panel">
-            <h2>Персонаж</h2>
-            <div id="character-info"></div>
+    <div class="main-container">
+        <div class="sidebar-left">
+            <div class="container character-info">
+                <h2>Персонаж</h2>
+                <p id="character-name">Загрузка...</p>
+                <p id="character-race"></p>
+                <p id="character-class"></p>
+                <p id="character-stats"></p>
+                <div id="error" class="error"></div>
+            </div>
+            <div class="container inventory">
+                <h2>Инвентарь</h2>
+                <p>Инвентарь пока пуст. Здесь будут отображаться предметы персонажа.</p>
+            </div>
         </div>
-        <div class="scene-panel">
+        <div class="container scene">
             <h2>Сцена</h2>
-            <div id="scene-description"></div>
-            <div id="actions"></div>
+            <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Вдалеке слышны шорохи, а тени между деревьями кажутся живыми. Что будете делать?</p>
         </div>
-        <div class="actions-panel">
-            <h2>Действия</h2>
-            <div id="action-buttons"></div>
+        <div class="container sidebar-right">
+            <h2>Умения и заклинания</h2>
+            <div id="abilities">
+                <p>Умения и заклинания зависят от вашего класса. Выберите действие из списка ниже.</p>
+            </div>
         </div>
     </div>
-    <div class="event-log" id="event-log"></div>
+    <div class="container actions">
+        <h2>Действия</h2>
+        <button onclick="performAction('Осмотреть тропу')">Осмотреть тропу</button>
+        <button onclick="performAction('Пойти в деревню')">Пойти в деревню</button>
+        <button onclick="performAction('Остаться на месте')">Остаться на месте</button>
+    </div>
     <script>
-        async function loadGameplay() {
+        const classAbilities = {
+            'Воин': ['Боевой стиль', 'Вторая атака'],
+            'Варвар': ['Ярость', 'Неразрушимость'],
+            'Монах': ['Бездоспешный бой', 'Поражающий удар'],
+            'Чародей': ['Гибкие чары', 'Метамагия'],
+            'Друид': ['Дикая форма', 'Природная магия'],
+            'Волшебник': ['Подготовка заклинаний', 'Арканальная традиция'],
+            'Жрец': ['Домен божества', 'Канал божественности'],
+            'Паладин': ['Божественная магия', 'Священная клятва'],
+            'Колдун': ['Магический покров', 'Мистические аруаны'],
+            'Следопыт': ['Избранный враг', 'Стиль боя'],
+            'Плут': ['Мастер скрытности', 'Удар исподтишка']
+        };
+
+        async function loadCharacter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const characterId = urlParams.get('characterId');
+            if (!characterId) {
+                document.getElementById('error').textContent = 'Персонаж не выбран';
+                setTimeout(() => window.location.href = '/', 2000);
+                return;
+            }
+
             try {
-                const response = await fetch('/api/gameplay', { method: 'GET' });
-                const data = await response.json();
-                document.getElementById('character-info').innerHTML = `
-                    <p><strong>Имя:</strong> ${data.character.name}</p>
-                    <p><strong>Раса:</strong> ${data.character.race}</p>
-                    <p><strong>Класс:</strong> ${data.character.class}</p>
-                    <p><strong>Здоровье:</strong> ${data.character.hp}</p>
+                const response = await fetch('/api/characters');
+                const characters = await response.json();
+                const character = characters.find(c => c.id === parseInt(characterId));
+                if (!character) {
+                    document.getElementById('error').textContent = 'Персонаж не найден';
+                    setTimeout(() => window.location.href = '/', 2000);
+                    return;
+                }
+
+                document.getElementById('character-name').innerHTML = `<strong>Имя:</strong> ${character.name}`;
+                document.getElementById('character-race').innerHTML = `<strong>Раса:</strong> ${character.race}`;
+                document.getElementById('character-class').innerHTML = `<strong>Класс:</strong> ${character.class}`;
+                document.getElementById('character-stats').innerHTML = `
+                    <strong>Характеристики:</strong><br>
+                    Сила: ${character.stats.strength}<br>
+                    Ловкость: ${character.stats.dexterity}<br>
+                    Телосложение: ${character.stats.constitution}<br>
+                    Мудрость: ${character.stats.wisdom}<br>
+                    Интеллект: ${character.stats.intelligence}<br>
+                    Харизма: ${character.stats.charisma}
                 `;
-                document.getElementById('scene-description').innerText = data.scene.description;
-                const actionsDiv = document.getElementById('action-buttons');
-                actionsDiv.innerHTML = data.scene.choices.map(choice => 
-                    `<button onclick="performAction('${choice.action}')">${choice.text}</button>`
-                ).join('');
-            } catch (error) {
-                console.error('Ошибка загрузки сцены:', error);
+                document.getElementById('abilities').innerHTML = `
+                    <strong>Умения:</strong><br>
+                    <ul>
+                        ${classAbilities[character.class].map(ability => `<li>${ability}</li>`).join('')}
+                    </ul>
+                `;
+            } catch (err) {
+                console.error('Error loading character:', err);
+                document.getElementById('error').textContent = 'Ошибка при загрузке персонажа';
+                setTimeout(() => window.location.href = '/', 2000);
             }
         }
 
-        async function performAction(action) {
-            try {
-                const response = await fetch('/api/gameplay', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action })
-                });
-                const data = await response.json();
-                document.getElementById('scene-description').innerText = data.scene.description;
-                document.getElementById('action-buttons').innerHTML = data.scene.choices.map(choice => 
-                    `<button onclick="performAction('${choice.action}')">${choice.text}</button>`
-                ).join('');
-                document.getElementById('event-log').innerHTML += `<p>${data.outcome}</p>`;
-            } catch (error) {
-                console.error('Ошибка выполнения действия:', error);
-            }
+        function performAction(action) {
+            const scene = document.querySelector('.scene p');
+            scene.innerHTML += `<br><br><strong>Действие:</strong> ${action}. (В разработке: результат действия будет добавлен позже.)`;
+            scene.scrollTop = scene.scrollHeight;
         }
 
-        loadGameplay();
+        window.onload = loadCharacter;
     </script>
 </body>
 </html>
