@@ -19,6 +19,17 @@ const validRaces = [
     'Полурослик', 'Драконорожденный', 'Орк'
 ];
 
+// Определяем расовые бонусы для валидации на сервере
+const raceBonuses = {
+    'Человек': { strength: 1, dexterity: 1, constitution: 1, wisdom: 1, intelligence: 1, charisma: 1 },
+    'Драконорождённый': { strength: 2, charisma: 1 },
+    'Гном': { intelligence: 2 },
+    'Тифлинг': { intelligence: 1, charisma: 2 },
+    'Полуэльф': { charisma: 2, custom: 2 }, // +1 к двум характеристикам (например, Сила и Ловкость)
+    'Полуорк': { strength: 2, constitution: 1 },
+    'Дварф': { constitution: 2 }
+};
+
 // MongoDB connection
 mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
@@ -110,9 +121,26 @@ app.post('/api/character', async (req, res) => {
         if (statValues.some(val => !Number.isInteger(val) || val < 8 || val > 20)) {
             return res.status(400).json({ message: 'Характеристики должны быть целыми числами от 8 до 20' });
         }
-        const totalPoints = statValues.reduce((sum, val) => sum + (val - 8), 0);
+
+        // Вычисляем расовые бонусы
+        let raceBonusPoints = 0;
+        const bonuses = raceBonuses[race] || {};
+        for (let stat in stats) {
+            const bonus = bonuses[stat] || 0;
+            if (stat === 'custom' && race === 'Полуэльф') {
+                // Для Полуэльфа учитываем +1 к двум характеристикам (например, Сила и Ловкость)
+                raceBonusPoints += 2;
+            } else {
+                raceBonusPoints += bonus;
+            }
+        }
+
+        // Проверяем сумму пользовательских очков (вычитаем расовые бонусы)
+        const totalPoints = statValues.reduce((sum, val) => sum + (val - 8), 0) - raceBonusPoints;
         if (totalPoints !== 15) {
-            return res.status(400).json({ message: 'Сумма добавленных очков характеристик должна равняться 15' });
+            return res.status(400).json({ 
+                message: `Сумма добавленных очков характеристик должна равняться 15 (текущая сумма: ${totalPoints})` 
+            });
         }
 
         // Get next ID
