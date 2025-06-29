@@ -8,6 +8,24 @@ app.use(express.static('public'));
 
 const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
 const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
+
+bot.setMyCommands([
+    { command: '/start', description: 'Начать игру' }
+]);
+
+bot.setChatMenuButton({
+    chat_id: null, // Применяется ко всем чатам
+    menu_button: {
+        type: 'web_app',
+        text: 'Войти в игру',
+        web_app: { url: 'https://thornridge.ru/login.html' }
+    }
+}).then(() => {
+    console.log('Web App menu button set to login.html');
+}).catch(err => {
+    console.error('Error setting Web App menu button:', JSON.stringify(err, null, 2));
+});
+
 const bot = new TelegramBot(TOKEN, { polling: false });
 
 const validClasses = [
@@ -74,20 +92,7 @@ app.post('/bot' + TOKEN, (req, res) => {
 
 bot.onText(/\/start/, (msg) => {
     console.log('Received /start from:', msg.chat.id);
-    bot.sendMessage(msg.chat.id, 'Добро пожаловать в Терновую гряду!', {
-        reply_markup: {
-            inline_keyboard: [[
-                {
-                    text: 'Открыть игру',
-                    web_app: { url: 'https://thornridge.ru/login.html' }
-                },
-                {
-                    text: 'Посмотреть персонажей',
-                    web_app: { url: 'https://thornridge.ru/characters' }
-                }
-            ]]
-        }
-    }).then(() => {
+    bot.sendMessage(msg.chat.id, 'Нажмите на кнопку меню слева, чтобы войти в игру!').then(() => {
         console.log('Sent /start response to:', msg.chat.id);
     }).catch(err => {
         console.error('Error sending /start response:', JSON.stringify(err, null, 2));
