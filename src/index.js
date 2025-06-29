@@ -8,25 +8,45 @@ app.use(express.static('public'));
 
 const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
 const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
-
-bot.setMyCommands([
-    { command: '/start', description: 'Начать игру' }
-]);
-
-bot.setChatMenuButton({
-    chat_id: null, // Применяется ко всем чатам
-    menu_button: {
-        type: 'web_app',
-        text: 'Войти в игру',
-        web_app: { url: 'https://thornridge.ru/login.html' }
-    }
-}).then(() => {
-    console.log('Web App menu button set to login.html');
-}).catch(err => {
-    console.error('Error setting Web App menu button:', JSON.stringify(err, null, 2));
-});
-
 const bot = new TelegramBot(TOKEN, { polling: false });
+
+// MongoDB connection
+mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('Connected to MongoDB');
+    // Set Telegram commands and Web App button after bot initialization
+    bot.setMyCommands([
+        { command: '/start', description: 'Начать игру' }
+    ]).then(() => {
+        console.log('Telegram commands set');
+    }).catch(err => {
+        console.error('Error setting Telegram commands:', JSON.stringify(err, null, 2));
+    });
+
+    bot.setChatMenuButton({
+        chat_id: null,
+        menu_button: {
+            type: 'web_app',
+            text: 'Войти в игру',
+            web_app: { url: 'https://thornridge.ru/login.html' }
+        }
+    }).then(() => {
+        console.log('Web App menu button set to login.html');
+    }).catch(err => {
+        console.error('Error setting Web App menu button:', JSON.stringify(err, null, 2));
+    });
+
+    // Set webhook
+    bot.setWebHook(WEBHOOK_URL).then(() => {
+        console.log(`Webhook set to ${WEBHOOK_URL}`);
+    }).catch(err => {
+        console.error('Error setting webhook:', JSON.stringify(err, null, 2));
+    });
+}).catch(err => {
+    console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
+});
 
 const validClasses = [
     'Воин', 'Варвар', 'Монах', 'Чародей', 'Друид', 'Волшебник',
@@ -56,6 +76,11 @@ mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?aut
     console.log('Connected to MongoDB');
 }).catch(err => {
     console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
+});
+
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', JSON.stringify(err, null, 2));
+    bot.sendMessage(123456789, 'Ошибка подключения к MongoDB: ' + err.message); // Замените 123456789 на ваш chat_id
 });
 
 // Character schema

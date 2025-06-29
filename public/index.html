@@ -25,16 +25,15 @@
         }
         .main-container {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             align-items: flex-start;
             max-width: 1400px;
             width: 95%;
             margin: 0 auto;
             padding: 20px;
-            gap: 30px;
+            gap: 20px;
             overflow-y: auto;
             min-height: calc(100vh - 40px);
-            flex-wrap: wrap; /* Добавляем для лучшей адаптации */
         }
         .container {
             background: rgba(0, 0, 0, 0.7);
@@ -51,26 +50,30 @@
             border-radius: 10px;
         }
         .form-container {
-            flex: 0 0 450px;
+            flex: 1 1 400px;
+            max-width: 450px;
             margin: 0 auto;
             padding: 20px;
             overflow-y: auto;
             box-sizing: border-box;
-            min-width: 300px; /* Минимальная ширина для мобильных */
+            min-width: 300px;
+            order: 2; /* Помещаем форму в центр */
         }
         .race-info {
-            flex: 0 0 500px;
-            margin-left: auto;
+            flex: 1 1 400px;
+            max-width: 450px;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
+            order: 1; /* Помещаем описание расы слева */
         }
         .class-info {
-            flex: 0 0 500px;
-            margin-right: auto;
+            flex: 1 1 400px;
+            max-width: 450px;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
+            order: 3; /* Помещаем описание класса справа */
         }
         .form-container input,
         .form-container select {
@@ -225,18 +228,13 @@
                 align-items: center;
                 padding: 10px;
             }
-            .class-info, .race-info {
+            .class-info, .race-info, .form-container {
                 margin-top: 20px;
                 margin-left: 0;
                 margin-right: 0;
                 max-width: 100%;
                 padding: 10px;
-            }
-            .form-container {
-                max-width: 100%;
-                padding: 10px;
-                overflow-y: auto;
-                min-width: 100%;
+                order: initial; /* Сбрасываем порядок на мобильных */
             }
             .form-container input,
             .form-container select {
