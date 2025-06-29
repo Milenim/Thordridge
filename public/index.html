@@ -272,42 +272,6 @@
         body {
             animation: parallax 20s linear infinite;
         }
-
-        body {
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .container, .form-container, .race-info, .class-info {
-            transition: opacity 0.5s ease-in-out;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            box-shadow: 0 0 20px rgba(212, 160, 23, 0.7), inset 0 0 15px rgba(0, 0, 0, 0.8);
-        }
-        h1, h2, h3 {
-            text-shadow: 0 0 10px rgba(212, 160, 23, 0.8), 0 0 20px rgba(212, 160, 23, 0.5);
-        }
-        button, button[type="submit"] {
-            background: linear-gradient(to bottom, #d4a017, #a67c00);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover, button[type="submit"]:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.8);
-        }
-        select {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: box-shadow 0.2s;
-        }
-        select:focus {
-            box-shadow: 0 0 15px rgba(212, 160, 23, 1);
-        }
     </style>
 </head>
 <body>

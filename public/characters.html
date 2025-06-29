@@ -83,80 +83,16 @@
                 margin-top: 20px;
             }
         }
-        body {
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .container {
-            transition: opacity 0.5s ease-in-out;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            box-shadow: 0 0 20px rgba(212, 160, 23, 0.7), inset 0 0 15px rgba(0, 0, 0, 0.8);
-        }
-        h1, h2, h3 {
-            text-shadow: 0 0 10px rgba(212, 160, 23, 0.8), 0 0 20px rgba(212, 160, 23, 0.5);
-        }
-        button {
-            background: linear-gradient(to bottom, #d4a017, #a67c00);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.8);
-        }
-        select {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: box-shadow 0.2s;
-        }
-        select:focus {
-            box-shadow: 0 0 15px rgba(212, 160, 23, 1);
-        }
-        #characterInfo, #diceRoll {
-            margin: 20px 0;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 8px;
-            border: 1px solid #d4a017;
-        }
-        #characterStats p, #characterInventory li {
-            margin: 5px 0;
-            font-size: 1.1em;
-        }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="container">
-            <h1>Терновая гряда D&D</h1>
-            <div id="characterInfo">
-                <h2>Персонаж: <span id="characterName"></span></h2>
-                <p>Раса: <span id="characterRace"></span> | Класс: <span id="characterClass"></span></p>
-                <p>Уровень: <span id="characterLevel"></span> | Опыт: <span id="characterXP"></span></p>
-                <h3>Характеристики</h3>
-                <div id="characterStats"></div>
-                <h3>Инвентарь</h3>
-                <ul id="characterInventory"></ul>
-            </div>
-            <div id="diceRoll">
-                <h3>Бросок кубиков</h3>
-                <select id="diceType">
-                    <option value="d4">d4</option>
-                    <option value="d6">d6</option>
-                    <option value="d8">d8</option>
-                    <option value="d10">d10</option>
-                    <option value="d12">d12</option>
-                    <option value="d20" selected>d20</option>
-                </select>
-                <button onclick="rollDice()">Бросить кубик</button>
-                <p id="diceResult"></p>
-            </div>
+        <div class="container character-info">
+            <h2>Персонаж</h2>
+            <p id="character-name">Загрузка...</p>
+            <p id="character-race"></p>
+            <p id="character-class"></p>
+            <p id="character-stats"></p>
             <div id="error" class="error"></div>
         </div>
         <div class="container scene">
@@ -207,63 +143,6 @@
                 document.getElementById('error').textContent = 'Ошибка при загрузке персонажа';
                 setTimeout(() => window.location.href = '/', 2000);
             }
-        }
-
-        window.onload = loadCharacter;
-        async function loadCharacter() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const characterId = urlParams.get('characterId');
-            if (!characterId) {
-                document.getElementById('error').textContent = 'Персонаж не выбран';
-                return;
-            }
-            try {
-                const response = await fetch(`/api/character/${characterId}`);
-                const character = await response.json();
-                if (!response.ok) {
-                    throw new Error(character.message || 'Ошибка загрузки персонажа');
-                }
-                document.getElementById('characterName').textContent = character.name;
-                document.getElementById('characterRace').textContent = character.race;
-                document.getElementById('characterClass').textContent = character.class;
-                document.getElementById('characterLevel').textContent = character.level;
-                document.getElementById('characterXP').textContent = character.xp;
-                const statsDiv = document.getElementById('characterStats');
-                statsDiv.innerHTML = `
-                    <p>Сила: ${character.stats.strength}</p>
-                    <p>Ловкость: ${character.stats.dexterity}</p>
-                    <p>Телосложение: ${character.stats.constitution}</p>
-                    <p>Мудрость: ${character.stats.wisdom}</p>
-                    <p>Интеллект: ${character.stats.intelligence}</p>
-                    <p>Харизма: ${character.stats.charisma}</p>
-                `;
-                const inventoryUl = document.getElementById('characterInventory');
-                inventoryUl.innerHTML = character.inventory.length
-                    ? character.inventory.map(item => `<li>${item.item} (x${item.quantity})</li>`).join('')
-                    : '<li>Инвентарь пуст</li>';
-            } catch (err) {
-                document.getElementById('error').textContent = err.message;
-            }
-        }
-
-        function rollDice() {
-            const diceType = document.getElementById('diceType').value;
-            const max = parseInt(diceType.slice(1));
-            const result = Math.floor(Math.random() * max) + 1;
-            const urlParams = new URLSearchParams(window.location.search);
-            const characterId = urlParams.get('characterId');
-            fetch('/api/roll', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ characterId, diceType, result })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('diceResult').textContent = `Бросок ${diceType}: ${result}`;
-                })
-                .catch(err => {
-                    document.getElementById('error').textContent = 'Ошибка при броске кубика';
-                });
         }
 
         window.onload = loadCharacter;
