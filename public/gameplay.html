@@ -14,15 +14,17 @@
             margin: 0;
             padding: 20px;
             min-height: 100vh;
-            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            background-size: cover;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80'), url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            background-size: cover, 50px 50px;
+            background-position: center, 0 0;
+            background-repeat: no-repeat, repeat;
             font-family: 'Cinzel', serif;
             color: #e0d8c3;
             animation: bgShift 50s linear infinite;
         }
         @keyframes bgShift {
-            0% { background-position: 0 0; }
-            100% { background-position: 50px 50px; }
+            0% { background-position: center, 0 0; }
+            100% { background-position: center, 50px 50px; }
         }
         .main-container {
             display: flex;
@@ -98,6 +100,23 @@
         .actions button:hover {
             box-shadow: 0 0 10px #d4a017;
         }
+        .ability {
+            padding: 10px;
+            margin: 5px 0;
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #d4a017;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .ability:hover {
+            box-shadow: 0 0 10px #d4a017;
+            transform: translateY(-2px);
+        }
+        .ability p {
+            margin: 0;
+            font-size: 1em;
+        }
         .error {
             color: #ff6b6b;
             font-size: 1em;
@@ -117,6 +136,24 @@
                 transform: none;
                 width: 100%;
                 margin-top: 20px;
+            }
+            .scene {
+                max-height: none;
+            }
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            h2 {
+                font-size: 1.5em;
+            }
+            p, li, .ability p {
+                font-size: 0.9em;
+            }
+            .actions button {
+                font-size: 14px;
+                padding: 8px;
             }
         }
     </style>
@@ -143,9 +180,7 @@
         </div>
         <div class="container sidebar-right">
             <h2>Умения и заклинания</h2>
-            <div id="abilities">
-                <p>Умения и заклинания зависят от вашего класса. Выберите действие из списка ниже.</p>
-            </div>
+            <div id="abilities"></div>
         </div>
     </div>
     <div class="container actions">
@@ -156,17 +191,50 @@
     </div>
     <script>
         const classAbilities = {
-            'Воин': ['Боевой стиль', 'Вторая атака'],
-            'Варвар': ['Ярость', 'Неразрушимость'],
-            'Монах': ['Бездоспешный бой', 'Поражающий удар'],
-            'Чародей': ['Гибкие чары', 'Метамагия'],
-            'Друид': ['Дикая форма', 'Природная магия'],
-            'Волшебник': ['Подготовка заклинаний', 'Арканальная традиция'],
-            'Жрец': ['Домен божества', 'Канал божественности'],
-            'Паладин': ['Божественная магия', 'Священная клятва'],
-            'Колдун': ['Магический покров', 'Мистические аруаны'],
-            'Следопыт': ['Избранный враг', 'Стиль боя'],
-            'Плут': ['Мастер скрытности', 'Удар исподтишка']
+            'Воин': [
+                { name: 'Боевой стиль', description: 'Выберите стиль боя: Двуручное оружие (+2 к урону), Защита (+1 к КД) или Стрельба (+2 к атаке дальнобойным оружием).', type: 'passive' },
+                { name: 'Вторая атака', description: 'Вы можете атаковать дважды за одно действие атаки.', type: 'active' }
+            ],
+            'Варвар': [
+                { name: 'Ярость', description: 'Входите в ярость, получая бонус +2 к урону и сопротивление физическому урону. 2/день.', type: 'active' },
+                { name: 'Неразрушимость', description: 'При получении смертельного урона остаётесь с 1 хитом (1/день).', type: 'passive' }
+            ],
+            'Монах': [
+                { name: 'Бездоспешный бой', description: 'Ваше КД равно 10 + модификатор Ловкости + модификатор Мудрости без доспехов.', type: 'passive' },
+                { name: 'Поражающий удар', description: 'Тратите 1 ки для нанесения дополнительного урона (1к4). 3/день.', type: 'active' }
+            ],
+            'Чародей': [
+                { name: 'Гибкие чары', description: 'Конвертируйте 2 очка чар в ячейку заклинаний 1 уровня (1/день).', type: 'active' },
+                { name: 'Огненный шар', description: 'Заклинание: наносит 8к6 урона огнём в радиусе 20 футов. Спасбросок Ловкости (Сл 13). 1/день.', type: 'active' }
+            ],
+            'Друид': [
+                { name: 'Дикая форма', description: 'Превращайтесь в зверя (например, волка) с хп 15 и КД 13. 2/день.', type: 'active' },
+                { name: 'Лечащее слово', description: 'Заклинание: восстанавливает 1к4+4 хитов союзнику. 3/день.', type: 'active' }
+            ],
+            'Волшебник': [
+                { name: 'Магический дротик', description: 'Заклинание: наносит 1к4+1 урона силой на расстоянии 120 футов. Без ограничений.', type: 'active' },
+                { name: 'Щит', description: 'Заклинание: +5 к КД до конца хода. 2/день.', type: 'active' }
+            ],
+            'Жрец': [
+                { name: 'Канал божественности', description: 'Изгоняйте нежить или восстанавливайте 2к8 хитов союзникам в радиусе 30 футов. 2/день.', type: 'active' },
+                { name: 'Священное пламя', description: 'Заклинание: наносит 1к8 урона излучением. Спасбросок Ловкости (Сл 13). Без ограничений.', type: 'active' }
+            ],
+            'Паладин': [
+                { name: 'Божественный удар', description: 'Добавляет 2к8 урона излучением к атаке оружием. 2/день.', type: 'active' },
+                { name: 'Лечение наложением рук', description: 'Восстанавливает до 5 хитов союзнику касанием. 1/день.', type: 'active' }
+            ],
+            'Колдун': [
+                { name: 'Адский укор', description: 'Заклинание: наносит 2к10 урона силой при получении урона. 2/день.', type: 'active' },
+                { name: 'Чудотворство', description: 'Заклинание: создаёт незначительный магический эффект (звук, свет). Без ограничений.', type: 'active' }
+            ],
+            'Следопыт': [
+                { name: 'Избранный враг', description: 'Получаете +2 к урону против выбранного типа врагов (например, зверей).', type: 'passive' },
+                { name: 'Меткий выстрел', description: 'Дальнобойная атака с +4 к попаданию. 3/день.', type: 'active' }
+            ],
+            'Плут': [
+                { name: 'Удар исподтишка', description: 'Добавляет 2к6 урона при атаке с преимуществом или рядом с союзником.', type: 'active' },
+                { name: 'Скрытность', description: 'Получаете преимущество на проверки Скрытности. 3/день.', type: 'active' }
+            ]
         };
 
         async function loadCharacter() {
@@ -200,12 +268,12 @@
                     Интеллект: ${character.stats.intelligence}<br>
                     Харизма: ${character.stats.charisma}
                 `;
-                document.getElementById('abilities').innerHTML = `
-                    <strong>Умения:</strong><br>
-                    <ul>
-                        ${classAbilities[character.class].map(ability => `<li>${ability}</li>`).join('')}
-                    </ul>
-                `;
+                const abilities = classAbilities[character.class] || [];
+                document.getElementById('abilities').innerHTML = abilities.map(ability => `
+                    <div class="ability" onclick="useAbility('${ability.name}', '${ability.type}')">
+                        <p><strong>${ability.name}</strong>: ${ability.description}</p>
+                    </div>
+                `).join('');
             } catch (err) {
                 console.error('Error loading character:', err);
                 document.getElementById('error').textContent = 'Ошибка при загрузке персонажа';
@@ -216,6 +284,12 @@
         function performAction(action) {
             const scene = document.querySelector('.scene p');
             scene.innerHTML += `<br><br><strong>Действие:</strong> ${action}. (В разработке: результат действия будет добавлен позже.)`;
+            scene.scrollTop = scene.scrollHeight;
+        }
+
+        function useAbility(name, type) {
+            const scene = document.querySelector('.scene p');
+            scene.innerHTML += `<br><br><strong>Умение использовано:</strong> ${name} (${type === 'active' ? 'активное' : 'пассивное'}). (В разработке: эффект будет добавлен позже.)`;
             scene.scrollTop = scene.scrollHeight;
         }
 
