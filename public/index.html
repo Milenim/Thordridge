@@ -30,42 +30,35 @@
         }
         .container {
             background: rgba(0, 0, 0, 0.7);
-            border: 2px solid #d4a017;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
             padding: 20px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .form-container, .race-info, .class-info {
+            border: 5px solid #d4a017;
+            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
+            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
+            box-shadow: 0 0 15px rgba(212, 160, 23, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
         }
         .form-container {
-            flex: 0 0 400px; /* Фиксированная ширина */
-            margin: 0 auto; /* Точное центрирование */
+            flex: 0 0 400px;
+            margin: 0 auto;
         }
         .race-info {
-            flex: 0 0 500px; /* Фиксированная ширина */
-            margin-left: auto; /* Прижимание к правому краю */
+            flex: 0 0 500px;
+            margin-left: auto;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
         }
         .class-info {
-            flex: 0 0 500px; /* Фиксированная ширина */
-            margin-right: auto; /* Прижимание к левому краю */
+            flex: 0 0 500px;
+            margin-right: auto;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
-        }
-        .class-info p, .race-info p {
-            font-size: 1em;
-            line-height: 1.5;
-            margin: 10px 0;
-        }
-        .class-info strong, .race-info strong {
-            color: #d4a017;
-            font-size: 2.5em; /* Название класса/расы */
-        }
-        .class-info strong:not(:first-child), .race-info strong:not(:first-child) {
-            font-size: 1.2em; /* Ключевые фразы */
-            color: #d4a017;
         }
         .form-container input,
         .form-container select {
@@ -77,6 +70,14 @@
             background: rgba(255, 255, 255, 0.1);
             color: #e0d8c3;
             font-family: 'Cinzel', serif;
+            appearance: none;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4a017" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            cursor: pointer;
+        }
+        .form-container select {
+            padding-right: 30px;
         }
         .stat-container {
             display: flex;
@@ -135,6 +136,17 @@
         }
         button[type="submit"]:hover {
             box-shadow: 0 0 10px #d4a017;
+        }
+        #raceDescription, #classDescription {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         @media (max-width: 1000px) {
             .main-container {
@@ -487,8 +499,14 @@
             const descriptionDiv = document.getElementById('raceDescription');
             if (raceBonuses[race]) {
                 descriptionDiv.innerHTML = raceBonuses[race].description;
+                descriptionDiv.style.animation = 'none'; // Сбрасываем анимацию
+                void descriptionDiv.offsetWidth; // Триггер перерисовки
+                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
             } else {
                 descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
+                descriptionDiv.style.animation = 'none';
+                void descriptionDiv.offsetWidth;
+                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
             }
         }
 
@@ -498,8 +516,14 @@
             const descriptionDiv = document.getElementById('classDescription');
             if (classDescriptions[className]) {
                 descriptionDiv.innerHTML = classDescriptions[className];
+                descriptionDiv.style.animation = 'none'; // Сбрасываем анимацию
+                void descriptionDiv.offsetWidth; // Триггер перерисовки
+                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
             } else {
                 descriptionDiv.innerHTML = '<p>Выберите класс, чтобы увидеть его описание.</p>';
+                descriptionDiv.style.animation = 'none';
+                void descriptionDiv.offsetWidth;
+                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
             }
         }
 
