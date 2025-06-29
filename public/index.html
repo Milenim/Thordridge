@@ -29,6 +29,8 @@
             gap: 20px;
             max-width: 1200px;
             width: 100%;
+            margin-left: auto;
+            margin-right: auto;
         }
         .container {
             background: rgba(0, 0, 0, 0.7);
@@ -39,7 +41,7 @@
             text-align: center;
         }
         .form-container {
-            flex: 0 0 400px; /* Фиксированная ширина для центрирования */
+            flex: 0 0 400px; /* Фиксированная ширина для точного центрирования */
             margin: 0 auto;
         }
         .race-info {
@@ -47,13 +49,7 @@
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
-        }
-        .race-info h2 {
-            font-size: 2.5em; /* Увеличен размер названия расы */
-            color: #d4a017;
-            text-shadow: 2px 2px 4px #000;
-            margin: 0 0 15px;
-            text-align: center;
+            margin-left: 20px; /* Смещение правее */
         }
         .race-info p {
             font-size: 1em;
@@ -62,6 +58,7 @@
         }
         .race-info strong {
             color: #d4a017;
+            font-size: 2.5em; /* Увеличенный размер названия расы */
         }
         .form-container input,
         .form-container select {
@@ -100,7 +97,12 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        .stat-container button:hover {
+        .stat-container button:disabled {
+            background: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .stat-container button:hover:not(:disabled) {
             box-shadow: 0 0 10px #d4a017;
         }
         .points {
@@ -168,39 +170,39 @@
                 <h2>Характеристики (15 очков):</h2>
                 <div class="stat-container">
                     <label for="strength">Сила:</label>
-                    <button type="button" onclick="changeStat('strength', -1)">-</button>
+                    <button type="button" id="strengthDec" onclick="changeStat('strength', -1)" disabled>-</button>
                     <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('strength', 1)">+</button>
+                    <button type="button" id="strengthInc" onclick="changeStat('strength', 1)" disabled>+</button>
                 </div>
                 <div class="stat-container">
                     <label for="dexterity">Ловкость:</label>
-                    <button type="button" onclick="changeStat('dexterity', -1)">-</button>
+                    <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
                     <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('dexterity', 1)">+</button>
+                    <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
                 </div>
                 <div class="stat-container">
                     <label for="constitution">Телосложение:</label>
-                    <button type="button" onclick="changeStat('constitution', -1)">-</button>
+                    <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
                     <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('constitution', 1)">+</button>
+                    <button type="button" id="constitutionInc" onclick="changeStat('constitution', 1)" disabled>+</button>
                 </div>
                 <div class="stat-container">
                     <label for="wisdom">Мудрость:</label>
-                    <button type="button" onclick="changeStat('wisdom', -1)">-</button>
+                    <button type="button" id="wisdomDec" onclick="changeStat('wisdom', -1)" disabled>-</button>
                     <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('wisdom', 1)">+</button>
+                    <button type="button" id="wisdomInc" onclick="changeStat('wisdom', 1)" disabled>+</button>
                 </div>
                 <div class="stat-container">
                     <label for="intelligence">Интеллект:</label>
-                    <button type="button" onclick="changeStat('intelligence', -1)">-</button>
+                    <button type="button" id="intelligenceDec" onclick="changeStat('intelligence', -1)" disabled>-</button>
                     <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('intelligence', 1)">+</button>
+                    <button type="button" id="intelligenceInc" onclick="changeStat('intelligence', 1)" disabled>+</button>
                 </div>
                 <div class="stat-container">
                     <label for="charisma">Харизма:</label>
-                    <button type="button" onclick="changeStat('charisma', -1)">-</button>
+                    <button type="button" id="charismaDec" onclick="changeStat('charisma', -1)" disabled>-</button>
                     <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
-                    <button type="button" onclick="changeStat('charisma', 1)">+</button>
+                    <button type="button" id="charismaInc" onclick="changeStat('charisma', 1)" disabled>+</button>
                 </div>
                 <p class="points">Осталось очков: <span id="points">15</span></p>
                 <div id="error" class="error"></div>
@@ -208,7 +210,6 @@
             </form>
         </div>
         <div class="container race-info">
-            <h2>Информация о расе</h2>
             <div id="raceDescription">
                 <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
             </div>
@@ -224,7 +225,7 @@
             'Человек': {
                 bonuses: { strength: 1, dexterity: 1, constitution: 1, wisdom: 1, intelligence: 1, charisma: 1 },
                 description: `
-                    <strong style="font-size: 2.5em;">Человек</strong><br>
+                    <strong>Человек</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение всех ваших характеристик увеличивается на 1.<br>
                     <strong>Возраст:</strong> Люди становятся взрослыми в районе 20 лет, и живут менее столетия.<br>
                     <strong>Мировоззрение:</strong> Люди не имеют склонности к определённому мировоззрению. Среди них встречаются как лучшие, так и худшие представители.<br>
@@ -236,7 +237,7 @@
             'Драконорождённый': {
                 bonuses: { strength: 2, charisma: 1 },
                 description: `
-                    <strong style="font-size: 2.5em;">Драконорождённый</strong><br>
+                    <strong>Драконорождённый</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Харизмы — на 1.<br>
                     <strong>Возраст:</strong> Юные драконорождённые растут быстро. Они начинают ходить через час после вылупления, к трём годам достигают роста и сложения 10-летнего человека, и становятся взрослыми в 15. Живут они примерно до 80 лет.<br>
                     <strong>Мировоззрение:</strong> Драконорождённые склонны к крайностям, сознательно выбирая сторону добра или зла. Большинство добры, но те, кто принял сторону Тиамат, могут быть чрезвычайно жестокими.<br>
@@ -244,14 +245,14 @@
                     <strong>Скорость:</strong> Ваша базовая скорость перемещения составляет 30 футов.<br>
                     <strong>Наследие драконов:</strong> Выберите тип дракона. Вы получаете оружие дыхания и сопротивление к урону соответствующего вида.<br>
                     <strong>Оружие дыхания:</strong> Вы можете действием выдохнуть разрушительную энергию. Сложность спасброска: 8 + модификатор Телосложения + бонус мастерства. Урон: 2к6 (3к6 на 6 уровне, 4к6 на 11, 5к6 на 16). Перезарядка после отдыха.<br>
-                    <strong>Сопротивление урону:</strong> Сопротивление к урону, указанному в вашем наследии драконов.<br>
+                    <strong>Сопротивление урону:</strong> Сопротивление к урону, указанному в вашем наследие драконов.<br>
                     <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Драконьем языках.
                 `
             },
             'Гном': {
                 bonuses: { intelligence: 2 },
                 description: `
-                    <strong style="font-size: 2.5em;">Гном</strong><br>
+                    <strong>Гном</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 2.<br>
                     <strong>Возраст:</strong> Гномы взрослеют с той же скоростью, что и люди, и к 40 годам переходят к спокойной взрослой жизни. Они живут от 350 до почти 500 лет.<br>
                     <strong>Мировоззрение:</strong> Гномы чаще всего добры. Стремящиеся к порядку становятся мудрецами, инженерами, учёными. Склонные к хаосу — менестрелями, мошенниками, ювелирами.<br>
@@ -265,7 +266,7 @@
             'Тифлинг': {
                 bonuses: { intelligence: 1, charisma: 2 },
                 description: `
-                    <strong style="font-size: 2.5em;">Тифлинг</strong><br>
+                    <strong>Тифлинг</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 1, а Харизмы — на 2.<br>
                     <strong>Возраст:</strong> Тифлинги взрослеют как люди, но живут немного дольше.<br>
                     <strong>Мировоззрение:</strong> Тифлинги склонны к хаотичному мировоззрению, независимы по природе.<br>
@@ -280,7 +281,7 @@
             'Полуэльф': {
                 bonuses: { charisma: 2, custom: 2 }, // +2 к Харизме и +1 к двум другим на выбор
                 description: `
-                    <strong style="font-size: 2.5em;">Полуэльф</strong><br>
+                    <strong>Полуэльф</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Харизмы увеличивается на 2, а двух других характеристик на ваш выбор — на 1.<br>
                     <strong>Возраст:</strong> Полуэльфы взрослеют как люди, достигая зрелости к 20 годам, но живут до 180 лет.<br>
                     <strong>Мировоззрение:</strong> Полуэльфы склонны к хаосу, ценят личную свободу и творческое самовыражение.<br>
@@ -295,7 +296,7 @@
             'Полуорк': {
                 bonuses: { strength: 2, constitution: 1 },
                 description: `
-                    <strong style="font-size: 2.5em;">Полуорк</strong><br>
+                    <strong>Полуорк</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Телосложения — на 1.<br>
                     <strong>Возраст:</strong> Полуорки взрослеют к 14 годам, живут до 75 лет.<br>
                     <strong>Мировоззрение:</strong> Полуорки склонны к хаосу и не особо к добру. Выросшие среди орков часто злы.<br>
@@ -311,7 +312,7 @@
             'Дварф': {
                 bonuses: { constitution: 2 },
                 description: `
-                    <strong style="font-size: 2.5em;">Дварф</strong><br>
+                    <strong>Дварф</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Телосложения увеличивается на 2.<br>
                     <strong>Возраст:</strong> Дварфы взрослеют с той же скоростью, что и люди, но считаются молодыми до 50 лет. В среднем они живут около 350 лет.<br>
                     <strong>Мировоззрение:</strong> Большинство дварфов законопослушны, с сильным чувством чести и веры в традиции.<br>
@@ -330,7 +331,6 @@
         function applyRaceBonuses() {
             const raceSelect = document.getElementById('race');
             const race = raceSelect.value;
-            let totalBonusPoints = 0;
 
             // Сброс к базовым значениям
             for (let stat in baseStats) {
@@ -339,27 +339,27 @@
             }
             points = maxPoints;
 
+            // Активируем кнопки
+            const buttons = document.querySelectorAll('.stat-container button');
+            buttons.forEach(button => button.disabled = false);
+
             if (raceBonuses[race]) {
                 const bonuses = raceBonuses[race].bonuses;
                 for (let stat in bonuses) {
                     if (stat === 'custom') {
-                        // Для полуэльфа: +1 к двум характеристикам на выбор (пока фиксируем как +1 к Силе и Ловкости)
-                        document.getElementById('strength').value = Math.max(baseStats.strength + 1, document.getElementById('strength').value);
-                        document.getElementById('dexterity').value = Math.max(baseStats.dexterity + 1, document.getElementById('dexterity').value);
-                        minStats.strength = Math.max(minStats.strength, baseStats.strength + 1);
-                        minStats.dexterity = Math.max(minStats.dexterity, baseStats.dexterity + 1);
-                        totalBonusPoints += 2;
+                        // Для полуэльфа: +1 к двум характеристикам на выбор (например, Сила и Ловкость)
+                        document.getElementById('strength').value = baseStats.strength + 1;
+                        document.getElementById('dexterity').value = baseStats.dexterity + 1;
+                        minStats.strength = baseStats.strength + 1;
+                        minStats.dexterity = baseStats.dexterity + 1;
                     } else {
                         const bonus = bonuses[stat];
                         const currentValue = parseInt(document.getElementById(stat).value);
-                        const newValue = Math.max(baseStats[stat] + bonus, currentValue);
+                        const newValue = baseStats[stat] + bonus;
                         document.getElementById(stat).value = newValue;
-                        minStats[stat] = Math.max(minStats[stat], baseStats[stat] + bonus);
-                        totalBonusPoints += bonus;
+                        minStats[stat] = newValue;
                     }
                 }
-                points -= totalBonusPoints;
-                if (points < 0) points = 0; // Убедимся, что очки не уйдут в минус
             }
 
             document.getElementById('points').textContent = points;
@@ -387,45 +387,11 @@
             }
         }
 
-        document.getElementById('race').addEventListener('change', applyRaceBonuses);
-
-        document.getElementById('characterForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const errorDiv = document.getElementById('error');
-            errorDiv.textContent = '';
-
-            const character = {
-                name: document.getElementById('name').value,
-                race: document.getElementById('race').value,
-                class: document.getElementById('class').value,
-                stats: {
-                    strength: parseInt(document.getElementById('strength').value),
-                    dexterity: parseInt(document.getElementById('dexterity').value),
-                    constitution: parseInt(document.getElementById('constitution').value),
-                    wisdom: parseInt(document.getElementById('wisdom').value),
-                    intelligence: parseInt(document.getElementById('intelligence').value),
-                    charisma: parseInt(document.getElementById('charisma').value)
-                }
-            };
-
-            try {
-                const response = await fetch('/api/character', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(character)
-                });
-                if (response.ok) {
-                    window.location.href = '/characters';
-                } else {
-                    const errorData = await response.json();
-                    errorDiv.textContent = errorData.message || 'Ошибка при сохранении персонажа';
-                }
-            } catch (error) {
-                errorDiv.textContent = 'Ошибка сервера';
-            }
-        });
+        // Изначально кнопки неактивны
+        window.onload = function() {
+            const buttons = document.querySelectorAll('.stat-container button');
+            buttons.forEach(button => button.disabled = true);
+        };
     </script>
 </body>
 </html>
