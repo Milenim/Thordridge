@@ -39,18 +39,17 @@
             text-align: center;
         }
         .form-container {
-            flex: 1;
-            max-width: 400px;
+            flex: 0 0 400px; /* Фиксированная ширина для центрирования */
+            margin: 0 auto;
         }
         .race-info {
-            flex: 1;
-            max-width: 500px;
+            flex: 0 0 500px;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
         }
         .race-info h2 {
-            font-size: 2.2em; /* Увеличен размер заголовка расы */
+            font-size: 2.5em; /* Увеличен размер названия расы */
             color: #d4a017;
             text-shadow: 2px 2px 4px #000;
             margin: 0 0 15px;
@@ -139,7 +138,7 @@
                 <input type="text" id="name" name="name" required>
 
                 <label for="race">Раса:</label>
-                <select id="race" name="race" required>
+                <select id="race" name="race" required onchange="applyRaceBonuses()">
                     <option value="">Выберите расу</option>
                     <option value="Человек">Человек</option>
                     <option value="Драконорождённый">Драконорождённый</option>
@@ -159,7 +158,7 @@
                     <option value="Чародей">Чародей</option>
                     <option value="Друид">Друид</option>
                     <option value="Волшебник">Волшебник</option>
-                    <option value="Жрец Жрец">Жрец</option>
+                    <option value="Жрец">Жрец</option>
                     <option value="Паладин">Паладин</option>
                     <option value="Колдун">Колдун</option>
                     <option value="Следопыт">Следопыт</option>
@@ -218,11 +217,14 @@
     <script>
         const maxPoints = 15;
         let points = maxPoints;
+        let baseStats = { strength: 8, dexterity: 8, constitution: 8, wisdom: 8, intelligence: 8, charisma: 8 };
+        let minStats = { strength: 8, dexterity: 8, constitution: 8, wisdom: 8, intelligence: 8, charisma: 8 };
 
         const raceBonuses = {
             'Человек': {
+                bonuses: { strength: 1, dexterity: 1, constitution: 1, wisdom: 1, intelligence: 1, charisma: 1 },
                 description: `
-                    <strong>Человек</strong><br>
+                    <strong style="font-size: 2.5em;">Человек</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение всех ваших характеристик увеличивается на 1.<br>
                     <strong>Возраст:</strong> Люди становятся взрослыми в районе 20 лет, и живут менее столетия.<br>
                     <strong>Мировоззрение:</strong> Люди не имеют склонности к определённому мировоззрению. Среди них встречаются как лучшие, так и худшие представители.<br>
@@ -232,8 +234,9 @@
                 `
             },
             'Драконорождённый': {
+                bonuses: { strength: 2, charisma: 1 },
                 description: `
-                    <strong>Драконорождённый</strong><br>
+                    <strong style="font-size: 2.5em;">Драконорождённый</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Харизмы — на 1.<br>
                     <strong>Возраст:</strong> Юные драконорождённые растут быстро. Они начинают ходить через час после вылупления, к трём годам достигают роста и сложения 10-летнего человека, и становятся взрослыми в 15. Живут они примерно до 80 лет.<br>
                     <strong>Мировоззрение:</strong> Драконорождённые склонны к крайностям, сознательно выбирая сторону добра или зла. Большинство добры, но те, кто принял сторону Тиамат, могут быть чрезвычайно жестокими.<br>
@@ -246,8 +249,9 @@
                 `
             },
             'Гном': {
+                bonuses: { intelligence: 2 },
                 description: `
-                    <strong>Гном</strong><br>
+                    <strong style="font-size: 2.5em;">Гном</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 2.<br>
                     <strong>Возраст:</strong> Гномы взрослеют с той же скоростью, что и люди, и к 40 годам переходят к спокойной взрослой жизни. Они живут от 350 до почти 500 лет.<br>
                     <strong>Мировоззрение:</strong> Гномы чаще всего добры. Стремящиеся к порядку становятся мудрецами, инженерами, учёными. Склонные к хаосу — менестрелями, мошенниками, ювелирами.<br>
@@ -259,8 +263,9 @@
                 `
             },
             'Тифлинг': {
+                bonuses: { intelligence: 1, charisma: 2 },
                 description: `
-                    <strong>Тифлинг</strong><br>
+                    <strong style="font-size: 2.5em;">Тифлинг</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 1, а Харизмы — на 2.<br>
                     <strong>Возраст:</strong> Тифлинги взрослеют как люди, но живут немного дольше.<br>
                     <strong>Мировоззрение:</strong> Тифлинги склонны к хаотичному мировоззрению, независимы по природе.<br>
@@ -273,8 +278,9 @@
                 `
             },
             'Полуэльф': {
+                bonuses: { charisma: 2, custom: 2 }, // +2 к Харизме и +1 к двум другим на выбор
                 description: `
-                    <strong>Полуэльф</strong><br>
+                    <strong style="font-size: 2.5em;">Полуэльф</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Харизмы увеличивается на 2, а двух других характеристик на ваш выбор — на 1.<br>
                     <strong>Возраст:</strong> Полуэльфы взрослеют как люди, достигая зрелости к 20 годам, но живут до 180 лет.<br>
                     <strong>Мировоззрение:</strong> Полуэльфы склонны к хаосу, ценят личную свободу и творческое самовыражение.<br>
@@ -287,8 +293,9 @@
                 `
             },
             'Полуорк': {
+                bonuses: { strength: 2, constitution: 1 },
                 description: `
-                    <strong>Полуорк</strong><br>
+                    <strong style="font-size: 2.5em;">Полуорк</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Телосложения — на 1.<br>
                     <strong>Возраст:</strong> Полуорки взрослеют к 14 годам, живут до 75 лет.<br>
                     <strong>Мировоззрение:</strong> Полуорки склонны к хаосу и не особо к добру. Выросшие среди орков часто злы.<br>
@@ -302,8 +309,9 @@
                 `
             },
             'Дварф': {
+                bonuses: { constitution: 2 },
                 description: `
-                    <strong>Дварф</strong><br>
+                    <strong style="font-size: 2.5em;">Дварф</strong><br>
                     <strong>Увеличение характеристик:</strong> Значение вашего Телосложения увеличивается на 2.<br>
                     <strong>Возраст:</strong> Дварфы взрослеют с той же скоростью, что и люди, но считаются молодыми до 50 лет. В среднем они живут около 350 лет.<br>
                     <strong>Мировоззрение:</strong> Большинство дварфов законопослушны, с сильным чувством чести и веры в традиции.<br>
@@ -319,26 +327,67 @@
             }
         };
 
+        function applyRaceBonuses() {
+            const raceSelect = document.getElementById('race');
+            const race = raceSelect.value;
+            let totalBonusPoints = 0;
+
+            // Сброс к базовым значениям
+            for (let stat in baseStats) {
+                document.getElementById(stat).value = baseStats[stat];
+                minStats[stat] = baseStats[stat];
+            }
+            points = maxPoints;
+
+            if (raceBonuses[race]) {
+                const bonuses = raceBonuses[race].bonuses;
+                for (let stat in bonuses) {
+                    if (stat === 'custom') {
+                        // Для полуэльфа: +1 к двум характеристикам на выбор (пока фиксируем как +1 к Силе и Ловкости)
+                        document.getElementById('strength').value = Math.max(baseStats.strength + 1, document.getElementById('strength').value);
+                        document.getElementById('dexterity').value = Math.max(baseStats.dexterity + 1, document.getElementById('dexterity').value);
+                        minStats.strength = Math.max(minStats.strength, baseStats.strength + 1);
+                        minStats.dexterity = Math.max(minStats.dexterity, baseStats.dexterity + 1);
+                        totalBonusPoints += 2;
+                    } else {
+                        const bonus = bonuses[stat];
+                        const currentValue = parseInt(document.getElementById(stat).value);
+                        const newValue = Math.max(baseStats[stat] + bonus, currentValue);
+                        document.getElementById(stat).value = newValue;
+                        minStats[stat] = Math.max(minStats[stat], baseStats[stat] + bonus);
+                        totalBonusPoints += bonus;
+                    }
+                }
+                points -= totalBonusPoints;
+                if (points < 0) points = 0; // Убедимся, что очки не уйдут в минус
+            }
+
+            document.getElementById('points').textContent = points;
+            updateDescription();
+        }
+
         function changeStat(stat, change) {
             const input = document.getElementById(stat);
             let value = parseInt(input.value);
             const newValue = value + change;
-            if (newValue >= 8 && newValue <= 20 && points - change >= 0) {
+            if (newValue >= minStats[stat] && newValue <= 20 && points - change >= 0) {
                 input.value = newValue;
                 points -= change;
                 document.getElementById('points').textContent = points;
             }
         }
 
-        document.getElementById('race').addEventListener('change', function() {
-            const race = this.value;
+        function updateDescription() {
+            const race = document.getElementById('race').value;
             const descriptionDiv = document.getElementById('raceDescription');
             if (raceBonuses[race]) {
                 descriptionDiv.innerHTML = raceBonuses[race].description;
             } else {
                 descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
             }
-        });
+        }
+
+        document.getElementById('race').addEventListener('change', applyRaceBonuses);
 
         document.getElementById('characterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
