@@ -41,7 +41,7 @@
             margin-bottom: 5px;
         }
         input[type="text"], select {
-            width: 100%;
+            width: 100%; /* Приравниваем ширину всех полей */
             padding: 8px;
             margin-bottom: 10px;
             background: rgba(255, 255, 255, 0.1);
@@ -49,13 +49,25 @@
             color: #d4af37;
             border-radius: 5px;
             font-family: 'Cinzel', serif;
+            box-sizing: border-box; /* Учитываем padding и border в ширине */
         }
         .stat-group {
             display: flex;
-            justify-content: space-between;
+            justify-content: space-between; /* Равномерное распределение элементов */
             align-items: center;
             margin-bottom: 10px;
-            width: 100%; /* Убедимся, что группа занимает всю ширину */
+            width: 100%;
+        }
+        .stat-label {
+            flex: 0 0 80px; /* Фиксированная ширина для названий характеристик */
+            text-align: left;
+        }
+        .stat-controls {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 5px; /* Равные промежутки между кнопками и значением */
         }
         .stat-value {
             width: 50px;
@@ -64,9 +76,10 @@
             border: 1px solid #d4af37;
             border-radius: 5px;
             padding: 5px;
+            box-sizing: border-box;
         }
         button {
-            padding: 8px 15px;
+            padding: 8px 10px; /* Уменьшаем padding для компактности */
             background: #d4af37;
             border: none;
             border-radius: 5px;
@@ -74,6 +87,9 @@
             cursor: pointer;
             transition: all 0.3s ease;
             box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
+            font-size: 14px; /* Единый размер шрифта */
+            min-width: 30px; /* Минимальная ширина для равномерности */
+            text-align: center;
         }
         button:hover {
             transform: scale(1.05);
@@ -144,12 +160,12 @@
             </div>
             <div class="form-group">
                 <label>Характеристики (15 очков):</label>
-                <div class="stat-group"><span>Сила:</span><button type="button" onclick="changeStat('strength', -1)">-</button><span class="stat-value" id="strength">8</span><button type="button" onclick="changeStat('strength', 1)">+</button></div>
-                <div class="stat-group"><span>Ловкость:</span><button type="button" onclick="changeStat('dexterity', -1)">-</button><span class="stat-value" id="dexterity">8</span><button type="button" onclick="changeStat('dexterity', 1)">+</button></div>
-                <div class="stat-group"><span>Телосложение:</span><button type="button" onclick="changeStat('constitution', -1)">-</button><span class="stat-value" id="constitution">8</span><button type="button" onclick="changeStat('constitution', 1)">+</button></div>
-                <div class="stat-group"><span>Мудрость:</span><button type="button" onclick="changeStat('wisdom', -1)">-</button><span class="stat-value" id="wisdom">8</span><button type="button" onclick="changeStat('wisdom', 1)">+</button></div>
-                <div class="stat-group"><span>Интеллект:</span><button type="button" onclick="changeStat('intelligence', -1)">-</button><span class="stat-value" id="intelligence">8</span><button type="button" onclick="changeStat('intelligence', 1)">+</button></div>
-                <div class="stat-group"><span>Харизма:</span><button type="button" onclick="changeStat('charisma', -1)">-</button><span class="stat-value" id="charisma">8</span><button type="button" onclick="changeStat('charisma', 1)">+</button></div>
+                <div class="stat-group"><span class="stat-label">Сила:</span><div class="stat-controls"><button type="button" onclick="changeStat('strength', -1)">-</button><span class="stat-value" id="strength">8</span><button type="button" onclick="changeStat('strength', 1)">+</button></div></div>
+                <div class="stat-group"><span class="stat-label">Ловкость:</span><div class="stat-controls"><button type="button" onclick="changeStat('dexterity', -1)">-</button><span class="stat-value" id="dexterity">8</span><button type="button" onclick="changeStat('dexterity', 1)">+</button></div></div>
+                <div class="stat-group"><span class="stat-label">Телосложение:</span><div class="stat-controls"><button type="button" onclick="changeStat('constitution', -1)">-</button><span class="stat-value" id="constitution">8</span><button type="button" onclick="changeStat('constitution', 1)">+</button></div></div>
+                <div class="stat-group"><span class="stat-label">Мудрость:</span><div class="stat-controls"><button type="button" onclick="changeStat('wisdom', -1)">-</button><span class="stat-value" id="wisdom">8</span><button type="button" onclick="changeStat('wisdom', 1)">+</button></div></div>
+                <div class="stat-group"><span class="stat-label">Интеллект:</span><div class="stat-controls"><button type="button" onclick="changeStat('intelligence', -1)">-</button><span class="stat-value" id="intelligence">8</span><button type="button" onclick="changeStat('intelligence', 1)">+</button></div></div>
+                <div class="stat-group"><span class="stat-label">Харизма:</span><div class="stat-controls"><button type="button" onclick="changeStat('charisma', -1)">-</button><span class="stat-value" id="charisma">8</span><button type="button" onclick="changeStat('charisma', 1)">+</button></div></div>
                 <p>Осталось очков: <span id="pointsLeft">15</span></p>
             </div>
             <button type="submit" id="submitBtn">Создать персонажа</button>
