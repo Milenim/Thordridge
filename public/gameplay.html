@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Терновая гряда D&D - Геймплей</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         * {
@@ -17,9 +17,11 @@
             background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-            font-family: 'Cinzel', serif;
+            font-family: 'Playfair Display', serif;
             color: #e0d8c3;
+            background-attachment: scroll;
+            background-position: center;
+            transform: translateZ(0);
         }
         .main-container {
             display: flex;
@@ -87,7 +89,7 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-family: 'Cinzel', serif;
+            font-family: 'PT Serif', serif;
             font-size: 16px;
             transition: all 0.3s;
             margin: 5px 0;
@@ -149,6 +151,13 @@
             .actions button {
                 font-size: 14px;
                 padding: 8px;
+            }
+        @keyframes parallax {
+                0% { background-position: center 0; }
+                100% { background-position: center 50px; }
+            }
+            body {
+                animation: parallax 20s linear infinite;
             }
         }
     </style>
@@ -259,7 +268,7 @@
             const characterId = urlParams.get('characterId');
             if (!characterId) {
                 document.getElementById('error').textContent = 'Персонаж не выбран';
-                setTimeout(() => window.location.href = '/', 2000);
+                setTimeout(() => window.location.href = '/start.html', 2000);
                 return;
             }
 
@@ -269,7 +278,7 @@
                 const character = characters.find(c => c.id === parseInt(characterId));
                 if (!character) {
                     document.getElementById('error').textContent = 'Персонаж не найден';
-                    setTimeout(() => window.location.href = '/', 2000);
+                    setTimeout(() => window.location.href = '/start.html', 2000);
                     return;
                 }
 
@@ -294,7 +303,7 @@
             } catch (err) {
                 console.error('Error loading character:', err);
                 document.getElementById('error').textContent = 'Ошибка при загрузке персонажа';
-                setTimeout(() => window.location.href = '/', 2000);
+                setTimeout(() => window.location.href = '/start.html', 2000);
             }
         }
 
@@ -310,7 +319,17 @@
             scene.scrollTop = scene.scrollHeight;
         }
 
-        window.onload = loadCharacter;
+        // Параллакс-эффект для фона
+        function parallaxEffect() {
+            const scrollPosition = window.scrollY;
+            document.body.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
+            requestAnimationFrame(parallaxEffect);
+        }
+
+        window.onload = function() {
+            loadCharacter();
+            requestAnimationFrame(parallaxEffect);
+        };
     </script>
 </body>
 </html>

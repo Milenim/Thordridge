@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Терновая гряда D&D - Создание персонажа</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
         * {
@@ -17,8 +17,10 @@
             background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
             background-size: cover;
             background-position: center;
-            background-attachment: fixed;
-            font-family: 'Cinzel', serif;
+            background-attachment: scroll;
+            background-position: center;
+            transform: translateZ(0);
+            font-family: 'Playfair Display', serif;
             color: #e0d8c3;
         }
         .main-container {
@@ -251,6 +253,14 @@
                 font-size: 14px;
                 padding: 8px;
             }
+        @keyframes parallax {
+            0% { background-position: center 0; }
+            100% { background-position: center 50px; }
+        }
+        body {
+            animation: parallax 20s linear infinite;
+        }
+        
         }
     </style>
 </head>
@@ -302,7 +312,7 @@
                     <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
                     <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
                     <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
-                </ocl>
+                </div>
                 <div class="stat-container">
                     <label for="constitution">Телосложение:</label>
                     <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
@@ -556,6 +566,12 @@
 
             // Активация/деактивация кнопок
             if (!race) {
+                // Сброс всех характеристик к базовым значениям перед применением бонусов
+                for (let stat in baseStats) {
+                    document.getElementById(stat).value = 8; // Сбрасываем до 8
+                    minStats[stat] = 8; // Устанавливаем минимальное значение
+                }
+                points = maxPoints; // Сбрасываем очки
                 buttons.forEach(button => button.disabled = true);
             } else {
                 buttons.forEach(button => button.disabled = false);
