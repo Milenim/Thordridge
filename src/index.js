@@ -86,7 +86,7 @@ mongoose.connection.on('error', err => {
 // Character schema
 const characterSchema = new mongoose.Schema({
     id: { type: Number, unique: true },
-    name: { type: String, required: true },
+    name: { type: String, required: true, unique: true },
     race: { type: String, required: true },
     class: { type: String, required: true },
     stats: {
@@ -97,6 +97,9 @@ const characterSchema = new mongoose.Schema({
         intelligence: { type: Number, required: true },
         charisma: { type: Number, required: true }
     },
+    level: { type: Number, default: 1 },
+    xp: { type: Number, default: 0 },
+    inventory: [{ item: String, quantity: { type: Number, default: 1 } }],
     createdAt: { type: Date, default: Date.now }
 });
 
@@ -173,6 +176,11 @@ app.post('/api/character', async (req, res) => {
             });
         }
 
+        const existingCharacter = await Character.findOne({ name: name.trim() });
+        if (existingCharacter) {
+            return res.status(400).json({ message: 'Персонаж с таким именем уже существует' });
+        }
+
         // Get next ID
         const lastCharacter = await Character.findOne().sort({ id: -1 }).exec();
         console.log('Last character:', lastCharacter);
@@ -206,6 +214,36 @@ app.get('/api/characters', async (req, res) => {
     } catch (err) {
         console.error('Error fetching characters:', JSON.stringify(err, null, 2));
         res.status(500).json({ message: 'Ошибка сервера при загрузке персонажей' });
+    }
+});
+
+app.get('/api/character/:id', async (req, res) => {
+    try {
+        const character = await Character.findOne({ id: parseInt(req.params.id) });
+        if (!character) {
+            return res.status(404).json({ message: 'Персонаж не найден' });
+        }
+        res.json(character);
+    } catch (err) {
+        console.error('Error fetching character:', JSON.stringify(err, null, 2));
+        res.status(500).json({ message: 'Ошибка сервера при загрузке персонажа' });
+    }
+});
+
+app.post('/api/roll', async (req, res) => {
+    try {
+        const { characterId, diceType, result } = req.body;
+        if (!['d4', 'd6', 'd8', 'd10', 'd12', 'd20'].includes(diceType)) {
+            return res.status(400).json({ message: 'Недопустимый тип кубика' });
+        }
+        if (!Number.isInteger(result) || result < 1 || result > parseInt(diceType.slice(1))) {
+            return res.status(400).json({ message: `Результат должен быть от 1 до ${diceType.slice(1)}` });
+        }
+        // Можно добавить логирование броска в MongoDB, если нужно
+        res.json({ message: `Бросок ${diceType}: ${result}` });
+    } catch (err) {
+        console.error('Error processing roll:', JSON.stringify(err, null, 2));
+        res.status(500).json({ message: 'Ошибка сервера при обработке броска' });
     }
 });
 
