@@ -36,13 +36,6 @@
             padding: 20px;
             text-align: center;
         }
-        .class-info {
-            flex: 0 0 500px; /* Фиксированная ширина */
-            margin-right: auto; /* Прижимание к левому краю */
-            text-align: left;
-            overflow-y: auto;
-            max-height: 80vh;
-        }
         .form-container {
             flex: 0 0 400px; /* Фиксированная ширина */
             margin: 0 auto; /* Точное центрирование */
@@ -50,6 +43,13 @@
         .race-info {
             flex: 0 0 500px; /* Фиксированная ширина */
             margin-left: auto; /* Прижимание к правому краю */
+            text-align: left;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+        .class-info {
+            flex: 0 0 500px; /* Фиксированная ширина */
+            margin-right: auto; /* Прижимание к левому краю */
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
@@ -151,11 +151,6 @@
 </head>
 <body>
     <div class="main-container">
-        <div class="container class-info">
-            <div id="classDescription">
-                <p>Выберите класс, чтобы увидеть его описание.</p>
-            </div>
-        </div>
         <div class="container form-container">
             <h1>Создание персонажа</h1>
             <form id="characterForm">
@@ -235,6 +230,11 @@
         <div class="container race-info">
             <div id="raceDescription">
                 <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
+            </div>
+        </div>
+        <div class="container class-info">
+            <div id="classDescription">
+                <p>Выберите класс, чтобы увидеть его описание.</p>
             </div>
         </div>
     </div>
