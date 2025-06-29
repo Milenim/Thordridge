@@ -26,11 +26,10 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            gap: 20px;
+            gap: 40px; /* Увеличен gap для большего расстояния между окнами */
             max-width: 1200px;
             width: 100%;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto;
         }
         .container {
             background: rgba(0, 0, 0, 0.7);
@@ -43,13 +42,16 @@
         .form-container {
             flex: 0 0 400px; /* Фиксированная ширина для точного центрирования */
             margin: 0 auto;
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
         }
         .race-info {
             flex: 0 0 500px;
             text-align: left;
             overflow-y: auto;
             max-height: 80vh;
-            margin-left: 20px; /* Смещение правее */
+            margin-left: 60px; /* Сдвиг правее для лучшего расположения */
         }
         .race-info p {
             font-size: 1em;
@@ -58,7 +60,7 @@
         }
         .race-info strong {
             color: #d4a017;
-            font-size: 2.5em; /* Увеличенный размер названия расы */
+            font-size: 2.5em; /* Название расы остаётся большим */
         }
         .form-container input,
         .form-container select {
@@ -141,7 +143,7 @@
 
                 <label for="race">Раса:</label>
                 <select id="race" name="race" required onchange="applyRaceBonuses()">
-                    <option value="">Выберите расу</option>
+                    <option value="" selected>Выберите расу</option>
                     <option value="Человек">Человек</option>
                     <option value="Драконорождённый">Драконорождённый</option>
                     <option value="Гном">Гном</option>
@@ -331,6 +333,7 @@
         function applyRaceBonuses() {
             const raceSelect = document.getElementById('race');
             const race = raceSelect.value;
+            const buttons = document.querySelectorAll('.stat-container button');
 
             // Сброс к базовым значениям
             for (let stat in baseStats) {
@@ -339,25 +342,26 @@
             }
             points = maxPoints;
 
-            // Активируем кнопки
-            const buttons = document.querySelectorAll('.stat-container button');
-            buttons.forEach(button => button.disabled = false);
-
-            if (raceBonuses[race]) {
-                const bonuses = raceBonuses[race].bonuses;
-                for (let stat in bonuses) {
-                    if (stat === 'custom') {
-                        // Для полуэльфа: +1 к двум характеристикам на выбор (например, Сила и Ловкость)
-                        document.getElementById('strength').value = baseStats.strength + 1;
-                        document.getElementById('dexterity').value = baseStats.dexterity + 1;
-                        minStats.strength = baseStats.strength + 1;
-                        minStats.dexterity = baseStats.dexterity + 1;
-                    } else {
-                        const bonus = bonuses[stat];
-                        const currentValue = parseInt(document.getElementById(stat).value);
-                        const newValue = baseStats[stat] + bonus;
-                        document.getElementById(stat).value = newValue;
-                        minStats[stat] = newValue;
+            // Активация/деактивация кнопок
+            if (!race) {
+                buttons.forEach(button => button.disabled = true);
+            } else {
+                buttons.forEach(button => button.disabled = false);
+                if (raceBonuses[race]) {
+                    const bonuses = raceBonuses[race].bonuses;
+                    for (let stat in bonuses) {
+                        if (stat === 'custom') {
+                            // Для полуэльфа: +1 к двум характеристикам на выбор (например, Сила и Ловкость)
+                            document.getElementById('strength').value = baseStats.strength + 1;
+                            document.getElementById('dexterity').value = baseStats.dexterity + 1;
+                            minStats.strength = baseStats.strength + 1;
+                            minStats.dexterity = baseStats.dexterity + 1;
+                        } else {
+                            const bonus = bonuses[stat];
+                            const newValue = baseStats[stat] + bonus;
+                            document.getElementById(stat).value = newValue;
+                            minStats[stat] = newValue;
+                        }
                     }
                 }
             }
