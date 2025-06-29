@@ -3,148 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Терновая гряда D&D</title>
+    <title>Терновая гряда D&D - Создание персонажа</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            font-family: 'Cinzel', serif;
-            background-image: url('background.jpg'); /* Укажи точное имя файла твоего фона */
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            color: #d4af37;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            overflow: auto;
-        }
-        .container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-            width: 100%;
-            max-width: 500px;
-            animation: fadeIn 0.5s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"], select {
-            width: 100%; /* Приравниваем ширину всех полей */
-            padding: 8px;
-            margin-bottom: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #d4af37;
-            color: #d4af37;
-            border-radius: 5px;
-            font-family: 'Cinzel', serif;
-            box-sizing: border-box; /* Учитываем padding и border в ширине */
-        }
-        .stat-group {
-            display: flex;
-            justify-content: space-between; /* Равномерное распределение элементов */
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-        }
-        .stat-label {
-            flex: 0 0 80px; /* Фиксированная ширина для названий характеристик */
-            text-align: left;
-        }
-        .stat-controls {
-            flex: 1;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 5px; /* Равные промежутки между кнопками и значением */
-        }
-        .stat-value {
-            width: 50px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid #d4af37;
-            border-radius: 5px;
-            padding: 5px;
+        * {
             box-sizing: border-box;
         }
-        button {
-            padding: 8px 10px; /* Уменьшаем padding для компактности */
-            background: #d4af37;
-            border: none;
-            border-radius: 5px;
-            color: #1a1a1a;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 10px rgba(212, 175, 55, 0.7);
-            font-size: 14px; /* Единый размер шрифта */
-            min-width: 30px; /* Минимальная ширина для равномерности */
+        .main-container {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .race-info {
+            text-align: left;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #d4a017;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            color: #e0d8c3;
+        }
+        .race-info h2 {
+            font-size: 1.8em;
+            color: #d4a017;
+            text-shadow: 2px 2px 4px #000;
+            margin: 0 0 15px;
             text-align: center;
         }
-        button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.9);
+        .race-info p {
+            font-size: 1em;
+            line-height: 1.5;
+            margin: 10px 0;
         }
-        button:active {
-            transform: scale(0.95);
+        .race-info strong {
+            color: #d4a017;
         }
-        #submitBtn {
-            display: block;
+        .form-container {
+            flex: 1;
+            min-width: 300px;
+        }
+        .form-container input,
+        .form-container select {
             width: 100%;
-            margin-top: 20px;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #d4a017;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #e0d8c3;
+            font-family: 'Cinzel', serif;
         }
-        .animated-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: inherit;
-            z-index: -1;
-            animation: bgShift 10s infinite linear;
+        .stat-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
         }
-        @keyframes bgShift {
-            0% { background-position: 0 0; }
-            50% { background-position: 50px 50px; }
-            100% { background-position: 0 0; }
+        .stat-container label {
+            flex: 1;
+            font-size: 1.1em;
+        }
+        .stat-container input {
+            width: 60px;
+            text-align: center;
+        }
+        .stat-container button {
+            width: 30px;
+            height: 30px;
+            background: #d4a017;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .stat-container button:hover {
+            box-shadow: 0 0 10px #d4a017;
+        }
+        .points {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 1em;
+            margin: 10px 0;
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="animated-bg"></div>
-    <div class="container">
-        <form id="characterForm">
-            <div class="form-group">
+    <div class="main-container">
+        <div class="container form-container">
+            <h1>Создание персонажа</h1>
+            <form id="characterForm">
                 <label for="name">Имя персонажа:</label>
-                <input type="text" id="name" required>
-            </div>
-            <div class="form-group">
+                <input type="text" id="name" name="name" required>
+
                 <label for="race">Раса:</label>
-                <select id="race">
+                <select id="race" name="race" required>
+                    <option value="">Выберите расу</option>
                     <option value="Человек">Человек</option>
-                    <option value="Эльф">Эльф</option>
-                    <option value="Дварф">Дварф</option>
+                    <option value="Драконорождённый">Драконорождённый</option>
                     <option value="Гном">Гном</option>
                     <option value="Тифлинг">Тифлинг</option>
-                    <option value="Полурослик">Полурослик</option>
-                    <option value="Драконорожденный">Драконорожденный</option>
-                    <option value="Орк">Орк</option>
+                    <option value="Полуэльф">Полуэльф</option>
+                    <option value="Полуорк">Полуорк</option>
+                    <option value="Дварф">Дварф</option>
                 </select>
-            </div>
-            <div class="form-group">
+
                 <label for="class">Класс:</label>
-                <select id="class">
+                <select id="class" name="class" required>
+                    <option value="">Выберите класс</option>
                     <option value="Воин">Воин</option>
                     <option value="Варвар">Варвар</option>
                     <option value="Монах">Монах</option>
@@ -157,67 +133,216 @@
                     <option value="Следопыт">Следопыт</option>
                     <option value="Плут">Плут</option>
                 </select>
+
+                <h2>Характеристики (15 очков):</h2>
+                <div class="stat-container">
+                    <label for="strength">Сила:</label>
+                    <button type="button" onclick="changeStat('strength', -1)">-</button>
+                    <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('strength', 1)">+</button>
+                </div>
+                <div class="stat-container">
+                    <label for="dexterity">Ловкость:</label>
+                    <button type="button" onclick="changeStat('dexterity', -1)">-</button>
+                    <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('dexterity', 1)">+</button>
+                </div>
+                <div class="stat-container">
+                    <label for="constitution">Телосложение:</label>
+                    <button type="button" onclick="changeStat('constitution', -1)">-</button>
+                    <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('constitution', 1)">+</button>
+                </div>
+                <div class="stat-container">
+                    <label for="wisdom">Мудрость:</label>
+                    <button type="button" onclick="changeStat('wisdom', -1)">-</button>
+                    <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('wisdom', 1)">+</button>
+                </div>
+                <div class="stat-container">
+                    <label for="intelligence">Интеллект:</label>
+                    <button type="button" onclick="changeStat('intelligence', -1)">-</button>
+                    <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('intelligence', 1)">+</button>
+                </div>
+                <div class="stat-container">
+                    <label for="charisma">Харизма:</label>
+                    <button type="button" onclick="changeStat('charisma', -1)">-</button>
+                    <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
+                    <button type="button" onclick="changeStat('charisma', 1)">+</button>
+                </div>
+                <p class="points">Осталось очков: <span id="points">15</span></p>
+                <div id="error" class="error"></div>
+                <button type="submit">Создать персонажа</button>
+            </form>
+        </div>
+        <div class="race-info">
+            <h2>Информация о расе</h2>
+            <div id="raceDescription">
+                <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
             </div>
-            <div class="form-group">
-                <label>Характеристики (15 очков):</label>
-                <div class="stat-group"><span class="stat-label">Сила:</span><div class="stat-controls"><button type="button" onclick="changeStat('strength', -1)">-</button><span class="stat-value" id="strength">8</span><button type="button" onclick="changeStat('strength', 1)">+</button></div></div>
-                <div class="stat-group"><span class="stat-label">Ловкость:</span><div class="stat-controls"><button type="button" onclick="changeStat('dexterity', -1)">-</button><span class="stat-value" id="dexterity">8</span><button type="button" onclick="changeStat('dexterity', 1)">+</button></div></div>
-                <div class="stat-group"><span class="stat-label">Телосложение:</span><div class="stat-controls"><button type="button" onclick="changeStat('constitution', -1)">-</button><span class="stat-value" id="constitution">8</span><button type="button" onclick="changeStat('constitution', 1)">+</button></div></div>
-                <div class="stat-group"><span class="stat-label">Мудрость:</span><div class="stat-controls"><button type="button" onclick="changeStat('wisdom', -1)">-</button><span class="stat-value" id="wisdom">8</span><button type="button" onclick="changeStat('wisdom', 1)">+</button></div></div>
-                <div class="stat-group"><span class="stat-label">Интеллект:</span><div class="stat-controls"><button type="button" onclick="changeStat('intelligence', -1)">-</button><span class="stat-value" id="intelligence">8</span><button type="button" onclick="changeStat('intelligence', 1)">+</button></div></div>
-                <div class="stat-group"><span class="stat-label">Харизма:</span><div class="stat-controls"><button type="button" onclick="changeStat('charisma', -1)">-</button><span class="stat-value" id="charisma">8</span><button type="button" onclick="changeStat('charisma', 1)">+</button></div></div>
-                <p>Осталось очков: <span id="pointsLeft">15</span></p>
-            </div>
-            <button type="submit" id="submitBtn">Создать персонажа</button>
-        </form>
+        </div>
     </div>
     <script>
-        let pointsLeft = 15;
-        const maxStat = 20;
-        const minStat = 8;
+        const maxPoints = 15;
+        let points = maxPoints;
 
-        function changeStat(stat, delta) {
-            const value = parseInt(document.getElementById(stat).textContent);
-            const newValue = value + delta;
-            if (newValue >= minStat && newValue <= maxStat && pointsLeft - delta >= 0) {
-                document.getElementById(stat).textContent = newValue;
-                pointsLeft -= delta;
-                document.getElementById('pointsLeft').textContent = pointsLeft;
+        const raceBonuses = {
+            'Человек': {
+                description: `
+                    <strong>Человек</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение всех ваших характеристик увеличивается на 1.<br>
+                    <strong>Возраст:</strong> Люди становятся взрослыми в районе 20 лет, и живут менее столетия.<br>
+                    <strong>Мировоззрение:</strong> Люди не имеют склонности к определённому мировоззрению. Среди них встречаются как лучшие, так и худшие представители.<br>
+                    <strong>Размер:</strong> Люди сильно различаются по размерам. Некоторые с трудом достигают 5 футов (152 см) ростом, тогда как другие имеют рост, превосходящий 6 футов (183 см). Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения составляет 30 футов.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и ещё одном языке на ваш выбор. Люди обычно изучают языки народов, с которыми имеют дело, включая редкие диалекты.
+                `
+            },
+            'Драконорождённый': {
+                description: `
+                    <strong>Драконорождённый</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Харизмы — на 1.<br>
+                    <strong>Возраст:</strong> Юные драконорождённые растут быстро. Они начинают ходить через час после вылупления, к трём годам достигают роста и сложения 10-летнего человека, и становятся взрослыми в 15. Живут они примерно до 80 лет.<br>
+                    <strong>Мировоззрение:</strong> Драконорождённые склонны к крайностям, сознательно выбирая сторону добра или зла. Большинство добры, но те, кто принял сторону Тиамат, могут быть чрезвычайно жестокими.<br>
+                    <strong>Размер:</strong> Драконорождённые выше и тяжелее людей, их рост около 6 футов (2 м) и вес около 250 фунтов (115 кг). Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения составляет 30 футов.<br>
+                    <strong>Наследие драконов:</strong> Выберите тип дракона. Вы получаете оружие дыхания и сопротивление к урону соответствующего вида.<br>
+                    <strong>Оружие дыхания:</strong> Вы можете действием выдохнуть разрушительную энергию. Сложность спасброска: 8 + модификатор Телосложения + бонус мастерства. Урон: 2к6 (3к6 на 6 уровне, 4к6 на 11, 5к6 на 16). Перезарядка после отдыха.<br>
+                    <strong>Сопротивление урону:</strong> Сопротивление к урону, указанному в вашем наследии драконов.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Драконьем языках.
+                `
+            },
+            'Гном': {
+                description: `
+                    <strong>Гном</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 2.<br>
+                    <strong>Возраст:</strong> Гномы взрослеют с той же скоростью, что и люди, и к 40 годам переходят к спокойной взрослой жизни. Они живут от 350 до почти 500 лет.<br>
+                    <strong>Мировоззрение:</strong> Гномы чаще всего добры. Стремящиеся к порядку становятся мудрецами, инженерами, учёными. Склонные к хаосу — менестрелями, мошенниками, ювелирами.<br>
+                    <strong>Размер:</strong> Рост гномов между 3 и 4 футами (91–122 см), средний вес — 40 фунтов (18 кг). Ваш размер — Маленький.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения равна 25 футам.<br>
+                    <strong>Тёмное зрение:</strong> На расстоянии 60 футов вы видите в темноте как при тусклом освещении, а при тусклом — как при ярком. В темноте различаете только оттенки серого.<br>
+                    <strong>Гномья хитрость:</strong> Преимущество на спасброски Интеллекта, Мудрости и Харизмы против магии.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Гномьем языках.
+                `
+            },
+            'Тифлинг': {
+                description: `
+                    <strong>Тифлинг</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашего Интеллекта увеличивается на 1, а Харизмы — на 2.<br>
+                    <strong>Возраст:</strong> Тифлинги взрослеют как люди, но живут немного дольше.<br>
+                    <strong>Мировоззрение:</strong> Тифлинги склонны к хаотичному мировоззрению, независимы по природе.<br>
+                    <strong>Размер:</strong> Тифлинги схожи с людьми по росту и телосложению. Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения — 30 футов.<br>
+                    <strong>Тёмное зрение:</strong> На расстоянии 60 футов вы видите в темноте как при тусклом освещении, а при тусклом — как при ярком. В темноте различаете только оттенки серого.<br>
+                    <strong>Адское сопротивление:</strong> Сопротивление урону огнём.<br>
+                    <strong>Дьявольское наследие:</strong> Знаете заклинание чудотворство. С 3 уровня — адское возмездие (1/день, 2 уровень). С 5 уровня — тьма (1/день). Базовая характеристика — Харизма.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Инфернальном.
+                `
+            },
+            'Полуэльф': {
+                description: `
+                    <strong>Полуэльф</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашей Харизмы увеличивается на 2, а двух других характеристик на ваш выбор — на 1.<br>
+                    <strong>Возраст:</strong> Полуэльфы взрослеют как люди, достигая зрелости к 20 годам, но живут до 180 лет.<br>
+                    <strong>Мировоззрение:</strong> Полуэльфы склонны к хаосу, ценят личную свободу и творческое самовыражение.<br>
+                    <strong>Размер:</strong> Полуэльфы почти такого же размера, как люди, рост от 5 до 6 футов (155–183 см). Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Базовая скорость перемещения — 30 футов.<br>
+                    <strong>Тёмное зрение:</strong> На расстоянии 60 футов вы видите в темноте как при тусклом освещении, а при тусклом — как при ярком. В темноте различаете только оттенки серого.<br>
+                    <strong>Наследие фей:</strong> Преимущество на спасброски от очарования, и вас невозможно магически усыпить.<br>
+                    <strong>Универсальность навыков:</strong> Владение двумя навыками на ваш выбор.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем, Эльфийском и ещё одном языке на ваш выбор.
+                `
+            },
+            'Полуорк': {
+                description: `
+                    <strong>Полуорк</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашей Силы увеличивается на 2, а Телосложения — на 1.<br>
+                    <strong>Возраст:</strong> Полуорки взрослеют к 14 годам, живут до 75 лет.<br>
+                    <strong>Мировоззрение:</strong> Полуорки склонны к хаосу и не особо к добру. Выросшие среди орков часто злы.<br>
+                    <strong>Размер:</strong> Полуорки выше и массивнее людей, рост от 5 до 6 футов (152–185 см). Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения — 30 футов.<br>
+                    <strong>Тёмное зрение:</strong> На расстоянии 60 футов вы видите в темноте как при тусклом освещении, а при тусклом — как при ярком. В темноте различаете только оттенки серого.<br>
+                    <strong>Угрожающий вид:</strong> Владение навыком Запугивание.<br>
+                    <strong>Непоколебимая стойкость:</strong> Если хиты опустились до 0, но вы не убиты, хиты становятся 1 (1/день).<br>
+                    <strong>Свирепые атаки:</strong> При критическом попадании рукопашной атакой оружием добавляется одна кость урона.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Орочьем.
+                `
+            },
+            'Дварф': {
+                description: `
+                    <strong>Дварф</strong><br>
+                    <strong>Увеличение характеристик:</strong> Значение вашего Телосложения увеличивается на 2.<br>
+                    <strong>Возраст:</strong> Дварфы взрослеют с той же скоростью, что и люди, но считаются молодыми до 50 лет. В среднем они живут около 350 лет.<br>
+                    <strong>Мировоззрение:</strong> Большинство дварфов законопослушны, с сильным чувством чести и веры в традиции.<br>
+                    <strong>Размер:</strong> Дварфы в среднем от 4 до 5 футов ростом (122–152 см) и весят около 150 фунтов (68 кг). Ваш размер — Средний.<br>
+                    <strong>Скорость:</strong> Ваша базовая скорость перемещения — 25 футов. Ваша скорость не уменьшается при ношении тяжёлых доспехов.<br>
+                    <strong>Тёмное зрение:</strong> На расстоянии 60 футов вы видите в темноте как при тусклом освещении, а при тусклом — как при ярком. В темноте различаете только оттенки серого.<br>
+                    <strong>Дварфская стойкость:</strong> Преимущество на спасброски против яда и сопротивление урону ядом.<br>
+                    <strong>Знание оружия:</strong> Владение боевым топором, ручным топором, лёгким молотом и боевым молотом.<br>
+                    <strong>Знание инструментов:</strong> Владение одним из инструментов на выбор: кузнечные, пивоваренные или каменщицкие.<br>
+                    <strong>Знание камня:</strong> При проверке Интеллекта (История), связанной с каменными изделиями, ваш бонус мастерства удваивается.<br>
+                    <strong>Языки:</strong> Вы можете говорить, читать и писать на Общем и Дварфском.
+                `
+            }
+        };
+
+        function changeStat(stat, change) {
+            const input = document.getElementById(stat);
+            let value = parseInt(input.value);
+            const newValue = value + change;
+            if (newValue >= 8 && newValue <= 20 && points - change >= 0) {
+                input.value = newValue;
+                points -= change;
+                document.getElementById('points').textContent = points;
             }
         }
 
-        document.getElementById('characterForm').addEventListener('submit', async (e) => {
+        document.getElementById('race').addEventListener('change', function() {
+            const race = this.value;
+            const descriptionDiv = document.getElementById('raceDescription');
+            if (raceBonuses[race]) {
+                descriptionDiv.innerHTML = raceBonuses[race].description;
+            } else {
+                descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
+            }
+        });
+
+        document.getElementById('characterForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const name = document.getElementById('name').value;
-            const race = document.getElementById('race').value;
-            const className = document.getElementById('class').value;
-            const stats = {
-                strength: parseInt(document.getElementById('strength').textContent),
-                dexterity: parseInt(document.getElementById('dexterity').textContent),
-                constitution: parseInt(document.getElementById('constitution').textContent),
-                wisdom: parseInt(document.getElementById('wisdom').textContent),
-                intelligence: parseInt(document.getElementById('intelligence').textContent),
-                charisma: parseInt(document.getElementById('charisma').textContent)
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = '';
+
+            const character = {
+                name: document.getElementById('name').value,
+                race: document.getElementById('race').value,
+                class: document.getElementById('class').value,
+                stats: {
+                    strength: parseInt(document.getElementById('strength').value),
+                    dexterity: parseInt(document.getElementById('dexterity').value),
+                    constitution: parseInt(document.getElementById('constitution').value),
+                    wisdom: parseInt(document.getElementById('wisdom').value),
+                    intelligence: parseInt(document.getElementById('intelligence').value),
+                    charisma: parseInt(document.getElementById('charisma').value)
+                }
             };
 
-            if (pointsLeft !== 0) {
-                alert('Распределите ровно 15 очков!');
-                return;
-            }
-
-            const response = await fetch('/api/character', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, race, class: className, stats })
-            });
-
-            const data = await response.json();
-            alert(data.message);
-            if (response.ok) {
-                document.getElementById('characterForm').reset();
-                document.querySelectorAll('.stat-value').forEach(el => el.textContent = '8');
-                pointsLeft = 15;
-                document.getElementById('pointsLeft').textContent = pointsLeft;
+            try {
+                const response = await fetch('/api/character', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(character)
+                });
+                if (response.ok) {
+                    window.location.href = '/characters';
+                } else {
+                    const errorData = await response.json();
+                    errorDiv.textContent = errorData.message || 'Ошибка при сохранении персонажа';
+                }
+            } catch (error) {
+                errorDiv.textContent = 'Ошибка сервера';
             }
         });
     </script>
