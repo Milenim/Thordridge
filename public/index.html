@@ -10,28 +10,47 @@
         * {
             box-sizing: border-box;
         }
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+            background-size: cover;
+            font-family: 'Cinzel', serif;
+            color: #e0d8c3;
+        }
         .main-container {
             display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
             max-width: 1200px;
             width: 100%;
-            gap: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
         }
-        .race-info {
-            text-align: left;
-            padding: 20px;
+        .container {
             background: rgba(0, 0, 0, 0.7);
             border: 2px solid #d4a017;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 20px;
+            text-align: center;
+        }
+        .form-container {
+            flex: 1;
+            max-width: 400px;
+        }
+        .race-info {
+            flex: 1;
             max-width: 500px;
-            max-height: 80vh;
+            text-align: left;
             overflow-y: auto;
-            color: #e0d8c3;
+            max-height: 80vh;
         }
         .race-info h2 {
-            font-size: 1.8em;
+            font-size: 2.2em; /* Увеличен размер заголовка расы */
             color: #d4a017;
             text-shadow: 2px 2px 4px #000;
             margin: 0 0 15px;
@@ -44,10 +63,6 @@
         }
         .race-info strong {
             color: #d4a017;
-        }
-        .form-container {
-            flex: 1;
-            min-width: 300px;
         }
         .form-container input,
         .form-container select {
@@ -63,12 +78,14 @@
         .stat-container {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             gap: 10px;
             margin: 10px 0;
         }
         .stat-container label {
             flex: 1;
             font-size: 1.1em;
+            text-align: left;
         }
         .stat-container input {
             width: 60px;
@@ -95,6 +112,21 @@
             color: #ff6b6b;
             font-size: 1em;
             margin: 10px 0;
+        }
+        button[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background: #d4a017;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        button[type="submit"]:hover {
+            box-shadow: 0 0 10px #d4a017;
         }
     </style>
 </head>
@@ -127,7 +159,7 @@
                     <option value="Чародей">Чародей</option>
                     <option value="Друид">Друид</option>
                     <option value="Волшебник">Волшебник</option>
-                    <option value="Жрец">Жрец</option>
+                    <option value="Жрец Жрец">Жрец</option>
                     <option value="Паладин">Паладин</option>
                     <option value="Колдун">Колдун</option>
                     <option value="Следопыт">Следопыт</option>
@@ -176,7 +208,7 @@
                 <button type="submit">Создать персонажа</button>
             </form>
         </div>
-        <div class="race-info">
+        <div class="container race-info">
             <h2>Информация о расе</h2>
             <div id="raceDescription">
                 <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
