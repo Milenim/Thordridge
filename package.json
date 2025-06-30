@@ -1,0 +1,13 @@
+{
+  "name": "thordridge",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12",
+    "node-telegram-bot-api": "^0.56.0"
+  },
+  "scripts": {
+    "start": "node src/index.js"
+  }
+}
