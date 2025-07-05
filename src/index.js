@@ -11,7 +11,7 @@ const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
 
 // MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@5.129.220.137/thordridge?authSource=admin', {
+mongoose.connect('mongodb://admin:Netskyline1996!@5.129.220.137:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -114,6 +114,31 @@ bot.onText(/\/start/, (msg) => {
 
 app.get('/api', (req, res) => {
     res.json({ message: 'API работает!' });
+});
+
+app.get('/api/status', (req, res) => {
+    try {
+        const mongoState = mongoose.connection.readyState;
+        const states = {
+            0: 'disconnected',
+            1: 'connected',
+            2: 'connecting',
+            3: 'disconnecting'
+        };
+        res.json({ 
+            api: 'working',
+            mongodb: states[mongoState] || 'unknown',
+            mongoState: mongoState,
+            host: mongoose.connection.host,
+            port: mongoose.connection.port,
+            name: mongoose.connection.name
+        });
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'Status check failed',
+            message: err.message
+        });
+    }
 });
 
 app.post('/api/character', async (req, res) => {
