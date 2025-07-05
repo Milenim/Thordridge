@@ -11,7 +11,7 @@ const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
 
 // MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
+mongoose.connect('mongodb://admin:Netskyline1996!@5.129.220.137/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
