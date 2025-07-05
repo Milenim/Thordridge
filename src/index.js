@@ -52,6 +52,17 @@ mongoose.connection.on('error', err => {
     console.error('MongoDB connection error:', JSON.stringify(err, null, 2));
     // Убираем отправку сообщения в Telegram при ошибке подключения к MongoDB
     console.log('MongoDB connection failed. Please check your database server.');
+    global.mongoError = err.message || 'Unknown MongoDB error';
+});
+
+mongoose.connection.on('disconnected', () => {
+    console.log('MongoDB disconnected');
+    global.mongoError = 'MongoDB disconnected';
+});
+
+mongoose.connection.on('connected', () => {
+    console.log('MongoDB connected successfully');
+    global.mongoError = null;
 });
 
 const validClasses = [
@@ -131,7 +142,9 @@ app.get('/api/status', (req, res) => {
             mongoState: mongoState,
             host: mongoose.connection.host,
             port: mongoose.connection.port,
-            name: mongoose.connection.name
+            name: mongoose.connection.name,
+            error: global.mongoError || null,
+            connectionString: 'mongodb://admin:***@5.129.220.137:27017/thordridge?authSource=admin'
         });
     } catch (err) {
         res.status(500).json({ 
@@ -254,6 +267,48 @@ app.post('/api/roll', async (req, res) => {
     } catch (err) {
         console.error('Error processing roll:', JSON.stringify(err, null, 2));
         res.status(500).json({ message: 'Ошибка сервера при обработке броска' });
+    }
+});
+
+app.get('/api/test-local-mongo', async (req, res) => {
+    try {
+        const localMongoose = require('mongoose');
+        const localConnection = localMongoose.createConnection('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000
+        });
+        
+        localConnection.on('connected', () => {
+            localConnection.close();
+            res.json({ 
+                local: 'success',
+                message: 'Local MongoDB connection successful'
+            });
+        });
+        
+        localConnection.on('error', (err) => {
+            localConnection.close();
+            res.json({ 
+                local: 'failed',
+                error: err.message,
+                message: 'Local MongoDB connection failed'
+            });
+        });
+        
+        setTimeout(() => {
+            localConnection.close();
+            res.json({ 
+                local: 'timeout',
+                message: 'Local MongoDB connection timeout'
+            });
+        }, 10000);
+        
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'Local test failed',
+            message: err.message
+        });
     }
 });
 
