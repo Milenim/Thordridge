@@ -11,7 +11,7 @@ const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
 
 // MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
+mongoose.connect('mongodb://admin:Netskyline1996!@127.0.0.1:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -144,7 +144,7 @@ app.get('/api/status', (req, res) => {
             port: mongoose.connection.port,
             name: mongoose.connection.name,
             error: global.mongoError || null,
-            connectionString: 'mongodb://admin:***@localhost:27017/thordridge?authSource=admin'
+            connectionString: 'mongodb://admin:***@127.0.0.1:27017/thordridge?authSource=admin'
         });
     } catch (err) {
         res.status(500).json({ 
@@ -307,6 +307,48 @@ app.get('/api/test-local-mongo', async (req, res) => {
     } catch (err) {
         res.status(500).json({ 
             error: 'Local test failed',
+            message: err.message
+        });
+    }
+});
+
+app.get('/api/test-mongo-no-auth', async (req, res) => {
+    try {
+        const mongoose2 = require('mongoose');
+        const testConnection = mongoose2.createConnection('mongodb://127.0.0.1:27017/test', {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000
+        });
+        
+        testConnection.on('connected', () => {
+            testConnection.close();
+            res.json({ 
+                noauth: 'success',
+                message: 'MongoDB basic connection successful (no auth)'
+            });
+        });
+        
+        testConnection.on('error', (err) => {
+            testConnection.close();
+            res.json({ 
+                noauth: 'failed',
+                error: err.message,
+                message: 'MongoDB basic connection failed (no auth)'
+            });
+        });
+        
+        setTimeout(() => {
+            testConnection.close();
+            res.json({ 
+                noauth: 'timeout',
+                message: 'MongoDB basic connection timeout (no auth)'
+            });
+        }, 10000);
+        
+    } catch (err) {
+        res.status(500).json({ 
+            error: 'No-auth test failed',
             message: err.message
         });
     }
