@@ -11,7 +11,7 @@ const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
 
 // MongoDB connection
-mongoose.connect('mongodb://admin:TempPass123@localhost:27017/thordridge?authSource=admin', {
+mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -48,40 +48,32 @@ mongoose.connect('mongodb://admin:TempPass123@localhost:27017/thordridge?authSou
     console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
 });
 
+mongoose.connection.on('error', err => {
+    console.error('MongoDB connection error:', JSON.stringify(err, null, 2));
+    // Убираем отправку сообщения в Telegram при ошибке подключения к MongoDB
+    console.log('MongoDB connection failed. Please check your database server.');
+});
+
 const validClasses = [
     'Воин', 'Варвар', 'Монах', 'Чародей', 'Друид', 'Волшебник',
     'Жрец', 'Паладин', 'Колдун', 'Следопыт', 'Плут'
 ];
 const validRaces = [
     'Человек', 'Эльф', 'Дварф', 'Гном', 'Тифлинг',
-    'Полурослик', 'Драконорожденный', 'Орк'
+    'Полуэльф', 'Полуорк', 'Драконорождённый'
 ];
 
 // Определяем расовые бонусы для валидации на сервере
 const raceBonuses = {
     'Человек': { strength: 1, dexterity: 1, constitution: 1, wisdom: 1, intelligence: 1, charisma: 1 },
-    'Драконорождённый': { strength: 2, charisma: 1 },
+    'Эльф': { dexterity: 2 },
+    'Дварф': { constitution: 2 },
     'Гном': { intelligence: 2 },
     'Тифлинг': { intelligence: 1, charisma: 2 },
     'Полуэльф': { charisma: 2, custom: 2 }, // +1 к двум характеристикам (например, Сила и Ловкость)
     'Полуорк': { strength: 2, constitution: 1 },
-    'Дварф': { constitution: 2 }
+    'Драконорождённый': { strength: 2, charisma: 1 }
 };
-
-// MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@localhost:27017/thordridge?authSource=admin', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).then(() => {
-    console.log('Connected to MongoDB');
-}).catch(err => {
-    console.error('Error connecting to MongoDB:', JSON.stringify(err, null, 2));
-});
-
-mongoose.connection.on('error', err => {
-    console.error('MongoDB connection error:', JSON.stringify(err, null, 2));
-    bot.sendMessage(123456789, 'Ошибка подключения к MongoDB: ' + err.message); // Замените 123456789 на ваш chat_id
-});
 
 // Character schema
 const characterSchema = new mongoose.Schema({
@@ -104,13 +96,6 @@ const characterSchema = new mongoose.Schema({
 });
 
 const Character = mongoose.model('Character', characterSchema);
-
-// Set webhook
-bot.setWebHook(WEBHOOK_URL).then(() => {
-    console.log(`Webhook set to ${WEBHOOK_URL}`);
-}).catch(err => {
-    console.error('Error setting webhook:', JSON.stringify(err, null, 2));
-});
 
 app.post('/bot' + TOKEN, (req, res) => {
     console.log('Received webhook update:', JSON.stringify(req.body, null, 2));
