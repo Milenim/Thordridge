@@ -17,12 +17,13 @@ const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
 const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'gpt2';
 const HUGGINGFACE_API_URL = process.env.HUGGINGFACE_API_URL || 'https://api-inference.huggingface.co/models/';
 
-// Альтернативные модели для генерации RPG контента
+// Проверенные доступные модели HuggingFace (2024)
 const RPG_MODELS = {
     primary: 'gpt2',
-    alternative: 'distilgpt2', 
-    creative: 'facebook/opt-350m',
-    story: 'microsoft/DialoGPT-small'
+    alternative: 'distilgpt2',
+    creative: 'openai-community/gpt2-medium',
+    story: 'microsoft/DialoGPT-small',
+    simple: 'openai-community/gpt2-xl'
 };
 
 // MongoDB connection
@@ -196,9 +197,8 @@ async function callHuggingFaceAPI(prompt, maxLength = 400, temperature = 0.7) {
         process.env.HUGGINGFACE_MODEL || RPG_MODELS.primary,
         RPG_MODELS.alternative,
         RPG_MODELS.creative,
-        RPG_MODELS.story,
-        'microsoft/DialoGPT-medium',
-        'EleutherAI/gpt-neo-125M'
+        RPG_MODELS.simple,
+        RPG_MODELS.story
     ];
 
     for (const modelName of modelsToTry) {
@@ -363,36 +363,206 @@ function getClassBasedActions(characterClass) {
 }
 
 function generateFallbackContent(character, action = null, previousContext = '') {
-    const scenes = [
-        "Ты идёшь по тропе, окутанной древним туманом Терновой гряды. Вековые деревья возвышаются как безмолвные стражи, их ветви переплетаются в причудливые узоры. Где-то вдали ты слышишь волчий вой.",
-        "Перед тобой простираются руины некогда величественного города. Разрушенные башни пронзают сумеречное небо, а из трещин в камне пробивается странное зелёное свечение.",
-        "Ты стоишь у подножия мрачного замка на скалистом утёсе. Его чёрные башни теряются в облаках, а единственное окно светится зловещим красным светом. Воздух наполнен запахом серы и старой крови.",
-        "Ты находишься на заброшенном кладбище под бледной луной. Покосившиеся надгробия создают лабиринт теней, а из-под земли доносятся странные звуки. Туман стелется между могил.",
-        "Тёмный лес встречает тебя шёпотом листьев и треском веток. Тропинка едва различима в густой тени, а ты чувствуешь, как глаза неведомых существ следят за каждым твоим шагом из чащи."
-    ];
-    
+    // Расширенные сцены по локациям
+    const locationScenes = {
+        forest: [
+            "Ты идёшь по извилистой тропе сквозь дремучий лес Терновой гряды. Древние дубы переплетают свои ветви над головой, создавая живой свод. Сквозь листву пробиваются лучи заходящего солнца, освещая танец пылинок в воздухе.",
+            "Тёмная чаща окружает тебя со всех сторон. Корни деревьев причудливо переплетаются под ногами, а в тишине слышен лишь твой собственный шёпот дыхания. Где-то вдали хрустнула ветка."
+        ],
+        ruins: [
+            "Перед тобой простираются руины некогда величественного города. Разрушенные арки и покосившиеся колонны рассказывают историю былого величия. Из трещин в камне пробивается странное голубоватое свечение.",
+            "Ты стоишь среди развалин древнего храма. Сломанные статуи богов безмолвно взирают на тебя пустыми глазницами. Ветер свистит между разрушенными стенами, унося эхо забытых молитв."
+        ],
+        castle: [
+            "Мрачный замок возвышается перед тобой на скалистом утёсе. Его чёрные башни пронзают грозовые облака, а единственное окно в главной башне светится зловещим красным светом. Воздух густо пропитан запахом старой крови и серы.",
+            "Массивные врата замка приоткрыты, словно приглашая войти. Но что-то в этом приглашении кажется ловушкой. Железные петли скрипят на ветру, а с зубцов стен свисают старые цепи."
+        ],
+        cemetery: [
+            "Заброшенное кладбище простирается перед тобой под бледным светом луны. Покосившиеся надгробия создают лабиринт теней, а из-под земли доносятся едва слышные шорохи. Туман стелется между могил, скрывая древние секреты.",
+            "Ты идёшь по узкой тропинке между старых склепов. Некоторые двери приоткрыты, зияя чёрной пустотой. На мраморных плитах едва различимы стёртые временем имена и даты."
+        ],
+        tavern: [
+            "Ты входишь в полутёмную таверну 'Золотой Грифон'. Тёплый свет очага играет на закопчённых стенах, а воздух наполнен ароматом эля и жареного мяса. За столами сидят странные путники, каждый из которых хранит свои секреты.",
+            "Трактир гудит от разговоров и смеха. Бардочка в углу наигрывает печальную мелодию на лютне, а хозяин таверны полирует кружки, внимательно прислушиваясь к беседам гостей."
+        ]
+    };
+
+    // Умные переходы действий
+    const actionResponses = {
+        exploration: [
+            `Решив ${action.toLowerCase()}, ты обнаруживаешь нечто неожиданное.`,
+            `Твоё решение ${action.toLowerCase()} приводит к удивительной находке.`,
+            `Когда ты ${action.toLowerCase()}, окружающий мир словно отвечает на твои действия.`
+        ],
+        social: [
+            `Пытаясь ${action.toLowerCase()}, ты замечаешь изменения в поведении окружающих.`,
+            `Твоя попытка ${action.toLowerCase()} вызывает неожиданную реакцию.`,
+            `${action} открывает новые возможности для взаимодействия.`
+        ],
+        combat: [
+            `Готовясь к ${action.toLowerCase()}, ты чувствуешь, как адреналин разгоняет кровь по венам.`,
+            `Твоё намерение ${action.toLowerCase()} меняет атмосферу вокруг - опасность витает в воздухе.`,
+            `${action} - мудрое решение в данной ситуации, учитывая твои навыки.`
+        ],
+        magic: [
+            `Концентрируясь на ${action.toLowerCase()}, ты чувствуешь, как магические силы откликаются на твой зов.`,
+            `Попытка ${action.toLowerCase()} пробуждает древние энергии в этом месте.`,
+            `${action} заставляет воздух вокруг тебя мерцать от магической энергии.`
+        ]
+    };
+
     let scene;
     if (action) {
-        // Генерируем реакцию на действие
-        const actionResponses = [
-            `Выполняя "${action}", ты замечаешь, как обстановка вокруг меняется.`,
-            `Когда ты ${action.toLowerCase()}, происходит нечто неожиданное.`,
-            `${action} приводит к неожиданному повороту событий.`
-        ];
-        const response = actionResponses[Math.floor(Math.random() * actionResponses.length)];
-        scene = `${response} ${scenes[Math.floor(Math.random() * scenes.length)]}`;
+        // Определяем тип действия для более точного ответа
+        const actionType = determineActionType(action, character.class);
+        const responses = actionResponses[actionType] || actionResponses.exploration;
+        const response = responses[Math.floor(Math.random() * responses.length)];
+        
+        // Выбираем локацию на основе контекста
+        const location = determineLocation(previousContext, action);
+        const locationSceneArray = locationScenes[location] || locationScenes.forest;
+        const locationScene = locationSceneArray[Math.floor(Math.random() * locationSceneArray.length)];
+        
+        scene = `${response} ${locationScene}`;
     } else {
-        scene = scenes[Math.floor(Math.random() * scenes.length)];
+        // Начальная сцена - выбираем случайную локацию
+        const locations = Object.keys(locationScenes);
+        const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+        const locationSceneArray = locationScenes[randomLocation];
+        scene = locationSceneArray[Math.floor(Math.random() * locationSceneArray.length)];
     }
     
-    const baseActions = ['Осмотреться внимательнее', 'Продолжить путь осторожно', 'Остановиться и прислушаться'];
+    // Генерируем более разнообразные действия
+    const baseActions = generateVariedActions(character, action);
     const classActions = getClassBasedActions(character.class);
-    const randomClassAction = classActions[Math.floor(Math.random() * classActions.length)];
+    const contextActions = getContextBasedActions(scene);
+    
+    // Смешиваем и выбираем лучшие
+    const allActions = [...baseActions, ...classActions, ...contextActions];
+    const selectedActions = selectBestActions(allActions, 4);
     
     return {
         scene,
-        actions: [...baseActions, randomClassAction]
+        actions: selectedActions
     };
+}
+
+function determineActionType(action, characterClass) {
+    const actionLower = action.toLowerCase();
+    
+    // Магические действия
+    if (actionLower.includes('магия') || actionLower.includes('заклинание') || actionLower.includes('энергия') || 
+        ['Чародей', 'Волшебник', 'Друид', 'Жрец', 'Паладин', 'Колдун'].includes(characterClass)) {
+        return 'magic';
+    }
+    
+    // Боевые действия
+    if (actionLower.includes('бой') || actionLower.includes('атак') || actionLower.includes('оружие') || 
+        actionLower.includes('защита') || actionLower.includes('удар')) {
+        return 'combat';
+    }
+    
+    // Социальные действия
+    if (actionLower.includes('говор') || actionLower.includes('убед') || actionLower.includes('переговор') || 
+        actionLower.includes('спрос')) {
+        return 'social';
+    }
+    
+    return 'exploration';
+}
+
+function determineLocation(context, action) {
+    const contextLower = (context + ' ' + (action || '')).toLowerCase();
+    
+    if (contextLower.includes('лес') || contextLower.includes('дерев') || contextLower.includes('тропа')) return 'forest';
+    if (contextLower.includes('руины') || contextLower.includes('развал') || contextLower.includes('храм')) return 'ruins';
+    if (contextLower.includes('замок') || contextLower.includes('башня') || contextLower.includes('крепость')) return 'castle';
+    if (contextLower.includes('кладбище') || contextLower.includes('могил') || contextLower.includes('склеп')) return 'cemetery';
+    if (contextLower.includes('таверна') || contextLower.includes('трактир') || contextLower.includes('гостиница')) return 'tavern';
+    
+    return 'forest'; // по умолчанию
+}
+
+function generateVariedActions(character, previousAction) {
+    const explorationActions = [
+        'Внимательно осмотреться вокруг',
+        'Проследить за звуками в тишине',
+        'Исследовать ближайшие объекты',
+        'Найти безопасное место для отдыха'
+    ];
+    
+    const movementActions = [
+        'Продолжить путь осторожно',
+        'Свернуть с основной дороги',
+        'Вернуться назад',
+        'Подняться на возвышенность для обзора'
+    ];
+    
+    const interactionActions = [
+        'Попытаться найти следы других путников',
+        'Прислушаться к звукам природы',
+        'Проверить свою экипировку',
+        'Изучить карту местности'
+    ];
+    
+    // Избегаем повторений предыдущего действия
+    const allActions = [...explorationActions, ...movementActions, ...interactionActions];
+    return allActions.filter(action => action !== previousAction);
+}
+
+function getContextBasedActions(scene) {
+    const sceneLower = scene.toLowerCase();
+    
+    if (sceneLower.includes('лес') || sceneLower.includes('дерев')) {
+        return [
+            'Собрать лекарственные травы',
+            'Поискать следы диких животных',
+            'Найти источник воды'
+        ];
+    }
+    
+    if (sceneLower.includes('руины') || sceneLower.includes('развал')) {
+        return [
+            'Исследовать древние надписи',
+            'Поискать ценные артефакты',
+            'Проверить устойчивость конструкций'
+        ];
+    }
+    
+    if (sceneLower.includes('замок') || sceneLower.includes('башня')) {
+        return [
+            'Попытаться найти тайный проход',
+            'Изучить архитектуру строения',
+            'Подслушать разговоры внутри'
+        ];
+    }
+    
+    if (sceneLower.includes('кладбище') || sceneLower.includes('могил')) {
+        return [
+            'Прочитать надписи на надгробиях',
+            'Поискать признаки нежити',
+            'Найти самую старую могилу'
+        ];
+    }
+    
+    return [
+        'Оценить текущую ситуацию',
+        'Подготовиться к неожиданностям'
+    ];
+}
+
+function selectBestActions(actions, count) {
+    // Убираем дубликаты
+    const uniqueActions = [...new Set(actions)];
+    
+    // Если действий мало, возвращаем все
+    if (uniqueActions.length <= count) {
+        return uniqueActions;
+    }
+    
+    // Случайно выбираем нужное количество
+    const shuffled = uniqueActions.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
 }
 
 async function generateGameContent(character, sessionMessages, userAction = null) {
