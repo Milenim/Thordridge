@@ -1,28 +1,21 @@
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=MedievalSharp&family=Uncial+Antiqua&family=Metamorphous&display=swap');
 
 :root {
-    /* Новая атмосферная цветовая палитра */
-    --primary-gold: #ffd700;
-    --bright-gold: #ffed4e;
+    /* Новая элегантная цветовая палитра */
+    --primary-gold: #d4af37;
     --dark-gold: #b8860b;
-    --accent-silver: #c0c0c0;
-    --deep-purple: #2d1b3d;
-    --medium-purple: #4a2c5a;
-    --dark-slate: #1e1e2e;
-    --medium-slate: #2d2d3d;
-    --light-slate: #3d3d4d;
-    --mystical-blue: #4a90e2;
-    --dark-mystical: #2d5aa0;
-    --shadow-dark: rgba(0, 0, 0, 0.9);
-    --shadow-medium: rgba(0, 0, 0, 0.6);
-    --shadow-light: rgba(0, 0, 0, 0.3);
-    --glow-gold: rgba(255, 215, 0, 0.8);
-    --glow-blue: rgba(74, 144, 226, 0.6);
+    --accent-gold: #f4d03f;
+    --dark-bg: #1a1a1a;
+    --darker-bg: #0f0f0f;
+    --medium-bg: #2a2a2a;
+    --light-bg: #3a3a3a;
     --text-light: #f0f0f0;
-    --text-gold: #ffd700;
-    --text-dark: #1a1a1a;
+    --text-gold: #d4af37;
+    --text-secondary: #cccccc;
+    --border-color: #4a4a4a;
+    --shadow-color: rgba(0, 0, 0, 0.5);
     --border-radius: 8px;
-    --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition: all 0.3s ease;
 }
 
 /* Базовые стили */
@@ -34,89 +27,34 @@
 
 body {
     font-family: 'Cinzel', serif;
-    background: 
-        radial-gradient(circle at 20% 20%, rgba(74, 144, 226, 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(45, 27, 61, 0.2) 0%, transparent 50%),
-        linear-gradient(135deg, 
-            #1e1e2e 0%, 
-            #2d1b3d 25%, 
-            #1e1e2e 50%, 
-            #2d2d3d 75%, 
-            #1e1e2e 100%),
-        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60"><defs><pattern id="stars" width="60" height="60" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1" fill="rgba(255,215,0,0.1)"/><circle cx="45" cy="45" r="0.5" fill="rgba(255,215,0,0.08)"/><circle cx="30" cy="5" r="0.8" fill="rgba(74,144,226,0.12)"/><circle cx="5" cy="35" r="0.6" fill="rgba(255,215,0,0.06)"/><circle cx="55" cy="25" r="1.2" fill="rgba(74,144,226,0.1)"/></pattern></defs><rect width="60" height="60" fill="url(%23stars)"/></svg>');
+    background: var(--darker-bg);
     color: var(--text-light);
     min-height: 100vh;
     position: relative;
-    overflow-x: hidden;
-    background-attachment: fixed;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
 }
 
-/* Анимированные фоновые эффекты */
-body::before {
-    content: '';
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: 
-        radial-gradient(circle at 30% 40%, rgba(255, 215, 0, 0.03) 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, rgba(74, 144, 226, 0.05) 0%, transparent 50%);
-    pointer-events: none;
-    z-index: -1;
-    animation: mysticalGlow 8s ease-in-out infinite alternate;
-}
-
-@keyframes mysticalGlow {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.7; }
-}
-
-/* Улучшенные контейнеры */
+/* Упрощенные контейнеры */
 .container {
-    background: rgba(30, 30, 46, 0.9);
-    backdrop-filter: blur(15px);
-    border: 2px solid transparent;
+    background: var(--dark-bg);
+    border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 2rem;
     position: relative;
-    overflow: hidden;
     box-shadow: 
-        0 25px 50px rgba(0, 0, 0, 0.5),
-        0 15px 30px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 215, 0, 0.1),
-        inset 0 -1px 0 rgba(74, 144, 226, 0.1);
+        0 10px 30px var(--shadow-color),
+        0 5px 15px rgba(0, 0, 0, 0.3);
+    transition: var(--transition);
 }
 
-.container::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
-    border-radius: var(--border-radius);
-    pointer-events: none;
-    z-index: -1;
-}
-
-.container::after {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(135deg, 
-        var(--primary-gold) 0%, 
-        var(--mystical-blue) 25%, 
-        var(--primary-gold) 50%, 
-        var(--dark-mystical) 75%, 
-        var(--primary-gold) 100%);
-    border-radius: var(--border-radius);
-    z-index: -2;
-    opacity: 0.6;
+.container:hover {
+    border-color: var(--primary-gold);
+    box-shadow: 
+        0 15px 40px var(--shadow-color),
+        0 8px 20px rgba(0, 0, 0, 0.4),
+        0 0 20px rgba(212, 175, 55, 0.1);
 }
 
 /* Заголовки */
@@ -124,13 +62,9 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'MedievalSharp', cursive;
     font-weight: 400;
     color: var(--primary-gold);
-    text-shadow: 
-        0 0 15px var(--glow-gold),
-        0 0 30px var(--glow-gold),
-        2px 2px 6px rgba(0, 0, 0, 0.8);
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
     margin-bottom: 1rem;
     letter-spacing: 1px;
-    position: relative;
 }
 
 h1 {
@@ -138,23 +72,6 @@ h1 {
     font-family: 'Uncial Antiqua', cursive;
     text-align: center;
     margin-bottom: 1.5rem;
-    animation: titleGlow 3s ease-in-out infinite alternate;
-}
-
-@keyframes titleGlow {
-    0% { 
-        text-shadow: 
-            0 0 15px var(--glow-gold),
-            0 0 30px var(--glow-gold),
-            2px 2px 6px rgba(0, 0, 0, 0.8);
-    }
-    100% { 
-        text-shadow: 
-            0 0 25px var(--glow-gold),
-            0 0 40px var(--glow-gold),
-            0 0 60px rgba(255, 215, 0, 0.3),
-            2px 2px 6px rgba(0, 0, 0, 0.8);
-    }
 }
 
 h2 {
@@ -166,120 +83,62 @@ h3 {
     font-size: 1.8rem;
 }
 
-/* Кнопки в стиле магических рун */
+/* Кнопки */
 button, .btn {
     font-family: 'Cinzel', serif;
     font-weight: 600;
     font-size: 1rem;
     padding: 1rem 2rem;
-    border: none;
+    border: 2px solid var(--primary-gold);
     border-radius: var(--border-radius);
     cursor: pointer;
     position: relative;
     overflow: hidden;
     transition: var(--transition);
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     text-decoration: none;
     display: inline-block;
     text-align: center;
     
-    background: linear-gradient(135deg, 
-        var(--primary-gold) 0%, 
-        var(--bright-gold) 30%, 
-        var(--primary-gold) 70%, 
-        var(--dark-gold) 100%);
-    color: var(--text-dark);
+    background: var(--primary-gold);
+    color: var(--dark-bg);
     box-shadow: 
-        0 8px 25px rgba(255, 215, 0, 0.4),
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 0 rgba(255, 255, 255, 0.3),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.2);
-    
-    border: 2px solid var(--dark-gold);
-}
-
-button::before, .btn::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.6) 50%, 
-        transparent 100%);
-    transition: left 0.8s ease;
-}
-
-button::after, .btn::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.3) 0%, transparent 70%);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s ease, height 0.6s ease;
-    border-radius: 50%;
+        0 6px 20px rgba(212, 175, 55, 0.3),
+        0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 button:hover, .btn:hover {
-    transform: translateY(-3px) scale(1.02);
+    background: var(--accent-gold);
+    transform: translateY(-2px);
     box-shadow: 
-        0 15px 35px rgba(255, 215, 0, 0.5),
-        0 8px 20px rgba(0, 0, 0, 0.4),
-        inset 0 2px 0 rgba(255, 255, 255, 0.4),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.3);
-    background: linear-gradient(135deg, 
-        var(--bright-gold) 0%, 
-        var(--primary-gold) 30%, 
-        var(--bright-gold) 70%, 
-        var(--primary-gold) 100%);
-}
-
-button:hover::before, .btn:hover::before {
-    left: 100%;
-}
-
-button:hover::after, .btn:hover::after {
-    width: 100%;
-    height: 100%;
+        0 10px 30px rgba(212, 175, 55, 0.4),
+        0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 button:active, .btn:active {
-    transform: translateY(-1px) scale(1.01);
+    transform: translateY(0);
     box-shadow: 
-        0 8px 20px rgba(255, 215, 0, 0.4),
-        0 4px 12px rgba(0, 0, 0, 0.3);
+        0 4px 15px rgba(212, 175, 55, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Вторичные кнопки */
 .btn-secondary {
-    background: linear-gradient(135deg, 
-        var(--mystical-blue) 0%, 
-        var(--dark-mystical) 50%, 
-        var(--mystical-blue) 100%);
-    color: var(--text-light);
-    border: 2px solid var(--dark-mystical);
+    background: transparent;
+    color: var(--primary-gold);
+    border: 2px solid var(--primary-gold);
     box-shadow: 
-        0 8px 25px rgba(74, 144, 226, 0.4),
-        0 4px 15px rgba(0, 0, 0, 0.3),
-        inset 0 2px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.2);
+        0 6px 20px rgba(212, 175, 55, 0.2),
+        0 3px 10px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary:hover {
-    background: linear-gradient(135deg, 
-        var(--dark-mystical) 0%, 
-        var(--mystical-blue) 50%, 
-        var(--dark-mystical) 100%);
+    background: var(--primary-gold);
+    color: var(--dark-bg);
     box-shadow: 
-        0 15px 35px rgba(74, 144, 226, 0.5),
-        0 8px 20px rgba(0, 0, 0, 0.4),
-        inset 0 2px 0 rgba(255, 255, 255, 0.3);
+        0 10px 30px rgba(212, 175, 55, 0.4),
+        0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 /* Поля ввода */
@@ -287,37 +146,34 @@ input, select, textarea {
     font-family: 'Cinzel', serif;
     font-size: 1rem;
     padding: 1rem 1.5rem;
-    border: 2px solid var(--medium-purple);
+    border: 2px solid var(--border-color);
     border-radius: var(--border-radius);
-    background: rgba(30, 30, 46, 0.9);
+    background: var(--medium-bg);
     color: var(--text-light);
     transition: var(--transition);
-    backdrop-filter: blur(5px);
     width: 100%;
-    box-shadow: 
-        inset 0 3px 8px rgba(0, 0, 0, 0.4),
-        0 1px 0 rgba(255, 215, 0, 0.1);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--primary-gold);
-    background: rgba(45, 27, 61, 0.9);
+    background: var(--light-bg);
     box-shadow: 
-        0 0 0 4px rgba(255, 215, 0, 0.2),
-        inset 0 3px 8px rgba(0, 0, 0, 0.4),
-        0 8px 20px rgba(255, 215, 0, 0.1);
+        0 0 0 3px rgba(212, 175, 55, 0.2),
+        inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 input::placeholder, textarea::placeholder {
-    color: rgba(240, 240, 240, 0.5);
+    color: var(--text-secondary);
+    opacity: 0.7;
     font-style: italic;
 }
 
 /* Селекты */
 select {
     appearance: none;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23ffd700" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
     background-repeat: no-repeat;
     background-position: right 1.5rem center;
     padding-right: 4rem;
@@ -325,7 +181,7 @@ select {
 }
 
 select option {
-    background: var(--deep-purple);
+    background: var(--dark-bg);
     color: var(--text-light);
     padding: 1rem;
 }
@@ -338,7 +194,7 @@ label {
     color: var(--primary-gold);
     margin-bottom: 0.5rem;
     display: block;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     letter-spacing: 0.5px;
 }
 
@@ -348,7 +204,7 @@ p {
     line-height: 1.7;
     margin-bottom: 1rem;
     color: var(--text-light);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Ошибки */
@@ -358,39 +214,20 @@ p {
     margin: 1rem 0;
     padding: 1rem 1.5rem;
     background: rgba(255, 107, 107, 0.1);
-    border: 2px solid rgba(255, 107, 107, 0.4);
+    border: 2px solid rgba(255, 107, 107, 0.3);
     border-radius: var(--border-radius);
-    backdrop-filter: blur(5px);
     box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
 }
 
 /* Анимации */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(30px); }
+    from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 @keyframes slideIn {
-    from { opacity: 0; transform: translateX(-30px); }
+    from { opacity: 0; transform: translateX(-20px); }
     to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes magicalAppear {
-    0% { 
-        opacity: 0; 
-        transform: scale(0.8) rotate(-5deg); 
-        filter: blur(5px);
-    }
-    50% { 
-        opacity: 0.7; 
-        transform: scale(1.05) rotate(2deg); 
-        filter: blur(2px);
-    }
-    100% { 
-        opacity: 1; 
-        transform: scale(1) rotate(0deg); 
-        filter: blur(0px);
-    }
 }
 
 /* Модальные окна */
@@ -401,17 +238,17 @@ p {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    backdrop-filter: blur(15px);
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    animation: fadeIn 0.4s ease;
+    animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-    background: rgba(30, 30, 46, 0.95);
-    border: 3px solid var(--primary-gold);
+    background: var(--dark-bg);
+    border: 2px solid var(--primary-gold);
     border-radius: var(--border-radius);
     padding: 2.5rem;
     text-align: center;
@@ -419,10 +256,9 @@ p {
     max-width: 500px;
     width: 90%;
     box-shadow: 
-        0 30px 60px rgba(0, 0, 0, 0.6),
-        0 15px 30px rgba(0, 0, 0, 0.4),
-        inset 0 2px 0 rgba(255, 215, 0, 0.2);
-    animation: magicalAppear 0.6s ease;
+        0 20px 60px rgba(0, 0, 0, 0.6),
+        0 10px 30px rgba(0, 0, 0, 0.4);
+    animation: slideIn 0.4s ease;
 }
 
 /* Адаптивность */
@@ -498,4 +334,3 @@ p {
 .rounded { border-radius: var(--border-radius); }
 .shadow { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
 .shadow-lg { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
-.transition { transition: var(--transition); }

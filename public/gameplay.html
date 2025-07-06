@@ -4,388 +4,210 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Терновая гряда D&D - Геймплей</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
+            margin: 0;
             padding: 20px;
             min-height: 100vh;
+            font-family: 'Cinzel', serif;
+            color: var(--text-light);
         }
-        
         .main-container {
             display: flex;
             justify-content: center;
-            max-width: 1400px;
+            align-items: flex-start;
+            max-width: 1200px;
             width: 100%;
             margin: 0 auto;
             gap: 20px;
-            min-height: calc(100vh - 40px);
         }
-        
-        .sidebar-left, .sidebar-right {
-            flex: 0 0 25%;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .character-info, .inventory {
-            flex: 1;
+        .character-info, .scene, .actions {
+            flex: 0 0 400px;
             text-align: left;
-            overflow-y: auto;
         }
-        
-        .scene {
-            flex: 0 0 50%;
-            text-align: left;
-            overflow-y: auto;
-            max-height: calc(100vh - 100px);
+        .character-info h2, .scene h2, .actions h2 {
+            font-size: 1.8em;
+            color: var(--primary-gold);
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            margin-top: 0;
         }
-        
-        .sidebar-right {
-            text-align: left;
-            overflow-y: auto;
-        }
-        
-        .actions {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 50%;
-            text-align: center;
-            z-index: 100;
-        }
-        
-        .actions .container {
-            backdrop-filter: blur(20px);
-            border: 3px solid var(--primary-gold);
-            background: rgba(30, 30, 46, 0.95);
-            box-shadow: 
-                0 15px 40px rgba(0, 0, 0, 0.6),
-                0 8px 25px rgba(255, 215, 0, 0.2),
-                inset 0 2px 0 rgba(255, 215, 0, 0.1);
-        }
-        
-        .ability {
-            padding: 15px;
+        .character-info p, .scene p, .actions p {
+            font-size: 1.1em;
             margin: 10px 0;
-            background: rgba(30, 30, 46, 0.9);
-            border: 2px solid var(--mystical-blue);
+        }
+        .actions button {
+            width: 100%;
+            padding: 10px;
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+            border: 2px solid var(--primary-gold);
             border-radius: var(--border-radius);
             cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 4px 15px rgba(74, 144, 226, 0.2),
-                inset 0 1px 0 rgba(255, 215, 0, 0.1);
-        }
-        
-        .ability::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(255, 215, 0, 0.15) 50%, 
-                transparent 100%);
-            transition: left 0.8s ease;
-        }
-        
-        .ability:hover {
-            transform: translateY(-3px);
-            box-shadow: 
-                0 12px 30px rgba(74, 144, 226, 0.3),
-                0 6px 20px rgba(0, 0, 0, 0.4),
-                inset 0 1px 0 rgba(255, 215, 0, 0.2);
-            border-color: var(--primary-gold);
-            background: rgba(40, 40, 56, 0.95);
-        }
-        
-        .ability:hover::before {
-            left: 100%;
-        }
-        
-        .ability p {
-            margin: 0;
-            font-size: 1rem;
-            position: relative;
-            z-index: 1;
-            color: var(--text-light);
-        }
-        
-        .ability strong {
-            color: var(--primary-gold);
-            font-family: 'MedievalSharp', cursive;
-            font-size: 1.1rem;
-            text-shadow: 0 0 8px var(--glow-gold);
-        }
-        
-        .character-stats {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin: 15px 0;
-        }
-        
-        .stat-item {
-            background: rgba(40, 40, 56, 0.7);
-            padding: 10px 15px;
-            border-radius: var(--border-radius);
-            border: 1px solid rgba(255, 215, 0, 0.4);
-            box-shadow: 
-                0 2px 8px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 215, 0, 0.2);
-            transition: var(--transition);
-        }
-        
-        .stat-item:hover {
-            transform: translateY(-2px);
-            box-shadow: 
-                0 4px 15px rgba(255, 215, 0, 0.3),
-                0 2px 8px rgba(0, 0, 0, 0.4);
-            border-color: var(--primary-gold);
-        }
-        
-        .stat-item strong {
-            color: var(--primary-gold);
             font-family: 'Cinzel', serif;
-            font-weight: 600;
-            text-shadow: 0 0 5px var(--glow-gold);
+            font-size: 16px;
+            transition: var(--transition);
+            margin: 5px 0;
         }
-        
-        @media (max-width: 1200px) {
+        .actions button:hover {
+            background: var(--accent-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4);
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 1em;
+            margin: 10px 0;
+        }
+        @media (max-width: 1000px) {
             .main-container {
                 flex-direction: column;
-                height: auto;
+                align-items: center;
             }
-            
-            .sidebar-left, .scene, .sidebar-right {
-                flex: 1 1 100%;
-                max-width: 100%;
-            }
-            
-            .actions {
-                position: static;
-                transform: none;
-                width: 100%;
+            .character-info, .scene, .actions {
                 margin-top: 20px;
             }
-            
-            .scene {
-                max-height: none;
-            }
         }
-        
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            
-            .character-stats {
-                grid-template-columns: 1fr;
-            }
-            
-            .ability {
-                padding: 12px;
-                margin: 8px 0;
-            }
-            
-            .ability p {
-                font-size: 0.9rem;
-            }
-            
-            .stat-item {
-                padding: 8px 12px;
-            }
+        body {
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        .container {
+            transition: opacity 0.5s ease-in-out;
+        }
+        h1, h2, h3 {
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.6);
+        }
+        select {
+            background: var(--medium-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-light);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+        select:focus {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.2);
+        }
+        #characterInfo, #diceRoll {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+        }
+        #characterStats p, #characterInventory li {
+            margin: 5px 0;
+            font-size: 1.1em;
         }
     </style>
 </head>
 <body>
     <div class="main-container">
-        <div class="sidebar-left">
-            <div class="container character-info">
-                <h2>Персонаж</h2>
-                <p id="character-name">Загрузка...</p>
-                <p id="character-race"></p>
-                <p id="character-class"></p>
-                <div id="character-stats" class="character-stats"></div>
-                <div id="error" class="error" style="display: none;"></div>
+        <div class="container">
+            <h1>Терновая гряда D&D</h1>
+            <div id="characterInfo">
+                <h2>Персонаж: <span id="characterName"></span></h2>
+                <p>Раса: <span id="characterRace"></span> | Класс: <span id="characterClass"></span></p>
+                <p>Уровень: <span id="characterLevel"></span> | Опыт: <span id="characterXP"></span></p>
+                <h3>Характеристики</h3>
+                <div id="characterStats"></div>
+                <h3>Инвентарь</h3>
+                <ul id="characterInventory"></ul>
             </div>
-            
-            <div class="container inventory">
-                <h2>Инвентарь</h2>
-                <p>Инвентарь пока пуст. Здесь будут отображаться предметы персонажа.</p>
+            <div id="diceRoll">
+                <h3>Бросок кубиков</h3>
+                <select id="diceType">
+                    <option value="d4">d4</option>
+                    <option value="d6">d6</option>
+                    <option value="d8">d8</option>
+                    <option value="d10">d10</option>
+                    <option value="d12">d12</option>
+                    <option value="d20" selected>d20</option>
+                </select>
+                <button onclick="rollDice()">Бросить кубик</button>
+                <p id="diceResult"></p>
             </div>
+            <div id="error" class="error"></div>
         </div>
-        
         <div class="container scene">
             <h2>Сцена</h2>
-            <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Вдалеке слышны шорохи, а тени между деревьями кажутся живыми. Что будете делать?</p>
+            <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Что будете делать?</p>
         </div>
-        
-        <div class="sidebar-right">
-            <div class="container">
-                <h2>Умения и заклинания</h2>
-                <div id="abilities"></div>
-            </div>
-        </div>
-    </div>
-    
-    <div class="actions">
-        <div class="container">
-            <h3>Действия</h3>
-            <button onclick="performAction('Осмотреть тропу')" class="w-full mb-2">
-                Осмотреть тропу
-            </button>
-            <button onclick="performAction('Пойти в деревню')" class="w-full mb-2">
-                Пойти в деревню
-            </button>
-            <button onclick="performAction('Остаться на месте')" class="w-full">
-                Остаться на месте
-            </button>
+        <div class="container actions">
+            <h2>Действия</h2>
+            <button onclick="alert('Вы осматриваете тропу...')">Осмотреть тропу</button>
+            <button onclick="alert('Вы идёте в деревню...')">Пойти в деревню</button>
+            <button onclick="alert('Вы решаете остаться на месте...')">Остаться на месте</button>
         </div>
     </div>
-    
-    <script>
-        const classAbilities = {
-            'Воин': [
-                { name: 'Боевой стиль', description: 'Выберите стиль боя: Двуручное оружие (+2 к урону), Защита (+1 к КД) или Стрельба (+2 к атаке дальнобойным оружием).', type: 'passive' },
-                { name: 'Вторая атака', description: 'Вы можете атаковать дважды за одно действие атаки.', type: 'active' },
-                { name: 'Манёвр', description: 'Добавьте 1к8 к одной атаке, защите или проверке навыка (3/день).', type: 'active' },
-                { name: 'Стойкость', description: 'Получаете временные хиты, равные 5 + модификатор Телосложения (1/день).', type: 'active' }
-            ],
-            'Варвар': [
-                { name: 'Ярость', description: 'Входите в ярость, получая бонус +2 к урону и сопротивление физическому урону. 2/день.', type: 'active' },
-                { name: 'Неразрушимость', description: 'При получении смертельного урона остаётесь с 1 хитом (1/день).', type: 'passive' },
-                { name: 'Бешеная атака', description: 'Атакуйте с преимуществом, но получаете штраф -5 к КД до следующего хода (2/день).', type: 'active' },
-                { name: 'Звериный инстинкт', description: 'Преимущество на проверки Инициативы и Восприятия.', type: 'passive' }
-            ],
-            'Монах': [
-                { name: 'Бездоспешный бой', description: 'Ваше КД равно 10 + модификатор Ловкости + модификатор Мудрости без доспехов.', type: 'passive' },
-                { name: 'Поражающий удар', description: 'Тратите 1 ки для нанесения дополнительного урона (1к4). 3/день.', type: 'active' },
-                { name: 'Шаг ветра', description: 'Тратите 1 ки для удвоения скорости и прыжков на один ход (3/день).', type: 'active' },
-                { name: 'Уклонение', description: 'Тратите 1 ки для наложения эффекта Уклонения (спасброски Ловкости с преимуществом). 2/день.', type: 'active' }
-            ],
-            'Чародей': [
-                { name: 'Гибкие чары', description: 'Конвертируйте 2 очка чар в ячейку заклинаний 1 уровня (1/день).', type: 'active' },
-                { name: 'Огненный шар', description: 'Заклинание: наносит 8к6 урона огнём в радиусе 20 футов. Спасбросок Ловкости (Сл 13). 1/день.', type: 'active' },
-                { name: 'Магическая кровь', description: 'Добавьте +2 к спасброскам против магии.', type: 'passive' },
-                { name: 'Очарование', description: 'Заклинание: одна цель в радиусе 30 футов становится очарованной на 1 минуту. Спасбросок Мудрости (Сл 13). 2/день.', type: 'active' }
-            ],
-            'Друид': [
-                { name: 'Дикая форма', description: 'Превращайтесь в зверя (например, волка) с хп 15 и КД 13. 2/день.', type: 'active' },
-                { name: 'Лечащее слово', description: 'Заклинание: восстанавливает 1к4+4 хитов союзнику. 3/день.', type: 'active' },
-                { name: 'Природный барьер', description: 'Заклинание: создаёт стену из шипов в радиусе 15 футов, нанося 2к6 урона при прохождении. Спасбросок Ловкости (Сл 13). 2/день.', type: 'active' },
-                { name: 'Чувство природы', description: 'Преимущество на проверки Выживания и Природы.', type: 'passive' }
-            ],
-            'Волшебник': [
-                { name: 'Магический дротик', description: 'Заклинание: наносит 1к4+1 урона силой на расстоянии 120 футов. Без ограничений.', type: 'active' },
-                { name: 'Щит', description: 'Заклинание: +5 к КД до конца хода. 2/день.', type: 'active' },
-                { name: 'Невидимость', description: 'Заклинание: становитесь невидимым на 1 час или до атаки/заклинания. 1/день.', type: 'active' },
-                { name: 'Арканное восстановление', description: 'Восстанавливайте ячейки заклинаний 1 уровня (1/день).', type: 'active' }
-            ],
-            'Жрец': [
-                { name: 'Канал божественности', description: 'Изгоняйте нежить или восстанавливайте 2к8 хитов союзникам в радиусе 30 футов. 2/день.', type: 'active' },
-                { name: 'Священное пламя', description: 'Заклинание: наносит 1к8 урона излучением. Спасбросок Ловкости (Сл 13). Без ограничений.', type: 'active' },
-                { name: 'Благословение', description: 'Заклинание: до 3 союзников в радиусе 30 футов получают +1к4 к атакам и спасброскам на 1 минуту. 2/день.', type: 'active' },
-                { name: 'Божественная защита', description: 'Получаете сопротивление к урону от заклинаний.', type: 'passive' }
-            ],
-            'Паладин': [
-                { name: 'Божественный удар', description: 'Добавляет 2к8 урона излучением к атаке оружием. 2/день.', type: 'active' },
-                { name: 'Лечение наложением рук', description: 'Восстанавливает до 5 хитов союзнику касанием. 1/день.', type: 'active' },
-                { name: 'Аура защиты', description: 'Вы и союзники в радиусе 10 футов получаете +2 к спасброскам.', type: 'passive' },
-                { name: 'Карающий удар', description: 'Добавляет 3к8 урона излучением против нежити или демонов. 1/день.', type: 'active' }
-            ],
-            'Колдун': [
-                { name: 'Адский укор', description: 'Заклинание: наносит 2к10 урона силой при получении урона. 2/день.', type: 'active' },
-                { name: 'Чудотворство', description: 'Заклинание: создаёт незначительный магический эффект (звук, свет). Без ограничений.', type: 'active' },
-                { name: 'Тёмное зрение', description: 'Заклинание: видите в магической и обычной тьме на 60 футов. 2/день.', type: 'active' },
-                { name: 'Проклятье', description: 'Заклинание: цель получает -1к4 к атакам и спасброскам на 1 минуту. Спасбросок Мудрости (Сл 13). 2/день.', type: 'active' }
-            ],
-            'Следопыт': [
-                { name: 'Избранный враг', description: 'Получаете +2 к урону против выбранного типа врагов (например, зверей).', type: 'passive' },
-                { name: 'Меткий выстрел', description: 'Дальнобойная атака с +4 к попаданию. 3/день.', type: 'active' },
-                { name: 'Ловушка', description: 'Создайте ловушку, наносящую 2к6 урона при срабатывании. Спасбросок Ловкости (Сл 13). 2/день.', type: 'active' },
-                { name: 'Чутьё следопыта', description: 'Преимущество на проверки Следопытства и Восприятия.', type: 'passive' }
-            ],
-            'Плут': [
-                { name: 'Удар исподтишка', description: 'Добавляет 2к6 урона при атаке с преимуществом или рядом с союзником.', type: 'active' },
-                { name: 'Скрытность', description: 'Получаете преимущество на проверки Скрытности. 3/день.', type: 'active' },
-                { name: 'Ускользание', description: 'Избегайте урона от заклинаний или эффектов при успешном спасброске Ловкости (2/день).', type: 'active' },
-                { name: 'Ловкость рук', description: 'Преимущество на проверки Ловкости рук и Воровских инструментов.', type: 'passive' }
-            ]
-        };
 
+    <script>
         async function loadCharacter() {
             const urlParams = new URLSearchParams(window.location.search);
             const characterId = urlParams.get('characterId');
-            const errorDiv = document.getElementById('error');
-            
             if (!characterId) {
-                errorDiv.textContent = 'Персонаж не выбран';
-                errorDiv.style.display = 'block';
-                setTimeout(() => window.location.href = '/login.html', 2000);
+                document.getElementById('error').textContent = 'Персонаж не выбран';
                 return;
             }
-
             try {
-                const response = await fetch('/api/characters');
-                const characters = await response.json();
-                const character = characters.find(c => c.id === parseInt(characterId));
-                
-                if (!character) {
-                    errorDiv.textContent = 'Персонаж не найден';
-                    errorDiv.style.display = 'block';
-                    setTimeout(() => window.location.href = '/login.html', 2000);
-                    return;
+                const response = await fetch(`/api/character/${characterId}`);
+                const character = await response.json();
+                if (!response.ok) {
+                    throw new Error(character.message || 'Ошибка загрузки персонажа');
                 }
-
-                document.getElementById('character-name').innerHTML = `<strong>Имя:</strong> ${character.name}`;
-                document.getElementById('character-race').innerHTML = `<strong>Раса:</strong> ${character.race}`;
-                document.getElementById('character-class').innerHTML = `<strong>Класс:</strong> ${character.class}`;
-                
-                document.getElementById('character-stats').innerHTML = `
-                    <div class="stat-item"><strong>Сила:</strong> ${character.stats.strength}</div>
-                    <div class="stat-item"><strong>Ловкость:</strong> ${character.stats.dexterity}</div>
-                    <div class="stat-item"><strong>Телосложение:</strong> ${character.stats.constitution}</div>
-                    <div class="stat-item"><strong>Мудрость:</strong> ${character.stats.wisdom}</div>
-                    <div class="stat-item"><strong>Интеллект:</strong> ${character.stats.intelligence}</div>
-                    <div class="stat-item"><strong>Харизма:</strong> ${character.stats.charisma}</div>
+                document.getElementById('characterName').textContent = character.name;
+                document.getElementById('characterRace').textContent = character.race;
+                document.getElementById('characterClass').textContent = character.class;
+                document.getElementById('characterLevel').textContent = character.level;
+                document.getElementById('characterXP').textContent = character.xp;
+                const statsDiv = document.getElementById('characterStats');
+                statsDiv.innerHTML = `
+                    <p>Сила: ${character.stats.strength}</p>
+                    <p>Ловкость: ${character.stats.dexterity}</p>
+                    <p>Телосложение: ${character.stats.constitution}</p>
+                    <p>Мудрость: ${character.stats.wisdom}</p>
+                    <p>Интеллект: ${character.stats.intelligence}</p>
+                    <p>Харизма: ${character.stats.charisma}</p>
                 `;
-                
-                const abilities = classAbilities[character.class] || [];
-                document.getElementById('abilities').innerHTML = abilities.map(ability => `
-                    <div class="ability" onclick="useAbility('${ability.name}', '${ability.type}')">
-                        <p><strong>${ability.name}</strong>: ${ability.description}</p>
-                    </div>
-                `).join('');
+                const inventoryUl = document.getElementById('characterInventory');
+                inventoryUl.innerHTML = character.inventory.length
+                    ? character.inventory.map(item => `<li>${item.item} (x${item.quantity})</li>`).join('')
+                    : '<li>Инвентарь пуст</li>';
             } catch (err) {
-                console.error('Error loading character:', err);
-                errorDiv.textContent = 'Ошибка при загрузке персонажа';
-                errorDiv.style.display = 'block';
-                setTimeout(() => window.location.href = '/login.html', 2000);
+                document.getElementById('error').textContent = err.message;
             }
         }
 
-        function performAction(action) {
-            const scene = document.querySelector('.scene p');
-            scene.innerHTML += `<br><br><strong>Действие:</strong> ${action}. (В разработке: результат действия будет добавлен позже.)`;
-            scene.scrollTop = scene.scrollHeight;
+        function rollDice() {
+            const diceType = document.getElementById('diceType').value;
+            const max = parseInt(diceType.slice(1));
+            const result = Math.floor(Math.random() * max) + 1;
+            const urlParams = new URLSearchParams(window.location.search);
+            const characterId = urlParams.get('characterId');
+            fetch('/api/roll', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ characterId, diceType, result })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('diceResult').textContent = `Бросок ${diceType}: ${result}`;
+                })
+                .catch(err => {
+                    document.getElementById('error').textContent = 'Ошибка при броске кубика';
+                });
         }
 
-        function useAbility(name, type) {
-            const scene = document.querySelector('.scene p');
-            scene.innerHTML += `<br><br><strong>Умение использовано:</strong> ${name} (${type === 'active' ? 'активное' : 'пассивное'}). (В разработке: эффект будет добавлен позже.)`;
-            scene.scrollTop = scene.scrollHeight;
-        }
-
-        window.onload = function() {
-            loadCharacter();
-        };
+        window.onload = loadCharacter;
     </script>
 </body>
 </html>
