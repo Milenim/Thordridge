@@ -1,24 +1,24 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=MedievalSharp&family=Uncial+Antiqua&family=Metamorphous&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
 
 :root {
-    /* Новая элегантная цветовая палитра */
-    --primary-gold: #d4af37;
-    --dark-gold: #b8860b;
-    --accent-gold: #f4d03f;
-    --dark-bg: #1a1a1a;
-    --darker-bg: #0f0f0f;
-    --medium-bg: #2a2a2a;
-    --light-bg: #3a3a3a;
-    --text-light: #f0f0f0;
-    --text-gold: #d4af37;
-    --text-secondary: #cccccc;
-    --border-color: #4a4a4a;
-    --shadow-color: rgba(0, 0, 0, 0.5);
-    --border-radius: 8px;
-    --transition: all 0.3s ease;
+    --primary-gold: #d4a017;
+    --dark-gold: #a67c00;
+    --light-gold: #f4d03f;
+    --accent-copper: #b87333;
+    --deep-brown: #2c1810;
+    --medium-brown: #4a2c1a;
+    --light-parchment: #f5f2e8;
+    --dark-parchment: #e8e0d0;
+    --shadow-dark: rgba(0, 0, 0, 0.8);
+    --shadow-light: rgba(0, 0, 0, 0.4);
+    --glow-gold: rgba(212, 160, 23, 0.6);
+    --text-light: #e0d8c3;
+    --text-dark: #1a1a1a;
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Базовые стили */
+/* Общий стиль страницы */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -26,70 +26,198 @@
 }
 
 body {
-    font-family: 'Cinzel', serif;
-    background: var(--darker-bg);
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c1810 50%, #1a1a1a 100%);
     color: var(--text-light);
     min-height: 100vh;
     position: relative;
-    background-image: 
-        radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.05) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(212, 175, 55, 0.03) 0%, transparent 50%);
+    overflow-x: hidden;
 }
 
-/* Упрощенные контейнеры */
+/* Полноэкранный режим для Telegram Web App */
+@media (max-width: 768px) {
+    html, body {
+        height: 100vh;
+        overflow: hidden;
+    }
+    
+    body {
+        padding: 0;
+        margin: 0;
+    }
+    
+    /* Убираем стандартные отступы в Telegram */
+    .tg-viewport {
+        height: 100vh !important;
+    }
+}
+
+/* Telegram Web App полноэкранный режим */
+.telegram-webapp {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+/* Стилизация ползунков (scrollbars) */
+/* Webkit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(44, 24, 16, 0.8);
+    border-radius: 4px;
+    border: 1px solid rgba(74, 44, 26, 0.6);
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, 
+        var(--primary-gold) 0%, 
+        var(--accent-copper) 50%, 
+        var(--dark-gold) 100%);
+    border-radius: 4px;
+    border: 1px solid rgba(212, 160, 23, 0.3);
+    box-shadow: 
+        0 0 3px rgba(212, 160, 23, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, 
+        var(--light-gold) 0%, 
+        var(--primary-gold) 50%, 
+        var(--accent-copper) 100%);
+    box-shadow: 
+        0 0 5px rgba(212, 160, 23, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(135deg, 
+        var(--dark-gold) 0%, 
+        var(--accent-copper) 100%);
+}
+
+::-webkit-scrollbar-corner {
+    background: rgba(44, 24, 16, 0.8);
+}
+
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-gold) rgba(44, 24, 16, 0.8);
+}
+
+/* Для Internet Explorer и старых Edge */
+body {
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/* Фоновые эффекты */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(212, 160, 23, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(184, 115, 51, 0.1) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(212,160,23,0.05)"/><circle cx="75" cy="75" r="1.5" fill="rgba(212,160,23,0.03)"/><circle cx="50" cy="10" r="0.5" fill="rgba(212,160,23,0.02)"/><circle cx="10" cy="60" r="1" fill="rgba(212,160,23,0.04)"/><circle cx="90" cy="40" r="0.8" fill="rgba(212,160,23,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Улучшенные контейнеры */
 .container {
-    background: var(--dark-bg);
-    border: 2px solid var(--border-color);
+    background: linear-gradient(135deg, 
+        rgba(44, 24, 16, 0.95) 0%, 
+        rgba(74, 44, 26, 0.9) 50%, 
+        rgba(44, 24, 16, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
     border-radius: var(--border-radius);
     padding: 2rem;
     position: relative;
+    overflow: hidden;
     box-shadow: 
-        0 10px 30px var(--shadow-color),
-        0 5px 15px rgba(0, 0, 0, 0.3);
-    transition: var(--transition);
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(212, 160, 23, 0.2);
 }
 
-.container:hover {
-    border-color: var(--primary-gold);
-    box-shadow: 
-        0 15px 40px var(--shadow-color),
-        0 8px 20px rgba(0, 0, 0, 0.4),
-        0 0 20px rgba(212, 175, 55, 0.1);
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(212, 160, 23, 0.1) 0%, 
+        transparent 30%, 
+        transparent 70%, 
+        rgba(212, 160, 23, 0.05) 100%);
+    border-radius: var(--border-radius);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, 
+        var(--primary-gold) 0%, 
+        var(--accent-copper) 25%, 
+        var(--primary-gold) 50%, 
+        var(--dark-gold) 75%, 
+        var(--primary-gold) 100%);
+    border-radius: var(--border-radius);
+    z-index: -2;
+    opacity: 0.8;
 }
 
 /* Заголовки */
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'MedievalSharp', cursive;
-    font-weight: 400;
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
     color: var(--primary-gold);
-    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.8);
+    text-shadow: 
+        0 0 10px var(--glow-gold),
+        0 0 20px var(--glow-gold),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
     margin-bottom: 1rem;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 h1 {
-    font-size: 2.8rem;
-    font-family: 'Uncial Antiqua', cursive;
-    text-align: center;
-    margin-bottom: 1.5rem;
+    font-size: 2.5rem;
+    font-weight: 700;
 }
 
 h2 {
-    font-size: 2.2rem;
+    font-size: 2rem;
     margin-bottom: 1.5rem;
 }
 
 h3 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
 
-/* Кнопки */
+/* Улучшенные кнопки */
 button, .btn {
     font-family: 'Cinzel', serif;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 1rem;
-    padding: 1rem 2rem;
-    border: 2px solid var(--primary-gold);
+    padding: 0.75rem 1.5rem;
+    border: none;
     border-radius: var(--border-radius);
     cursor: pointer;
     position: relative;
@@ -101,56 +229,78 @@ button, .btn {
     display: inline-block;
     text-align: center;
     
-    background: var(--primary-gold);
-    color: var(--dark-bg);
+    background: linear-gradient(135deg, 
+        var(--primary-gold) 0%, 
+        var(--light-gold) 50%, 
+        var(--primary-gold) 100%);
+    color: var(--text-dark);
     box-shadow: 
-        0 6px 20px rgba(212, 175, 55, 0.3),
-        0 3px 10px rgba(0, 0, 0, 0.2);
+        0 4px 15px rgba(212, 160, 23, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+button::before, .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        transparent 100%);
+    transition: left 0.6s ease;
 }
 
 button:hover, .btn:hover {
-    background: var(--accent-gold);
     transform: translateY(-2px);
     box-shadow: 
-        0 10px 30px rgba(212, 175, 55, 0.4),
-        0 5px 15px rgba(0, 0, 0, 0.3);
+        0 8px 25px rgba(212, 160, 23, 0.4),
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+button:hover::before, .btn:hover::before {
+    left: 100%;
 }
 
 button:active, .btn:active {
     transform: translateY(0);
     box-shadow: 
-        0 4px 15px rgba(212, 175, 55, 0.3),
-        0 2px 8px rgba(0, 0, 0, 0.2);
+        0 2px 10px rgba(212, 160, 23, 0.3),
+        0 1px 5px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+button:disabled, .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 /* Вторичные кнопки */
 .btn-secondary {
-    background: transparent;
-    color: var(--primary-gold);
-    border: 2px solid var(--primary-gold);
-    box-shadow: 
-        0 6px 20px rgba(212, 175, 55, 0.2),
-        0 3px 10px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg, 
+        var(--accent-copper) 0%, 
+        var(--medium-brown) 50%, 
+        var(--accent-copper) 100%);
+    color: var(--text-light);
 }
 
-.btn-secondary:hover {
-    background: var(--primary-gold);
-    color: var(--dark-bg);
-    box-shadow: 
-        0 10px 30px rgba(212, 175, 55, 0.4),
-        0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-/* Поля ввода */
+/* Поля ввода и селекты */
 input, select, textarea {
-    font-family: 'Cinzel', serif;
+    font-family: 'Playfair Display', serif;
     font-size: 1rem;
-    padding: 1rem 1.5rem;
-    border: 2px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--medium-brown);
     border-radius: var(--border-radius);
-    background: var(--medium-bg);
+    background: rgba(44, 24, 16, 0.8);
     color: var(--text-light);
     transition: var(--transition);
+    backdrop-filter: blur(5px);
     width: 100%;
     box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
@@ -158,32 +308,29 @@ input, select, textarea {
 input:focus, select:focus, textarea:focus {
     outline: none;
     border-color: var(--primary-gold);
-    background: var(--light-bg);
     box-shadow: 
-        0 0 0 3px rgba(212, 175, 55, 0.2),
+        0 0 0 3px rgba(212, 160, 23, 0.2),
         inset 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
 input::placeholder, textarea::placeholder {
-    color: var(--text-secondary);
-    opacity: 0.7;
-    font-style: italic;
+    color: rgba(224, 216, 195, 0.6);
 }
 
 /* Селекты */
 select {
     appearance: none;
-    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4af37" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4a017" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
     background-repeat: no-repeat;
-    background-position: right 1.5rem center;
-    padding-right: 4rem;
+    background-position: right 1rem center;
+    padding-right: 3rem;
     cursor: pointer;
 }
 
 select option {
-    background: var(--dark-bg);
+    background: var(--deep-brown);
     color: var(--text-light);
-    padding: 1rem;
+    padding: 0.5rem;
 }
 
 /* Лейблы */
@@ -194,17 +341,15 @@ label {
     color: var(--primary-gold);
     margin-bottom: 0.5rem;
     display: block;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
-    letter-spacing: 0.5px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* Параграфы */
 p {
     font-size: 1.1rem;
-    line-height: 1.7;
+    line-height: 1.6;
     margin-bottom: 1rem;
     color: var(--text-light);
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 /* Ошибки */
@@ -212,11 +357,11 @@ p {
     color: #ff6b6b;
     font-size: 1rem;
     margin: 1rem 0;
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1rem;
     background: rgba(255, 107, 107, 0.1);
-    border: 2px solid rgba(255, 107, 107, 0.3);
+    border: 1px solid rgba(255, 107, 107, 0.3);
     border-radius: var(--border-radius);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.2);
+    backdrop-filter: blur(5px);
 }
 
 /* Анимации */
@@ -230,6 +375,11 @@ p {
     to { opacity: 1; transform: translateX(0); }
 }
 
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 10px var(--glow-gold), 0 0 20px var(--glow-gold), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+    50% { text-shadow: 0 0 20px var(--glow-gold), 0 0 30px var(--glow-gold), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+}
+
 /* Модальные окна */
 .modal {
     display: none;
@@ -239,7 +389,7 @@ p {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
+    backdrop-filter: blur(10px);
     justify-content: center;
     align-items: center;
     z-index: 1000;
@@ -247,56 +397,46 @@ p {
 }
 
 .modal-content {
-    background: var(--dark-bg);
+    background: linear-gradient(135deg, 
+        var(--deep-brown) 0%, 
+        var(--medium-brown) 50%, 
+        var(--deep-brown) 100%);
     border: 2px solid var(--primary-gold);
     border-radius: var(--border-radius);
-    padding: 2.5rem;
+    padding: 2rem;
     text-align: center;
     color: var(--text-light);
-    max-width: 500px;
+    max-width: 400px;
     width: 90%;
     box-shadow: 
-        0 20px 60px rgba(0, 0, 0, 0.6),
-        0 10px 30px rgba(0, 0, 0, 0.4);
-    animation: slideIn 0.4s ease;
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
 }
 
 /* Адаптивность */
 @media (max-width: 768px) {
     .container {
-        padding: 1.5rem;
-        margin: 1rem;
+        padding: 1rem;
+        margin: 0.5rem;
     }
     
     h1 {
-        font-size: 2.2rem;
+        font-size: 2rem;
     }
     
     h2 {
-        font-size: 1.8rem;
-    }
-    
-    h3 {
         font-size: 1.5rem;
     }
     
     button, .btn {
         font-size: 0.9rem;
-        padding: 0.8rem 1.5rem;
-        letter-spacing: 1px;
+        padding: 0.6rem 1.2rem;
     }
     
     input, select, textarea {
         font-size: 0.9rem;
-        padding: 0.8rem 1.2rem;
-    }
-    
-    label {
-        font-size: 1rem;
-    }
-    
-    p {
-        font-size: 1rem;
+        padding: 0.6rem 0.8rem;
     }
 }
 
@@ -332,5 +472,6 @@ p {
 .select-none { user-select: none; }
 .overflow-hidden { overflow: hidden; }
 .rounded { border-radius: var(--border-radius); }
-.shadow { box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3); }
-.shadow-lg { box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4); }
+.shadow { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+.shadow-lg { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+.transition { transition: var(--transition); }
