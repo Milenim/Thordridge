@@ -291,7 +291,7 @@
                 display: flex;
                 flex-direction: column;
                 height: calc(var(--vh, 1vh) * 100 - 140px); /* Фиксированная высота */
-                gap: 15px;
+                gap: 10px; /* Уменьшаем отступы */
             }
             
             .scene-container {
@@ -306,7 +306,7 @@
             .scene-content {
                 flex: 1;
                 overflow-y: auto;
-                padding: 10px 0;
+                padding: 5px 0; /* Уменьшаем внутренние отступы */
                 max-height: none; /* Убираем ограничение */
             }
             
@@ -323,7 +323,7 @@
             .actions-content {
                 flex: 1;
                 overflow-y: auto;
-                padding: 10px 0;
+                padding: 5px 0; /* Уменьшаем внутренние отступы */
                 /* Улучшенный скролл для WebKit */
                 -webkit-overflow-scrolling: touch;
                 /* Предотвращаем скрытие кнопок */
@@ -613,6 +613,38 @@
         .quest-description {
             font-size: 0.9em;
             color: var(--text-secondary);
+        }
+
+        /* Мобильные стили для информации о локации */
+        @media (max-width: 768px) {
+            .location-info {
+                padding: 8px 12px;
+                margin: 8px 0;
+                border: 1px solid var(--border-color);
+            }
+            
+            .location-name {
+                font-size: 0.9em;
+                margin-bottom: 2px;
+                line-height: 1.2;
+            }
+            
+            .sublocation-name {
+                font-size: 0.8em;
+                margin-bottom: 5px;
+                line-height: 1.1;
+            }
+            
+            .event-info {
+                padding: 6px 8px;
+                margin: 5px 0;
+            }
+            
+            .event-name {
+                font-size: 0.8em;
+                margin-bottom: 2px;
+                line-height: 1.1;
+            }
         }
     </style>
 </head>
