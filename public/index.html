@@ -17,24 +17,24 @@
         
         .page-container {
             width: 100%;
-            max-width: 1800px;
+            max-width: 1600px;
             margin: 0 auto;
         }
         
         .main-container {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 30px;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 25px;
             align-items: flex-start;
         }
         
         .form-container {
-            min-width: 400px;
+            min-width: 380px;
         }
         
         .race-info, .class-info {
-            min-width: 400px;
-            max-height: 80vh;
+            min-width: 380px;
+            max-height: 75vh;
             overflow-y: auto;
         }
         
@@ -42,9 +42,9 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 15px;
-            margin: 20px 0;
-            padding: 15px;
+            gap: 10px;
+            margin: 15px 0;
+            padding: 12px;
             background: rgba(42, 42, 42, 0.6);
             border-radius: var(--border-radius);
             border: 1px solid var(--border-color);
@@ -60,59 +60,66 @@
             flex: 1;
             text-align: left;
             margin-bottom: 0;
-            font-size: 1.1em;
+            font-size: 1rem;
+        }
+        
+        .stat-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
         .stat-container input {
-            width: 80px;
+            width: 60px;
             text-align: center;
-            font-size: 1.2em;
+            font-size: 1.1em;
             font-weight: bold;
+            padding: 8px;
         }
         
         .stat-container button {
-            width: 45px;
-            height: 45px;
+            width: 35px;
+            height: 35px;
             padding: 0;
-            font-size: 1.4rem;
+            font-size: 1.2rem;
             font-weight: bold;
-            min-width: 45px;
+            min-width: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
         
         .points {
-            font-size: 1.4rem;
-            margin: 20px 0;
+            font-size: 1.2rem;
+            margin: 18px 0;
             text-align: center;
             color: var(--primary-gold);
             font-weight: bold;
-            padding: 15px;
+            padding: 12px;
             background: rgba(26, 26, 26, 0.8);
             border-radius: var(--border-radius);
             border: 2px solid var(--primary-gold);
         }
         
         .form-group {
-            margin-bottom: 2rem;
+            margin-bottom: 1.8rem;
         }
         
         .form-group input, .form-group select {
-            font-size: 1.1em;
-            padding: 15px;
+            font-size: 1rem;
+            padding: 12px;
         }
         
         .form-group label {
-            font-size: 1.2em;
-            margin-bottom: 0.8rem;
+            font-size: 1.1em;
+            margin-bottom: 0.6rem;
         }
         
         .description-content {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.5s ease forwards;
-            padding: 20px;
+            padding: 15px;
             background: rgba(26, 26, 26, 0.4);
             border-radius: var(--border-radius);
             margin-top: 10px;
@@ -125,9 +132,9 @@
         
         .submit-button {
             width: 100%;
-            padding: 20px;
-            font-size: 1.3em;
-            margin-top: 30px;
+            padding: 15px;
+            font-size: 1.2em;
+            margin-top: 25px;
         }
         
         /* Планшетная версия */
@@ -158,15 +165,24 @@
                 align-items: flex-start;
             }
             
+            .page-container {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+            
             .main-container {
                 display: block;
                 gap: 20px;
+                width: 100%;
+                max-width: 100%;
             }
             
             .form-container, .race-info, .class-info {
                 width: 100%;
                 min-width: auto;
-                margin-bottom: 20px;
+                margin: 0 auto 20px auto;
+                max-width: 500px;
             }
             
             .race-info, .class-info {
@@ -175,41 +191,29 @@
             }
             
             .stat-container {
-                flex-direction: column;
-                gap: 10px;
-                text-align: center;
-                padding: 15px;
+                padding: 12px;
             }
             
             .stat-container label {
-                width: 100%;
-                margin-bottom: 10px;
-                text-align: center;
-                font-size: 1.1em;
-            }
-            
-            .stat-controls {
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                justify-content: center;
+                font-size: 1rem;
             }
             
             .stat-container input {
-                width: 70px;
-                font-size: 1.3em;
+                width: 55px;
+                font-size: 1.1em;
+                padding: 6px;
             }
             
             .stat-container button {
-                width: 50px;
-                height: 50px;
-                font-size: 1.5rem;
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
             }
             
             .points {
-                font-size: 1.3rem;
-                padding: 15px;
-                margin: 20px 0;
+                font-size: 1.1rem;
+                padding: 12px;
+                margin: 15px 0;
             }
             
             .form-group input, .form-group select {
@@ -225,34 +229,32 @@
         
         /* Улучшенные описания */
         .race-info h2, .class-info h2 {
-            position: sticky;
-            top: 0;
-            background: var(--dark-bg);
-            padding: 10px 0;
-            border-bottom: 2px solid var(--primary-gold);
             margin-bottom: 15px;
-            z-index: 10;
+            position: static;
+            background: transparent;
+            border: none;
+            padding: 0;
         }
         
         .description-content strong {
             color: var(--primary-gold);
-            font-size: 1.1em;
+            font-size: 1em;
         }
         
         .description-content br + strong {
             display: block;
-            margin-top: 15px;
+            margin-top: 12px;
         }
         
         /* Анимации */
         .container {
-            animation: slideInUp 0.6s ease-out;
+            animation: slideInUp 0.5s ease-out;
         }
         
         @keyframes slideInUp {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -261,17 +263,17 @@
         }
         
         .stat-container {
-            animation: slideInLeft 0.4s ease-out;
+            animation: slideInLeft 0.3s ease-out;
         }
         
         .stat-container:nth-child(even) {
-            animation: slideInRight 0.4s ease-out;
+            animation: slideInRight 0.3s ease-out;
         }
         
         @keyframes slideInLeft {
             from {
                 opacity: 0;
-                transform: translateX(-20px);
+                transform: translateX(-15px);
             }
             to {
                 opacity: 1;
@@ -282,12 +284,30 @@
         @keyframes slideInRight {
             from {
                 opacity: 0;
-                transform: translateX(20px);
+                transform: translateX(15px);
             }
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+        
+        /* Центрирование контента */
+        .container {
+            margin: 0 auto;
+        }
+        
+        /* Улучшенные заголовки */
+        h1 {
+            font-size: 2.2rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            font-size: 1.4rem;
         }
     </style>
 </head>

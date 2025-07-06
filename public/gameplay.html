@@ -40,18 +40,39 @@
             display: flex;
             flex-direction: column;
             gap: 20px;
+            height: calc(100vh - 40px);
         }
         
         .scene-container {
             flex: 2;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
         }
         
         .actions-container {
             flex: 1;
+            min-height: 200px;
+            max-height: 300px;
+            display: flex;
+            flex-direction: column;
         }
         
         .character-info, .scene, .actions, .dice-roll {
             min-height: 200px;
+        }
+        
+        .scene-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
+            max-height: calc(100vh - 300px);
+        }
+        
+        .actions-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px 0;
         }
         
         .character-info h2, .scene h2, .actions h2 {
@@ -59,6 +80,7 @@
             color: var(--primary-gold);
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
             margin-top: 0;
+            margin-bottom: 15px;
         }
         
         .character-info p, .scene p, .actions p {
@@ -68,14 +90,14 @@
         
         .actions button {
             width: 100%;
-            padding: 15px;
+            padding: 12px;
             background: var(--primary-gold);
             color: var(--dark-bg);
             border: 2px solid var(--primary-gold);
             border-radius: var(--border-radius);
             cursor: pointer;
             font-family: 'Cinzel', serif;
-            font-size: 16px;
+            font-size: 14px;
             transition: var(--transition);
             margin: 5px 0;
         }
@@ -107,21 +129,22 @@
         .tab-buttons {
             display: flex;
             justify-content: space-around;
-            padding: 10px;
+            padding: 8px;
         }
         
         .tab-button {
             background: transparent;
             border: 2px solid var(--primary-gold);
             color: var(--primary-gold);
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-family: 'Cinzel', serif;
-            font-size: 14px;
+            font-size: 12px;
             transition: var(--transition);
             flex: 1;
-            margin: 0 5px;
+            margin: 0 3px;
+            text-align: center;
         }
         
         .tab-button.active {
@@ -148,28 +171,31 @@
         
         .modal-content-mobile {
             background: var(--dark-bg);
-            margin: 20px;
+            margin: 15px;
             padding: 20px;
+            padding-top: 50px;
             border-radius: var(--border-radius);
             border: 2px solid var(--primary-gold);
-            max-height: calc(100vh - 40px);
+            max-height: calc(100vh - 30px);
             overflow-y: auto;
+            position: relative;
         }
         
         .close-modal {
             position: absolute;
-            top: 10px;
+            top: 15px;
             right: 15px;
             background: none;
             border: none;
             color: var(--primary-gold);
             font-size: 24px;
             cursor: pointer;
-            width: 30px;
-            height: 30px;
+            width: 35px;
+            height: 35px;
             display: flex;
             align-items: center;
             justify-content: center;
+            z-index: 10;
         }
         
         .mobile-content {
@@ -251,6 +277,21 @@
             
             .center-panel {
                 display: block;
+                height: auto;
+            }
+            
+            .scene-container {
+                height: auto;
+                min-height: 300px;
+            }
+            
+            .scene-content {
+                max-height: 400px;
+            }
+            
+            .actions-container {
+                max-height: none;
+                min-height: auto;
             }
             
             .mobile-tabs {
@@ -352,6 +393,30 @@
             margin: 10px 0;
         }
         
+        .dice-controls select {
+            flex: 2;
+            margin: 0;
+        }
+        
+        .dice-controls button {
+            flex: 1;
+            padding: 12px;
+            background: var(--primary-gold);
+            color: var(--dark-bg);
+            border: 2px solid var(--primary-gold);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            font-size: 14px;
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+        
+        .dice-controls button:hover {
+            background: var(--accent-gold);
+            transform: translateY(-1px);
+        }
+        
         .dice-result {
             background: rgba(42, 42, 42, 0.8);
             padding: 10px;
@@ -392,17 +457,19 @@
         <div class="center-panel">
             <div class="container scene scene-container">
                 <h2>Сцена</h2>
-                <div id="sceneContent">
+                <div class="scene-content" id="sceneContent">
                     <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Что будете делать?</p>
                 </div>
             </div>
             
             <div class="container actions actions-container">
                 <h2>Действия</h2>
-                <button onclick="performAction('Осмотреть тропу')">Осмотреть тропу</button>
-                <button onclick="performAction('Пойти в деревню')">Пойти в деревню</button>
-                <button onclick="performAction('Остаться на месте')">Остаться на месте</button>
-                <button onclick="performAction('Исследовать окрестности')">Исследовать окрестности</button>
+                <div class="actions-content">
+                    <button onclick="performAction('Осмотреть тропу')">Осмотреть тропу</button>
+                    <button onclick="performAction('Пойти в деревню')">Пойти в деревню</button>
+                    <button onclick="performAction('Остаться на месте')">Остаться на месте</button>
+                    <button onclick="performAction('Исследовать окрестности')">Исследовать окрестности</button>
+                </div>
             </div>
         </div>
         
@@ -410,21 +477,18 @@
         <div class="right-panel">
             <div class="container dice-roll">
                 <h2>Броски кубиков</h2>
-                <div class="dice-section">
-                    <h3>Бросок кубика</h3>
-                    <div class="dice-controls">
-                        <select id="diceType">
-                            <option value="d4">d4</option>
-                            <option value="d6">d6</option>
-                            <option value="d8">d8</option>
-                            <option value="d10">d10</option>
-                            <option value="d12">d12</option>
-                            <option value="d20" selected>d20</option>
-                        </select>
-                        <button onclick="rollDice()" style="flex: 1;">Бросить</button>
-                    </div>
-                    <div id="diceResult" class="dice-result" style="display: none;"></div>
+                <div class="dice-controls">
+                    <select id="diceType">
+                        <option value="d4">d4</option>
+                        <option value="d6">d6</option>
+                        <option value="d8">d8</option>
+                        <option value="d10">d10</option>
+                        <option value="d12">d12</option>
+                        <option value="d20" selected>d20</option>
+                    </select>
+                    <button onclick="rollDice()">Бросить кубик</button>
                 </div>
+                <div id="diceResult" class="dice-result" style="display: none;"></div>
             </div>
         </div>
     </div>
@@ -463,21 +527,18 @@
         <div class="modal-content-mobile">
             <button class="close-modal" onclick="closeModal()">&times;</button>
             <h2>Броски кубиков</h2>
-            <div class="dice-section">
-                <h3>Бросок кубика</h3>
-                <div class="dice-controls">
-                    <select id="mobileDiceType">
-                        <option value="d4">d4</option>
-                        <option value="d6">d6</option>
-                        <option value="d8">d8</option>
-                        <option value="d10">d10</option>
-                        <option value="d12">d12</option>
-                        <option value="d20" selected>d20</option>
-                    </select>
-                    <button onclick="rollDice(true)" style="flex: 1;">Бросить</button>
-                </div>
-                <div id="mobileDiceResult" class="dice-result" style="display: none;"></div>
+            <div class="dice-controls">
+                <select id="mobileDiceType">
+                    <option value="d4">d4</option>
+                    <option value="d6">d6</option>
+                    <option value="d8">d8</option>
+                    <option value="d10">d10</option>
+                    <option value="d12">d12</option>
+                    <option value="d20" selected>d20</option>
+                </select>
+                <button onclick="rollDice(true)">Бросить кубик</button>
             </div>
+            <div id="mobileDiceResult" class="dice-result" style="display: none;"></div>
         </div>
     </div>
     
@@ -601,7 +662,12 @@
             const sceneContent = document.getElementById('sceneContent');
             const actionResult = getActionResult(action);
             
-            sceneContent.innerHTML += `<br><br><strong>Действие:</strong> ${action}<br><em>${actionResult}</em>`;
+            // Добавляем новое действие с результатом
+            const actionElement = document.createElement('div');
+            actionElement.innerHTML = `<br><strong>Действие:</strong> ${action}<br><em>${actionResult}</em>`;
+            sceneContent.appendChild(actionElement);
+            
+            // Прокручиваем к последнему действию
             sceneContent.scrollTop = sceneContent.scrollHeight;
         }
         
