@@ -14,7 +14,15 @@ const bot = new TelegramBot(TOKEN, { polling: false });
 
 // HuggingFace Configuration
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
-const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'microsoft/DialoGPT-medium';
+const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'microsoft/DialoGPT-large';
+const HUGGINGFACE_API_URL = process.env.HUGGINGFACE_API_URL || 'https://api-inference.huggingface.co/models/';
+
+// Альтернативные модели для генерации RPG контента
+const RPG_MODELS = {
+    primary: 'microsoft/DialoGPT-large',
+    alternative: 'gpt2',
+    creative: 'EleutherAI/gpt-neo-1.3B'
+};
 
 // MongoDB connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://admin:Netskyline1996!@127.0.0.1:27017/thordridge?authSource=admin', {
@@ -131,178 +139,273 @@ const gameSessionSchema = new mongoose.Schema({
 const GameSession = mongoose.model('GameSession', gameSessionSchema);
 
 // AI Game Master Functions
-function createGamePrompt(character, action = null) {
-    const characterInfo = `${character.name} (${character.race} ${character.class}, уровень ${character.level})`;
+function createDetailedGamePrompt(character, action = null, previousContext = '') {
+    const characterInfo = `${character.name} - ${character.race} ${character.class} ${character.level} уровня`;
+    const stats = `Сила: ${character.stats.strength}, Ловкость: ${character.stats.dexterity}, Телосложение: ${character.stats.constitution}, Мудрость: ${character.stats.wisdom}, Интеллект: ${character.stats.intelligence}, Харизма: ${character.stats.charisma}`;
     
+    const basePrompt = `Ты - Мастер игры в настольную RPG "Dungeons & Dragons" в мрачном фэнтези мире "Терновая гряда".
+
+ПЕРСОНАЖ: ${characterInfo}
+ХАРАКТЕРИСТИКИ: ${stats}
+ИНВЕНТАРЬ: ${character.inventory.map(item => `${item.item} (${item.quantity})`).join(', ') || 'пуст'}
+
+ПРАВИЛА ОТВЕТА:
+1. Всегда отвечай на русском языке
+2. Пиши в атмосферном стиле тёмного фэнтези
+3. Описывай сцены ярко и детально (2-3 предложения)
+4. Предлагай РОВНО 4 варианта действий
+5. Варианты действий должны быть разнообразными: боевые, дипломатические, исследовательские, классовые
+6. Учитывай класс персонажа при формировании вариантов действий
+7. Каждый вариант действия должен быть написан с новой строки и начинаться с "- "
+
+КОНТЕКСТ: ${previousContext || 'Персонаж начинает приключение в мрачном мире Терновой гряды.'}`;
+
     if (action) {
-        return `В тёмном фэнтези мире "Терновая гряда", ${characterInfo} выполняет действие: ${action}. Опиши что происходит и предложи 3 новых варианта действий.`;
+        return `${basePrompt}
+
+ДЕЙСТВИЕ ИГРОКА: ${action}
+
+Опиши что происходит после этого действия и предложи 4 новых варианта действий для продолжения приключения.
+
+ОТВЕТ:`;
     } else {
-        return `В тёмном фэнтези мире "Терновая гряда", ${characterInfo} начинает приключение. Опиши начальную сцену и предложи 3 варианта действий.`;
+        return `${basePrompt}
+
+Создай начальную сцену приключения и предложи 4 варианта действий для начала игры.
+
+ОТВЕТ:`;
     }
 }
 
-async function callHuggingFaceAPI(prompt, maxLength = 200) {
+async function callHuggingFaceAPI(prompt, maxLength = 400, temperature = 0.7) {
     if (!HUGGINGFACE_API_KEY) {
         console.log('HuggingFace API key not provided, using fallback');
         return null;
     }
 
-    try {
-        const response = await fetch(`https://api-inference.huggingface.co/models/${HUGGINGFACE_MODEL}`, {
-            headers: {
-                Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
-                'Content-Type': 'application/json',
-            },
-            method: 'POST',
-            body: JSON.stringify({
-                inputs: prompt,
-                parameters: {
-                    max_length: maxLength,
-                    temperature: 0.8,
-                    do_sample: true,
-                    top_p: 0.9
-                }
-            }),
-        });
+    // Пробуем разные модели по очереди
+    const modelsToTry = [
+        process.env.HUGGINGFACE_MODEL || RPG_MODELS.primary,
+        RPG_MODELS.alternative,
+        RPG_MODELS.creative
+    ];
 
-        if (!response.ok) {
-            throw new Error(`HuggingFace API error: ${response.status}`);
+    for (const modelName of modelsToTry) {
+        try {
+            console.log(`Trying model: ${modelName}`);
+            
+            const response = await fetch(`${HUGGINGFACE_API_URL}${modelName}`, {
+                headers: {
+                    Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
+                    'Content-Type': 'application/json',
+                },
+                method: 'POST',
+                body: JSON.stringify({
+                    inputs: prompt,
+                    parameters: {
+                        max_length: maxLength,
+                        temperature: temperature,
+                        do_sample: true,
+                        top_p: 0.9,
+                        top_k: 50,
+                        repetition_penalty: 1.1,
+                        num_return_sequences: 1,
+                        pad_token_id: 50256,
+                        return_full_text: false
+                    },
+                    options: {
+                        wait_for_model: true
+                    }
+                }),
+            });
+
+            if (!response.ok) {
+                console.error(`HuggingFace API error for ${modelName}: ${response.status}`);
+                continue;
+            }
+
+            const result = await response.json();
+            
+            if (result.error) {
+                console.error(`HuggingFace API error for ${modelName}:`, result.error);
+                continue;
+            }
+
+            if (result[0]?.generated_text) {
+                console.log(`Successfully generated content using ${modelName}`);
+                return result[0].generated_text;
+            }
+
+            console.log(`No generated text for ${modelName}, trying next model`);
+        } catch (error) {
+            console.error(`Error calling HuggingFace API for ${modelName}:`, error);
+            continue;
         }
-
-        const result = await response.json();
-        
-        if (result.error) {
-            console.error('HuggingFace API error:', result.error);
-            return null;
-        }
-
-        return result[0]?.generated_text || null;
-    } catch (error) {
-        console.error('Error calling HuggingFace API:', error);
-        return null;
     }
+
+    return null;
 }
 
 function parseAIResponse(response) {
-    // Пытаемся извлечь сцену и действия из ответа ИИ
-    const lines = response.split('\n').filter(line => line.trim());
+    if (!response) return null;
+
+    // Очищаем ответ от лишних символов
+    let cleanResponse = response.replace(/^[^А-Яа-яЁё]*/, '').trim();
+    
+    // Разделяем на части по ключевым словам
+    const sections = cleanResponse.split(/(?:действия|варианты|выбор|можете|можно)[\s\w]*:/i);
     
     let scene = '';
     let actions = [];
-    let inActions = false;
     
-    for (let line of lines) {
-        line = line.trim();
+    if (sections.length >= 2) {
+        // Первая часть - описание сцены
+        scene = sections[0].trim();
         
-        if (line.toLowerCase().includes('действия') || line.toLowerCase().includes('варианты') || line.includes(':')) {
-            inActions = true;
-            continue;
+        // Вторая часть - действия
+        const actionText = sections[1];
+        actions = extractActionsFromText(actionText);
+    } else {
+        // Если не удалось разделить, пробуем найти действия по маркерам
+        const lines = cleanResponse.split('\n').filter(line => line.trim());
+        
+        let sceneLines = [];
+        let actionLines = [];
+        let foundActions = false;
+        
+        for (const line of lines) {
+            if (line.match(/^[\s]*[-\*\d\.]\s*/) || line.toLowerCase().includes('действие')) {
+                foundActions = true;
+            }
+            
+            if (foundActions && line.match(/^[\s]*[-\*\d\.]\s*/)) {
+                actionLines.push(line);
+            } else if (!foundActions) {
+                sceneLines.push(line);
+            }
         }
         
-        if (inActions) {
-            // Извлекаем действия (строки с цифрами, точками или дефисами)
-            if (line.match(/^[\d\-\*•]\s*\.?\s*/)) {
-                const action = line.replace(/^[\d\-\*•]\s*\.?\s*/, '').trim();
-                if (action && actions.length < 4) {
-                    actions.push(action);
-                }
-            }
-        } else {
-            // Добавляем к описанию сцены
-            if (line && !line.includes('персонаж') && !line.includes('уровень')) {
-                scene += line + ' ';
+        scene = sceneLines.join(' ').trim();
+        actions = actionLines.map(line => line.replace(/^[\s]*[-\*\d\.]\s*/, '').trim()).filter(action => action.length > 0);
+    }
+    
+    // Если сцена слишком короткая, используем весь ответ
+    if (scene.length < 50) {
+        scene = cleanResponse.substring(0, 300).trim();
+    }
+    
+    // Если действий недостаточно, дополняем базовыми
+    if (actions.length < 4) {
+        const baseActions = ['Осмотреться внимательнее', 'Продолжить путь осторожно', 'Остановиться и подумать', 'Использовать свои навыки'];
+        actions = [...actions, ...baseActions].slice(0, 4);
+    }
+    
+    return {
+        scene: scene || 'Вы находитесь в загадочном месте Терновой гряды...',
+        actions: actions.slice(0, 4)
+    };
+}
+
+function extractActionsFromText(text) {
+    const actions = [];
+    const lines = text.split('\n');
+    
+    for (const line of lines) {
+        const trimmed = line.trim();
+        
+        // Поиск действий с маркерами
+        if (trimmed.match(/^[\s]*[-\*\d\.]\s*(.+)$/)) {
+            const action = trimmed.replace(/^[\s]*[-\*\d\.]\s*/, '').trim();
+            if (action.length > 3 && action.length < 100) {
+                actions.push(action);
             }
         }
     }
     
-    return {
-        scene: scene.trim() || response.substring(0, 300),
-        actions: actions.length > 0 ? actions : null
-    };
+    return actions;
 }
 
 function getClassBasedActions(characterClass) {
     const actionsByClass = {
-        'Воин': ['Атаковать мечом', 'Защищаться щитом', 'Использовать боевую тактику'],
-        'Варвар': ['Войти в ярость', 'Сокрушающий удар', 'Угрожающий рык'],
-        'Монах': ['Ударить без оружия', 'Использовать ки', 'Уклониться'],
-        'Чародей': ['Применить магию', 'Использовать врождённые силы', 'Магический снаряд'],
-        'Друид': ['Превратиться в животное', 'Природная магия', 'Говорить с животными'],
-        'Волшебник': ['Изучить заклинание', 'Волшебная атака', 'Магический анализ'],
-        'Жрец': ['Молитва', 'Божественная магия', 'Исцеление'],
-        'Паладин': ['Священная клятва', 'Изгнание нежити', 'Божественное наказание'],
-        'Колдун': ['Магия покровителя', 'Тёмные силы', 'Проклятие'],
-        'Следопыт': ['Выследить', 'Стрельба из лука', 'Знания о природе'],
-        'Плут': ['Скрыться в тенях', 'Удар исподтишка', 'Вскрыть замок']
+        'Воин': ['Изучить тактическую позицию', 'Проверить оружие и доспехи', 'Выполнить боевой приём', 'Занять оборонительную позицию'],
+        'Варвар': ['Прислушаться к зову дикой природы', 'Войти в боевое бешенство', 'Использовать первобытные инстинкты', 'Запугать противника'],
+        'Монах': ['Медитировать для обретения ясности', 'Использовать дыхательные техники', 'Применить боевые искусства', 'Найти внутреннее равновесие'],
+        'Чародей': ['Почувствовать магические потоки', 'Использовать врождённую магию', 'Создать магический эффект', 'Призвать силы стихий'],
+        'Друид': ['Пообщаться с природой', 'Превратиться в животное', 'Использовать природную магию', 'Прочитать знаки природы'],
+        'Волшебник': ['Изучить магические ауры', 'Применить заклинание', 'Консультироваться с заклинательной книгой', 'Провести магический анализ'],
+        'Жрец': ['Помолиться своему божеству', 'Использовать божественную магию', 'Освятить место', 'Изгнать нежить'],
+        'Паладин': ['Произнести священную клятву', 'Использовать божественные силы', 'Обнаружить зло', 'Защитить невинных'],
+        'Колдун': ['Связаться с покровителем', 'Использовать тёмную магию', 'Призвать мистические силы', 'Заключить магическую сделку'],
+        'Следопыт': ['Исследовать следы', 'Использовать знания о природе', 'Выследить цель', 'Применить навыки выживания'],
+        'Плут': ['Осмотреться в поисках скрытого', 'Использовать воровские навыки', 'Скрыться в тенях', 'Вскрыть замок или ловушку']
     };
     
-    return actionsByClass[characterClass] || ['Осмотреться', 'Продолжить путь', 'Подождать'];
+    return actionsByClass[characterClass] || ['Осмотреться вокруг', 'Продолжить путь', 'Подождать развития событий', 'Использовать базовые навыки'];
 }
 
-function generateFallbackContent(character, action = null) {
+function generateFallbackContent(character, action = null, previousContext = '') {
     const scenes = [
-        "Вы находитесь в тёмном лесу Терновой гряды. Древние деревья шепчут тайны прошлого, а туман скрывает опасности впереди.",
-        "Перед вами простирается заброшенная деревня. Пустые окна домов смотрят на вас как мёртвые глаза.",
-        "Вы стоите у входа в древнюю пещеру. Оттуда доносятся странные звуки и слабое свечение.",
-        "Дорога ведёт к мрачному замку на холме. Вороны кружат над его башнями.",
-        "Вы обнаруживаете руины старого храма. Магическая энергия пульсирует в воздухе."
+        "Древний туман окутывает тропу, ведущую вглубь Терновой гряды. Вековые деревья стоят как безмолвные стражи, их ветви переплетаются в причудливые узоры. Где-то вдали слышится волчий вой.",
+        "Перед вами простираются руины некогда величественного города. Разрушенные башни пронзают сумеречное небо, а из трещин в камне пробивается странное зелёное свечение.",
+        "Мрачный замок возвышается на скалистом утёсе. Его чёрные башни теряются в облаках, а единственное окно светится зловещим красным светом. Воздух наполнен запахом серы и старой крови.",
+        "Заброшенное кладбище раскинулось под бледной луной. Покосившиеся надгробия создают лабиринт теней, а из-под земли доносятся странные звуки. Туман стелется между могил.",
+        "Тёмный лес встречает вас шёпотом листьев и треском веток. Тропинка едва различима в густой тени, а глаза неведомых существ следят за каждым вашим шагом из чащи."
     ];
     
-    const scene = action 
-        ? `После действия "${action}" обстановка изменилась. ${scenes[Math.floor(Math.random() * scenes.length)]}`
-        : scenes[Math.floor(Math.random() * scenes.length)];
+    let scene;
+    if (action) {
+        scene = `После действия "${action}" обстановка кардинально меняется. ${scenes[Math.floor(Math.random() * scenes.length)]}`;
+    } else {
+        scene = scenes[Math.floor(Math.random() * scenes.length)];
+    }
     
-    const baseActions = ['Осмотреться вокруг', 'Продолжить путь', 'Остановиться и подумать'];
+    const baseActions = ['Осмотреться внимательнее', 'Продолжить путь осторожно', 'Остановиться и прислушаться'];
     const classActions = getClassBasedActions(character.class);
+    const randomClassAction = classActions[Math.floor(Math.random() * classActions.length)];
     
     return {
         scene,
-        actions: [...baseActions, classActions[Math.floor(Math.random() * classActions.length)]]
+        actions: [...baseActions, randomClassAction]
     };
 }
 
 async function generateGameContent(character, sessionMessages, userAction = null) {
     try {
-        const prompt = createGamePrompt(character, userAction);
+        // Формируем контекст из предыдущих сообщений
+        const previousContext = sessionMessages
+            .slice(-3) // Берём последние 3 сообщения для контекста
+            .map(msg => msg.content)
+            .join(' ');
+        
+        const prompt = createDetailedGamePrompt(character, userAction, previousContext);
+        console.log('Generated prompt:', prompt.substring(0, 200) + '...');
         
         // Пытаемся получить ответ от HuggingFace
-        const aiResponse = await callHuggingFaceAPI(prompt, 300);
+        const aiResponse = await callHuggingFaceAPI(prompt, 500, 0.8);
         
         if (aiResponse) {
-            console.log('AI Response:', aiResponse);
+            console.log('AI Response received:', aiResponse.substring(0, 200) + '...');
             const parsed = parseAIResponse(aiResponse);
             
-            // Если удалось извлечь действия из ответа ИИ, используем их
-            if (parsed.actions && parsed.actions.length >= 3) {
+            if (parsed && parsed.scene && parsed.actions && parsed.actions.length >= 3) {
+                console.log('Successfully parsed AI response');
                 return {
                     scene: parsed.scene,
                     actions: parsed.actions
                 };
             }
             
-            // Если сцена есть, но действий нет, добавляем свои
-            if (parsed.scene) {
-                const classActions = getClassBasedActions(character.class);
-                return {
-                    scene: parsed.scene,
-                    actions: [
-                        'Осмотреться вокруг',
-                        'Продолжить путь', 
-                        'Использовать навыки',
-                        classActions[Math.floor(Math.random() * classActions.length)]
-                    ]
-                };
-            }
+            console.log('AI response parsing failed, using fallback');
         }
         
         // Если ИИ не сработал, используем fallback
         console.log('Using fallback content generation');
-        return generateFallbackContent(character, userAction);
+        return generateFallbackContent(character, userAction, previousContext);
         
-    } catch (error) {
-        console.error('Error generating game content:', error);
-        return generateFallbackContent(character, userAction);
-    }
+            } catch (error) {
+            console.error('Error generating game content:', error);
+            return generateFallbackContent(character, userAction, '');
+        }
 }
 
 async function getOrCreateGameSession(characterId) {

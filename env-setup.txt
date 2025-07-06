@@ -1,0 +1,77 @@
+# ======================================
+# THORNRIDGE D&D GAME - Environment Configuration
+# ======================================
+
+# MongoDB Configuration
+MONGODB_URI=mongodb://admin:YourPassword@127.0.0.1:27017/thordridge?authSource=admin
+
+# Telegram Bot Configuration
+TELEGRAM_BOT_TOKEN=8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE
+WEBHOOK_URL=https://thornridge.ru/bot8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE
+
+# HuggingFace API Configuration для генерации истории
+HUGGINGFACE_API_KEY=your_huggingface_api_key_here
+HUGGINGFACE_MODEL=microsoft/DialoGPT-large
+HUGGINGFACE_API_URL=https://api-inference.huggingface.co/models/
+
+# Server Configuration
+PORT=3000
+NODE_ENV=production
+
+# ======================================
+# ИНСТРУКЦИИ ПО НАСТРОЙКЕ:
+# ======================================
+
+# 1. ОБЯЗАТЕЛЬНО: Получите бесплатный API ключ от HuggingFace:
+#    - Зайдите на https://huggingface.co/
+#    - Зарегистрируйтесь или войдите в аккаунт
+#    - Перейдите в Settings -> Access Tokens
+#    - Создайте новый токен с правами "Read"
+#    - Вставьте его в HUGGINGFACE_API_KEY
+
+# 2. РЕКОМЕНДУЕМЫЕ МОДЕЛИ для RPG:
+#    - microsoft/DialoGPT-large (по умолчанию)
+#    - microsoft/DialoGPT-medium (быстрее, но менее качественно)
+#    - gpt2 (резервная модель)
+#    - EleutherAI/gpt-neo-1.3B (более продвинутая, но медленнее)
+
+# 3. ВАЖНО: Замените YourPassword на реальный пароль MongoDB
+# 4. ВАЖНО: Убедитесь, что webhook URL соответствует вашему домену
+
+# ======================================
+# КАК СОЗДАТЬ .env ФАЙЛ НА VPS:
+# ======================================
+
+# Команды для выполнения на VPS:
+
+# 1. Перейдите в директорию с проектом:
+cd /path/to/your/project
+
+# 2. Создайте .env файл:
+nano .env
+
+# 3. Скопируйте и вставьте содержимое выше (без комментариев)
+# 4. Замените значения на реальные
+# 5. Сохраните файл: Ctrl+O, Enter, Ctrl+X
+
+# 6. Проверьте права доступа к файлу:
+chmod 600 .env
+
+# 7. Убедитесь, что файл создан:
+ls -la .env
+
+# 8. Для безопасности, добавьте .env в .gitignore:
+echo ".env" >> .gitignore
+
+# ======================================
+# ПРИМЕР ГОТОВОГО .env ФАЙЛА:
+# ======================================
+
+MONGODB_URI=mongodb://admin:Netskyline1996!@127.0.0.1:27017/thordridge?authSource=admin
+TELEGRAM_BOT_TOKEN=8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE
+WEBHOOK_URL=https://thornridge.ru/bot8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE
+HUGGINGFACE_API_KEY=hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+HUGGINGFACE_MODEL=microsoft/DialoGPT-large
+HUGGINGFACE_API_URL=https://api-inference.huggingface.co/models/
+PORT=3000
+NODE_ENV=production 
