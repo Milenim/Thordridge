@@ -4,407 +4,247 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Терновая гряда D&D - Создание персонажа</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
-            margin: 0;
             padding: 20px;
             min-height: 100vh;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-attachment: scroll;
-            background-position: center;
-            transform: translateZ(0);
-            font-family: 'Playfair Display', serif;
-            color: #e0d8c3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2c1810 50%, #1a1a1a 100%);
+            position: relative;
         }
+        
+        .page-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
         .main-container {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            max-width: 1400px;
-            width: 95%;
-            margin: 0 auto;
-            padding: 20px;
             gap: 20px;
-            overflow-y: auto;
-            min-height: calc(100vh - 40px);
+            flex-wrap: wrap;
         }
-        .container {
-            background: rgba(0, 0, 0, 0.7);
-            padding: 20px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        .form-container, .race-info, .class-info {
-            border: 5px solid #d4a017;
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-        }
+        
         .form-container {
             flex: 1 1 400px;
             max-width: 450px;
-            margin: 0 auto;
-            padding: 20px;
-            overflow-y: auto;
-            box-sizing: border-box;
-            min-width: 300px;
-            order: 2; /* Помещаем форму в центр */
+            min-width: 350px;
         }
-        .race-info {
+        
+        .race-info, .class-info {
             flex: 1 1 400px;
             max-width: 450px;
-            text-align: left;
-            overflow-y: auto;
+            min-width: 350px;
             max-height: 80vh;
-            order: 1; /* Помещаем описание расы слева */
-        }
-        .class-info {
-            flex: 1 1 400px;
-            max-width: 450px;
-            text-align: left;
             overflow-y: auto;
-            max-height: 80vh;
-            order: 3; /* Помещаем описание класса справа */
         }
-        .form-container input,
-        .form-container select {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #d4a017;
-            border-radius: 5px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #e0d8c3;
-            font-family: 'Cinzel', serif;
-            appearance: none;
-            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4a017" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            cursor: pointer;
-        }
-        .form-container select option {
-            background: rgba(0, 0, 0, 0.9);
-            color: #e0d8c3;
-            font-family: 'Cinzel', serif;
-        }
-        .form-container select {
-            padding-right: 30px;
-        }
+        
         .stat-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 5px;
-            margin: 10px 0;
-            flex-wrap: wrap; /* Позволяет перенос на мобильных */
+            gap: 10px;
+            margin: 15px 0;
         }
+        
         .stat-container label {
             flex: 1;
-            font-size: 1.1em;
             text-align: left;
+            margin-bottom: 0;
         }
+        
         .stat-container input {
-            width: 70px;
+            width: 80px;
             text-align: center;
-            min-width: 50px; /* Минимальная ширина для мобильных */
         }
+        
         .stat-container button {
-            width: 35px;
-            height: 35px;
-            background: #d4a017;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-size: 16px; /* Увеличиваем шрифт для кнопок */
+            width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+            min-width: 40px;
         }
-        .stat-container button:disabled {
-            background: #666;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .stat-container button:hover:not(:disabled) {
-            box-shadow: 0 0 10px #d4a017;
-        }
+        
         .points {
-            font-size: 1.2em;
-            margin: 10px 0;
+            font-size: 1.2rem;
+            margin: 15px 0;
+            text-align: center;
+            color: var(--primary-gold);
+            font-weight: 500;
         }
-        .error {
-            color: #ff6b6b;
-            font-size: 1em;
-            margin: 10px 0;
+        
+        .form-group {
+            margin-bottom: 1.5rem;
         }
-        button[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background: #d4a017;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Cinzel', serif;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        button[type="submit"]:hover {
-            box-shadow: 0 0 10px #d4a017;
-        }
-        #raceDescription, #classDescription {
+        
+        .description-content {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.5s ease forwards;
         }
-        @keyframes fadeIn {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        
+        .description-content.show {
+            opacity: 1;
+            transform: translateY(0);
         }
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 5px solid #d4a017;
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.5);
-            border-radius: 10px;
-            padding: 20px;
-            text-align: center;
-            color: #e0d8c3;
-            max-width: 400px;
-            width: 90%;
-            opacity: 0;
-            transform: scale(0.8);
-            animation: modalFadeIn 0.3s ease forwards;
-        }
-        @keyframes modalFadeIn {
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-        .modal-content p {
-            margin: 0 0 20px;
-            font-size: 1.2em;
-        }
-        .modal-content button {
-            padding: 10px 20px;
-            background: #d4a017;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'Cinzel', serif;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        .modal-content button:hover {
-            box-shadow: 0 0 10px #d4a017;
-        }
-        @media (max-width: 1000px) {
+        
+        @media (max-width: 1200px) {
             .main-container {
                 flex-direction: column;
                 align-items: center;
-                padding: 10px;
             }
-            .class-info, .race-info, .form-container {
-                margin-top: 20px;
-                margin-left: 0;
-                margin-right: 0;
+            
+            .form-container, .race-info, .class-info {
                 max-width: 100%;
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
                 padding: 10px;
-                order: initial; /* Сбрасываем порядок на мобильных */
             }
-            .form-container input,
-            .form-container select {
-                font-size: 14px;
-                padding: 8px;
-            }
+            
             .stat-container {
+                flex-wrap: wrap;
                 gap: 5px;
             }
-            .stat-container button {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-            }
-            .stat-container input {
-                width: 60px;
-                font-size: 14px;
-            }
+            
             .stat-container label {
-                font-size: 1em;
-                flex: 1;
+                width: 100%;
+                margin-bottom: 0.5rem;
             }
-            .points {
-                font-size: 1em;
+            
+            .stat-container input,
+            .stat-container button {
+                font-size: 0.9rem;
             }
-            button[type="submit"] {
-                font-size: 14px;
-                padding: 10px;
-            }
-        }
-        @keyframes parallax {
-            0% { background-position: center 0; }
-            100% { background-position: center 50px; }
-        }
-        body {
-            animation: parallax 20s linear infinite;
-        }
-
-        body {
-            animation: fadeIn 1s ease-in;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .container, .form-container, .race-info, .class-info {
-            transition: opacity 0.5s ease-in-out;
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/dark-wood.png');
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            box-shadow: 0 0 20px rgba(212, 160, 23, 0.7), inset 0 0 15px rgba(0, 0, 0, 0.8);
-        }
-        h1, h2, h3 {
-            text-shadow: 0 0 10px rgba(212, 160, 23, 0.8), 0 0 20px rgba(212, 160, 23, 0.5);
-        }
-        button, button[type="submit"] {
-            background: linear-gradient(to bottom, #d4a017, #a67c00);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        button:hover, button[type="submit"]:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.8);
-        }
-        select {
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #d4a017;
-            box-shadow: 0 0 10px rgba(212, 160, 23, 0.5);
-            transition: box-shadow 0.2s;
-        }
-        select:focus {
-            box-shadow: 0 0 15px rgba(212, 160, 23, 1);
         }
     </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="container form-container">
-            <h1>Создание персонажа</h1>
-            <form id="characterForm">
-                <label for="name">Имя персонажа:</label>
-                <input type="text" id="name" name="name" required>
-
-                <label for="race">Раса:</label>
-                <select id="race" name="race" required onchange="applyRaceBonuses()">
-                    <option value="" selected>Выберите расу</option>
-                    <option value="Человек">Человек</option>
-                    <option value="Драконорождённый">Драконорождённый</option>
-                    <option value="Гном">Гном</option>
-                    <option value="Тифлинг">Тифлинг</option>
-                    <option value="Полуэльф">Полуэльф</option>
-                    <option value="Полуорк">Полуорк</option>
-                    <option value="Дварф">Дварф</option>
-                </select>
-
-                <label for="class">Класс:</label>
-                <select id="class" name="class" required onchange="applyClassDescription()">
-                    <option value="" selected>Выберите класс</option>
-                    <option value="Воин">Воин</option>
-                    <option value="Варвар">Варвар</option>
-                    <option value="Монах">Монах</option>
-                    <option value="Чародей">Чародей</option>
-                    <option value="Друид">Друид</option>
-                    <option value="Волшебник">Волшебник</option>
-                    <option value="Жрец">Жрец</option>
-                    <option value="Паладин">Паладин</option>
-                    <option value="Колдун">Колдун</option>
-                    <option value="Следопыт">Следопыт</option>
-                    <option value="Плут">Плут</option>
-                </select>
-
-                <h2>Характеристики (15 очков):</h2>
-                <div class="stat-container">
-                    <label for="strength">Сила:</label>
-                    <button type="button" id="strengthDec" onclick="changeStat('strength', -1)" disabled>-</button>
-                    <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
-                    <button type="button" id="strengthInc" onclick="changeStat('strength', 1)" disabled>+</button>
+    <div class="page-container">
+        <div class="main-container">
+            <div class="container race-info">
+                <h2>Описание расы</h2>
+                <div id="raceDescription" class="description-content">
+                    <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
                 </div>
-                <div class="stat-container">
-                    <label for="dexterity">Ловкость:</label>
-                    <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
-                    <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
-                    <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
-                </div>
-                <div class="stat-container">
-                    <label for="constitution">Телосложение:</label>
-                    <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
-                    <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
-                    <button type="button" id="constitutionInc" onclick="changeStat('constitution', 1)" disabled>+</button>
-                </div>
-                <div class="stat-container">
-                    <label for="wisdom">Мудрость:</label>
-                    <button type="button" id="wisdomDec" onclick="changeStat('wisdom', -1)" disabled>-</button>
-                    <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
-                    <button type="button" id="wisdomInc" onclick="changeStat('wisdom', 1)" disabled>+</button>
-                </div>
-                <div class="stat-container">
-                    <label for="intelligence">Интеллект:</label>
-                    <button type="button" id="intelligenceDec" onclick="changeStat('intelligence', -1)" disabled>-</button>
-                    <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
-                    <button type="button" id="intelligenceInc" onclick="changeStat('intelligence', 1)" disabled>+</button>
-                </div>
-                <div class="stat-container">
-                    <label for="charisma">Харизма:</label>
-                    <button type="button" id="charismaDec" onclick="changeStat('charisma', -1)" disabled>-</button>
-                    <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
-                    <button type="button" id="charismaInc" onclick="changeStat('charisma', 1)" disabled>+</button>
-                </div>
-                <p class="points">Осталось очков: <span id="points">15</span> (расовые бонусы не учитываются)</p>
-                <div id="error" class="error"></div>
-                <button type="submit">Создать персонажа</button>
-            </form>
-        </div>
-        <div class="container race-info">
-            <div id="raceDescription">
-                <p>Выберите расу, чтобы увидеть её бонусы и умения.</p>
             </div>
-        </div>
-        <div class="container class-info">
-            <div id="classDescription">
-                <p>Выберите класс, чтобы увидеть его описание.</p>
+            
+            <div class="container form-container">
+                <h1 class="text-center">Создание персонажа</h1>
+                <form id="characterForm">
+                    <div class="form-group">
+                        <label for="name">Имя персонажа:</label>
+                        <input type="text" id="name" name="name" required placeholder="Введите имя персонажа">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="race">Раса:</label>
+                        <select id="race" name="race" required onchange="applyRaceBonuses()">
+                            <option value="" selected>Выберите расу</option>
+                            <option value="Человек">Человек</option>
+                            <option value="Драконорождённый">Драконорождённый</option>
+                            <option value="Гном">Гном</option>
+                            <option value="Тифлинг">Тифлинг</option>
+                            <option value="Полуэльф">Полуэльф</option>
+                            <option value="Полуорк">Полуорк</option>
+                            <option value="Дварф">Дварф</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="class">Класс:</label>
+                        <select id="class" name="class" required onchange="applyClassDescription()">
+                            <option value="" selected>Выберите класс</option>
+                            <option value="Воин">Воин</option>
+                            <option value="Варвар">Варвар</option>
+                            <option value="Монах">Монах</option>
+                            <option value="Чародей">Чародей</option>
+                            <option value="Друид">Друид</option>
+                            <option value="Волшебник">Волшебник</option>
+                            <option value="Жрец">Жрец</option>
+                            <option value="Паладин">Паладин</option>
+                            <option value="Колдун">Колдун</option>
+                            <option value="Следопыт">Следопыт</option>
+                            <option value="Плут">Плут</option>
+                        </select>
+                    </div>
+
+                    <h3 class="text-center">Характеристики</h3>
+                    <div class="points">Осталось очков: <span id="points">15</span></div>
+                    
+                    <div class="stat-container">
+                        <label for="strength">Сила:</label>
+                        <button type="button" id="strengthDec" onclick="changeStat('strength', -1)" disabled>-</button>
+                        <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
+                        <button type="button" id="strengthInc" onclick="changeStat('strength', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div class="stat-container">
+                        <label for="dexterity">Ловкость:</label>
+                        <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
+                        <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
+                        <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div class="stat-container">
+                        <label for="constitution">Телосложение:</label>
+                        <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
+                        <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
+                        <button type="button" id="constitutionInc" onclick="changeStat('constitution', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div class="stat-container">
+                        <label for="wisdom">Мудрость:</label>
+                        <button type="button" id="wisdomDec" onclick="changeStat('wisdom', -1)" disabled>-</button>
+                        <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
+                        <button type="button" id="wisdomInc" onclick="changeStat('wisdom', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div class="stat-container">
+                        <label for="intelligence">Интеллект:</label>
+                        <button type="button" id="intelligenceDec" onclick="changeStat('intelligence', -1)" disabled>-</button>
+                        <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
+                        <button type="button" id="intelligenceInc" onclick="changeStat('intelligence', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div class="stat-container">
+                        <label for="charisma">Харизма:</label>
+                        <button type="button" id="charismaDec" onclick="changeStat('charisma', -1)" disabled>-</button>
+                        <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
+                        <button type="button" id="charismaInc" onclick="changeStat('charisma', 1)" disabled>+</button>
+                    </div>
+                    
+                    <div id="error" class="error" style="display: none;"></div>
+                    <button type="submit" class="w-full mt-2">Создать персонажа</button>
+                </form>
+            </div>
+            
+            <div class="container class-info">
+                <h2>Описание класса</h2>
+                <div id="classDescription" class="description-content">
+                    <p>Выберите класс, чтобы увидеть его описание.</p>
+                </div>
             </div>
         </div>
     </div>
+    
     <div class="modal" id="successModal">
         <div class="modal-content">
             <p id="modalMessage"></p>
             <button onclick="closeModal()">Продолжить</button>
         </div>
     </div>
+
     <script>
         const maxPoints = 15;
         let points = maxPoints;
@@ -612,12 +452,11 @@
 
             // Активация/деактивация кнопок
             if (!race) {
-                // Сброс всех характеристик к базовым значениям перед применением бонусов
                 for (let stat in baseStats) {
-                    document.getElementById(stat).value = 8; // Сбрасываем до 8
-                    minStats[stat] = 8; // Устанавливаем минимальное значение
+                    document.getElementById(stat).value = 8;
+                    minStats[stat] = 8;
                 }
-                points = maxPoints; // Сбрасываем очки
+                points = maxPoints;
                 buttons.forEach(button => button.disabled = true);
             } else {
                 buttons.forEach(button => button.disabled = false);
@@ -625,7 +464,6 @@
                     const bonuses = raceBonuses[race].bonuses;
                     for (let stat in bonuses) {
                         if (stat === 'custom') {
-                            // Для полуэльфа: +1 к двум характеристикам на выбор (например, Сила и Ловкость)
                             document.getElementById('strength').value = baseStats.strength + 1;
                             document.getElementById('dexterity').value = baseStats.dexterity + 1;
                             minStats.strength = baseStats.strength + 1;
@@ -658,34 +496,32 @@
         function updateDescription() {
             const race = document.getElementById('race').value;
             const descriptionDiv = document.getElementById('raceDescription');
-            if (raceBonuses[race]) {
-                descriptionDiv.innerHTML = raceBonuses[race].description;
-                descriptionDiv.style.animation = 'none';
-                void descriptionDiv.offsetWidth;
-                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
-            } else {
-                descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
-                descriptionDiv.style.animation = 'none';
-                void descriptionDiv.offsetWidth;
-                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
-            }
+            descriptionDiv.classList.remove('show');
+            
+            setTimeout(() => {
+                if (raceBonuses[race]) {
+                    descriptionDiv.innerHTML = raceBonuses[race].description;
+                } else {
+                    descriptionDiv.innerHTML = '<p>Выберите расу, чтобы увидеть её бонусы и умения.</p>';
+                }
+                descriptionDiv.classList.add('show');
+            }, 150);
         }
 
         function applyClassDescription() {
             const classSelect = document.getElementById('class');
             const className = classSelect.value;
             const descriptionDiv = document.getElementById('classDescription');
-            if (classDescriptions[className]) {
-                descriptionDiv.innerHTML = classDescriptions[className];
-                descriptionDiv.style.animation = 'none';
-                void descriptionDiv.offsetWidth;
-                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
-            } else {
-                descriptionDiv.innerHTML = '<p>Выберите класс, чтобы увидеть его описание.</p>';
-                descriptionDiv.style.animation = 'none';
-                void descriptionDiv.offsetWidth;
-                descriptionDiv.style.animation = 'fadeIn 0.5s ease forwards';
-            }
+            descriptionDiv.classList.remove('show');
+            
+            setTimeout(() => {
+                if (classDescriptions[className]) {
+                    descriptionDiv.innerHTML = classDescriptions[className];
+                } else {
+                    descriptionDiv.innerHTML = '<p>Выберите класс, чтобы увидеть его описание.</p>';
+                }
+                descriptionDiv.classList.add('show');
+            }, 150);
         }
 
         function showModal(message, redirectUrl) {
@@ -723,13 +559,18 @@
                     charisma: parseInt(document.getElementById('charisma').value)
                 };
 
+                const errorDiv = document.getElementById('error');
+                errorDiv.style.display = 'none';
+
                 if (!name || !race || !charClass) {
-                    document.getElementById('error').textContent = 'Заполните все поля: имя, раса, класс';
+                    errorDiv.textContent = 'Заполните все поля: имя, раса, класс';
+                    errorDiv.style.display = 'block';
                     return;
                 }
 
                 if (points !== 0) {
-                    document.getElementById('error').textContent = 'Распределите все 15 очков характеристик';
+                    errorDiv.textContent = 'Распределите все 15 очков характеристик';
+                    errorDiv.style.display = 'block';
                     return;
                 }
 
@@ -750,11 +591,13 @@
                     if (response.ok) {
                         showModal(result.message, `/gameplay.html?characterId=${result.characterId}`);
                     } else {
-                        document.getElementById('error').textContent = result.message;
+                        errorDiv.textContent = result.message;
+                        errorDiv.style.display = 'block';
                     }
                 } catch (err) {
                     console.error('Error creating character:', err);
-                    document.getElementById('error').textContent = 'Ошибка при создании персонажа';
+                    errorDiv.textContent = 'Ошибка при создании персонажа';
+                    errorDiv.style.display = 'block';
                 }
             });
         };

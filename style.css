@@ -1,37 +1,396 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+:root {
+    --primary-gold: #d4a017;
+    --dark-gold: #a67c00;
+    --light-gold: #f4d03f;
+    --accent-copper: #b87333;
+    --deep-brown: #2c1810;
+    --medium-brown: #4a2c1a;
+    --light-parchment: #f5f2e8;
+    --dark-parchment: #e8e0d0;
+    --shadow-dark: rgba(0, 0, 0, 0.8);
+    --shadow-light: rgba(0, 0, 0, 0.4);
+    --glow-gold: rgba(212, 160, 23, 0.6);
+    --text-light: #e0d8c3;
+    --text-dark: #1a1a1a;
+    --border-radius: 12px;
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 /* Общий стиль страницы */
-body {
+* {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    height: 100vh;
-    display: flex;
+}
+
+body {
+    font-family: 'Playfair Display', serif;
+    background: linear-gradient(135deg, #1a1a1a 0%, #2c1810 50%, #1a1a1a 100%);
+    color: var(--text-light);
+    min-height: 100vh;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Фоновые эффекты */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at 20% 20%, rgba(212, 160, 23, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(184, 115, 51, 0.1) 0%, transparent 50%),
+        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(212,160,23,0.05)"/><circle cx="75" cy="75" r="1.5" fill="rgba(212,160,23,0.03)"/><circle cx="50" cy="10" r="0.5" fill="rgba(212,160,23,0.02)"/><circle cx="10" cy="60" r="1" fill="rgba(212,160,23,0.04)"/><circle cx="90" cy="40" r="0.8" fill="rgba(212,160,23,0.03)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+    z-index: -1;
+}
+
+/* Улучшенные контейнеры */
+.container {
+    background: linear-gradient(135deg, 
+        rgba(44, 24, 16, 0.95) 0%, 
+        rgba(74, 44, 26, 0.9) 50%, 
+        rgba(44, 24, 16, 0.95) 100%);
+    backdrop-filter: blur(10px);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.4),
+        0 10px 20px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(212, 160, 23, 0.2);
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, 
+        rgba(212, 160, 23, 0.1) 0%, 
+        transparent 30%, 
+        transparent 70%, 
+        rgba(212, 160, 23, 0.05) 100%);
+    border-radius: var(--border-radius);
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(135deg, 
+        var(--primary-gold) 0%, 
+        var(--accent-copper) 25%, 
+        var(--primary-gold) 50%, 
+        var(--dark-gold) 75%, 
+        var(--primary-gold) 100%);
+    border-radius: var(--border-radius);
+    z-index: -2;
+    opacity: 0.8;
+}
+
+/* Заголовки */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    color: var(--primary-gold);
+    text-shadow: 
+        0 0 10px var(--glow-gold),
+        0 0 20px var(--glow-gold),
+        2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 1rem;
+    letter-spacing: 0.5px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+h2 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+h3 {
+    font-size: 1.5rem;
+}
+
+/* Улучшенные кнопки */
+button, .btn {
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    
+    background: linear-gradient(135deg, 
+        var(--primary-gold) 0%, 
+        var(--light-gold) 50%, 
+        var(--primary-gold) 100%);
+    color: var(--text-dark);
+    box-shadow: 
+        0 4px 15px rgba(212, 160, 23, 0.3),
+        0 2px 8px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+button::before, .btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 255, 255, 0.4) 50%, 
+        transparent 100%);
+    transition: left 0.6s ease;
+}
+
+button:hover, .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 
+        0 8px 25px rgba(212, 160, 23, 0.4),
+        0 4px 15px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+button:hover::before, .btn:hover::before {
+    left: 100%;
+}
+
+button:active, .btn:active {
+    transform: translateY(0);
+    box-shadow: 
+        0 2px 10px rgba(212, 160, 23, 0.3),
+        0 1px 5px rgba(0, 0, 0, 0.2),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+button:disabled, .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Вторичные кнопки */
+.btn-secondary {
+    background: linear-gradient(135deg, 
+        var(--accent-copper) 0%, 
+        var(--medium-brown) 50%, 
+        var(--accent-copper) 100%);
+    color: var(--text-light);
+}
+
+/* Поля ввода и селекты */
+input, select, textarea {
+    font-family: 'Playfair Display', serif;
+    font-size: 1rem;
+    padding: 0.75rem 1rem;
+    border: 2px solid var(--medium-brown);
+    border-radius: var(--border-radius);
+    background: rgba(44, 24, 16, 0.8);
+    color: var(--text-light);
+    transition: var(--transition);
+    backdrop-filter: blur(5px);
+    width: 100%;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-gold);
+    box-shadow: 
+        0 0 0 3px rgba(212, 160, 23, 0.2),
+        inset 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input::placeholder, textarea::placeholder {
+    color: rgba(224, 216, 195, 0.6);
+}
+
+/* Селекты */
+select {
+    appearance: none;
+    background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="%23d4a017" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 3rem;
+    cursor: pointer;
+}
+
+select option {
+    background: var(--deep-brown);
+    color: var(--text-light);
+    padding: 0.5rem;
+}
+
+/* Лейблы */
+label {
+    font-family: 'Cinzel', serif;
+    font-weight: 500;
+    font-size: 1.1rem;
+    color: var(--primary-gold);
+    margin-bottom: 0.5rem;
+    display: block;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* Параграфы */
+p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    color: var(--text-light);
+}
+
+/* Ошибки */
+.error {
+    color: #ff6b6b;
+    font-size: 1rem;
+    margin: 1rem 0;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.3);
+    border-radius: var(--border-radius);
+    backdrop-filter: blur(5px);
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 10px var(--glow-gold), 0 0 20px var(--glow-gold), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+    50% { text-shadow: 0 0 20px var(--glow-gold), 0 0 30px var(--glow-gold), 2px 2px 4px rgba(0, 0, 0, 0.8); }
+}
+
+/* Модальные окна */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(10px);
     justify-content: center;
     align-items: center;
-    background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png'); /* Текстура тёмного дерева */
-    background-size: cover;
-    font-family: 'Cinzel', serif; /* Шрифт в стиле D&D */
-    color: #e0d8c3; /* Светлый цвет текста */
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
 }
 
-/* Контейнер для контента */
-.container {
+.modal-content {
+    background: linear-gradient(135deg, 
+        var(--deep-brown) 0%, 
+        var(--medium-brown) 50%, 
+        var(--deep-brown) 100%);
+    border: 2px solid var(--primary-gold);
+    border-radius: var(--border-radius);
+    padding: 2rem;
     text-align: center;
-    padding: 20px;
-    background: rgba(0, 0, 0, 0.7); /* Полупрозрачный тёмный фон */
-    border: 2px solid #d4a017; /* Золотистая рамка */
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    color: var(--text-light);
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 
+        0 20px 40px rgba(0, 0, 0, 0.5),
+        0 10px 20px rgba(0, 0, 0, 0.3);
+    animation: slideIn 0.3s ease;
 }
 
-/* Заголовок */
-h1 {
-    font-size: 2.5em;
-    color: #d4a017; /* Золотистый цвет */
-    text-shadow: 2px 2px 4px #000;
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        padding: 1rem;
+        margin: 0.5rem;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+    
+    button, .btn {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+    
+    input, select, textarea {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.8rem;
+    }
 }
 
-/* Текст */
-p {
-    font-size: 1.2浮
-
-System * Today's date and time is 03:44 PM CEST on Saturday, June 28, 2025
-}
+/* Утилитарные классы */
+.text-center { text-align: center; }
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+.flex { display: flex; }
+.flex-center { display: flex; justify-content: center; align-items: center; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }
+.flex-column { display: flex; flex-direction: column; }
+.gap-1 { gap: 0.5rem; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+.relative { position: relative; }
+.absolute { position: absolute; }
+.z-10 { z-index: 10; }
+.opacity-50 { opacity: 0.5; }
+.opacity-75 { opacity: 0.75; }
+.cursor-pointer { cursor: pointer; }
+.cursor-not-allowed { cursor: not-allowed; }
+.select-none { user-select: none; }
+.overflow-hidden { overflow: hidden; }
+.rounded { border-radius: var(--border-radius); }
+.shadow { box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); }
+.shadow-lg { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+.transition { transition: var(--transition); }

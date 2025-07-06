@@ -4,25 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Терновая гряда D&D - Геймплей</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <style>
-        * {
-            box-sizing: border-box;
-        }
         body {
-            margin: 0;
             padding: 20px;
             min-height: 100vh;
-            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            font-family: 'Playfair Display', serif;
-            color: #e0d8c3;
-            background-attachment: scroll;
-            background-position: center;
-            transform: translateZ(0);
         }
+        
         .main-container {
             display: flex;
             justify-content: center;
@@ -30,39 +18,34 @@
             width: 100%;
             margin: 0 auto;
             gap: 20px;
-            height: calc(100vh - 40px);
+            min-height: calc(100vh - 40px);
         }
-        .container {
-            background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.6)), url('https://www.transparenttextures.com/patterns/wood-pattern.png');
-            border: 5px solid #d4a017;
-            border-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M0 0h20v20h-20zM2 2h16v16h-16z" fill="none" stroke="%23d4a017" stroke-width="2"/><path d="M2 2l16 16M18 2l-16 16" stroke="%23d4a017" stroke-width="2"/></svg>') 20 round;
-            box-shadow: 0 0 15px rgba(212, 160, 23, 0.5), inset 0 0 10px rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            padding: 20px;
-            overflow: hidden;
-        }
-        .sidebar-left {
+        
+        .sidebar-left, .sidebar-right {
             flex: 0 0 25%;
             display: flex;
             flex-direction: column;
             gap: 20px;
         }
+        
         .character-info, .inventory {
             flex: 1;
             text-align: left;
             overflow-y: auto;
         }
+        
         .scene {
             flex: 0 0 50%;
             text-align: left;
             overflow-y: auto;
             max-height: calc(100vh - 100px);
         }
+        
         .sidebar-right {
-            flex: 0 0 25%;
             text-align: left;
             overflow-y: auto;
         }
+        
         .actions {
             position: fixed;
             bottom: 20px;
@@ -70,94 +53,112 @@
             transform: translateX(-50%);
             width: 50%;
             text-align: center;
+            z-index: 100;
         }
-        h2 {
-            font-size: 1.8em;
-            color: #d4a017;
-            text-shadow: 2px 2px 4px #000;
-            margin-top: 0;
+        
+        .actions .container {
+            backdrop-filter: blur(15px);
+            border: 2px solid var(--primary-gold);
         }
-        p, li {
-            font-size: 1.1em;
-            margin: 10px 0;
-        }
-        .actions button {
-            width: 100%;
-            padding: 10px;
-            background: #d4a017;
-            color: black;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-family: 'PT Serif', serif;
-            font-size: 16px;
-            transition: all 0.3s;
-            margin: 5px 0;
-        }
-        .actions button:hover {
-            box-shadow: 0 0 10px #d4a017;
-        }
+        
         .ability {
-            padding: 10px;
-            margin: 5px 0;
-            background: rgba(0, 0, 0, 0.9);
-            border: 1px solid #d4a017;
-            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            background: rgba(44, 24, 16, 0.9);
+            border: 2px solid var(--accent-copper);
+            border-radius: var(--border-radius);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
+        
+        .ability::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(212, 160, 23, 0.1) 50%, 
+                transparent 100%);
+            transition: left 0.6s ease;
+        }
+        
         .ability:hover {
-            box-shadow: 0 0 10px #d4a017;
-            transform: translateY(-2px);
+            transform: translateY(-3px);
+            box-shadow: 
+                0 8px 25px rgba(184, 115, 51, 0.3),
+                0 4px 15px rgba(0, 0, 0, 0.3);
+            border-color: var(--primary-gold);
         }
+        
+        .ability:hover::before {
+            left: 100%;
+        }
+        
         .ability p {
             margin: 0;
-            font-size: 1em;
+            font-size: 1rem;
+            position: relative;
+            z-index: 1;
         }
-        .error {
-            color: #ff6b6b;
-            font-size: 1em;
-            margin: 10px 0;
+        
+        .ability strong {
+            color: var(--primary-gold);
+            font-family: 'Cinzel', serif;
         }
+        
+        .character-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .stat-item {
+            background: rgba(212, 160, 23, 0.1);
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: 1px solid rgba(212, 160, 23, 0.3);
+        }
+        
+        .stat-item strong {
+            color: var(--primary-gold);
+        }
+        
         @media (max-width: 1200px) {
             .main-container {
                 flex-direction: column;
                 height: auto;
             }
+            
             .sidebar-left, .scene, .sidebar-right {
                 flex: 1 1 100%;
                 max-width: 100%;
             }
+            
             .actions {
                 position: static;
                 transform: none;
                 width: 100%;
                 margin-top: 20px;
             }
+            
             .scene {
                 max-height: none;
             }
         }
-        @media (max-width: 600px) {
+        
+        @media (max-width: 768px) {
             body {
                 padding: 10px;
             }
-            h2 {
-                font-size: 1.5em;
-            }
-            p, li, .ability p {
-                font-size: 0.9em;
-            }
-            .actions button {
-                font-size: 14px;
-                padding: 8px;
-            }
-        @keyframes parallax {
-                0% { background-position: center 0; }
-                100% { background-position: center 50px; }
-            }
-            body {
-                animation: parallax 20s linear infinite;
+            
+            .character-stats {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -170,29 +171,44 @@
                 <p id="character-name">Загрузка...</p>
                 <p id="character-race"></p>
                 <p id="character-class"></p>
-                <p id="character-stats"></p>
-                <div id="error" class="error"></div>
+                <div id="character-stats" class="character-stats"></div>
+                <div id="error" class="error" style="display: none;"></div>
             </div>
+            
             <div class="container inventory">
                 <h2>Инвентарь</h2>
                 <p>Инвентарь пока пуст. Здесь будут отображаться предметы персонажа.</p>
             </div>
         </div>
+        
         <div class="container scene">
             <h2>Сцена</h2>
             <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Вдалеке слышны шорохи, а тени между деревьями кажутся живыми. Что будете делать?</p>
         </div>
-        <div class="container sidebar-right">
-            <h2>Умения и заклинания</h2>
-            <div id="abilities"></div>
+        
+        <div class="sidebar-right">
+            <div class="container">
+                <h2>Умения и заклинания</h2>
+                <div id="abilities"></div>
+            </div>
         </div>
     </div>
-    <div class="container actions">
-        <h2>Действия</h2>
-        <button onclick="performAction('Осмотреть тропу')">Осмотреть тропу</button>
-        <button onclick="performAction('Пойти в деревню')">Пойти в деревню</button>
-        <button onclick="performAction('Остаться на месте')">Остаться на месте</button>
+    
+    <div class="actions">
+        <div class="container">
+            <h3>Действия</h3>
+            <button onclick="performAction('Осмотреть тропу')" class="w-full mb-2">
+                Осмотреть тропу
+            </button>
+            <button onclick="performAction('Пойти в деревню')" class="w-full mb-2">
+                Пойти в деревню
+            </button>
+            <button onclick="performAction('Остаться на месте')" class="w-full">
+                Остаться на месте
+            </button>
+        </div>
     </div>
+    
     <script>
         const classAbilities = {
             'Воин': [
@@ -266,9 +282,12 @@
         async function loadCharacter() {
             const urlParams = new URLSearchParams(window.location.search);
             const characterId = urlParams.get('characterId');
+            const errorDiv = document.getElementById('error');
+            
             if (!characterId) {
-                document.getElementById('error').textContent = 'Персонаж не выбран';
-                setTimeout(() => window.location.href = '/start.html', 2000);
+                errorDiv.textContent = 'Персонаж не выбран';
+                errorDiv.style.display = 'block';
+                setTimeout(() => window.location.href = '/login.html', 2000);
                 return;
             }
 
@@ -276,24 +295,27 @@
                 const response = await fetch('/api/characters');
                 const characters = await response.json();
                 const character = characters.find(c => c.id === parseInt(characterId));
+                
                 if (!character) {
-                    document.getElementById('error').textContent = 'Персонаж не найден';
-                    setTimeout(() => window.location.href = '/start.html', 2000);
+                    errorDiv.textContent = 'Персонаж не найден';
+                    errorDiv.style.display = 'block';
+                    setTimeout(() => window.location.href = '/login.html', 2000);
                     return;
                 }
 
                 document.getElementById('character-name').innerHTML = `<strong>Имя:</strong> ${character.name}`;
                 document.getElementById('character-race').innerHTML = `<strong>Раса:</strong> ${character.race}`;
                 document.getElementById('character-class').innerHTML = `<strong>Класс:</strong> ${character.class}`;
+                
                 document.getElementById('character-stats').innerHTML = `
-                    <strong>Характеристики:</strong><br>
-                    Сила: ${character.stats.strength}<br>
-                    Ловкость: ${character.stats.dexterity}<br>
-                    Телосложение: ${character.stats.constitution}<br>
-                    Мудрость: ${character.stats.wisdom}<br>
-                    Интеллект: ${character.stats.intelligence}<br>
-                    Харизма: ${character.stats.charisma}
+                    <div class="stat-item"><strong>Сила:</strong> ${character.stats.strength}</div>
+                    <div class="stat-item"><strong>Ловкость:</strong> ${character.stats.dexterity}</div>
+                    <div class="stat-item"><strong>Телосложение:</strong> ${character.stats.constitution}</div>
+                    <div class="stat-item"><strong>Мудрость:</strong> ${character.stats.wisdom}</div>
+                    <div class="stat-item"><strong>Интеллект:</strong> ${character.stats.intelligence}</div>
+                    <div class="stat-item"><strong>Харизма:</strong> ${character.stats.charisma}</div>
                 `;
+                
                 const abilities = classAbilities[character.class] || [];
                 document.getElementById('abilities').innerHTML = abilities.map(ability => `
                     <div class="ability" onclick="useAbility('${ability.name}', '${ability.type}')">
@@ -302,8 +324,9 @@
                 `).join('');
             } catch (err) {
                 console.error('Error loading character:', err);
-                document.getElementById('error').textContent = 'Ошибка при загрузке персонажа';
-                setTimeout(() => window.location.href = '/start.html', 2000);
+                errorDiv.textContent = 'Ошибка при загрузке персонажа';
+                errorDiv.style.display = 'block';
+                setTimeout(() => window.location.href = '/login.html', 2000);
             }
         }
 
@@ -319,16 +342,8 @@
             scene.scrollTop = scene.scrollHeight;
         }
 
-        // Параллакс-эффект для фона
-        function parallaxEffect() {
-            const scrollPosition = window.scrollY;
-            document.body.style.backgroundPositionY = `${scrollPosition * 0.5}px`;
-            requestAnimationFrame(parallaxEffect);
-        }
-
         window.onload = function() {
             loadCharacter();
-            requestAnimationFrame(parallaxEffect);
         };
     </script>
 </body>
