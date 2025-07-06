@@ -74,10 +74,7 @@ body::before {
 
 /* Улучшенные контейнеры */
 .container {
-    background: linear-gradient(135deg, 
-        rgba(45, 27, 61, 0.85) 0%, 
-        rgba(30, 30, 46, 0.9) 50%, 
-        rgba(45, 45, 77, 0.85) 100%);
+    background: rgba(30, 30, 46, 0.9);
     backdrop-filter: blur(15px);
     border: 2px solid transparent;
     border-radius: var(--border-radius);
@@ -98,11 +95,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, 
-        rgba(255, 215, 0, 0.08) 0%, 
-        transparent 30%, 
-        transparent 70%, 
-        rgba(74, 144, 226, 0.06) 100%);
+    background: radial-gradient(circle at 30% 30%, rgba(255, 215, 0, 0.05) 0%, transparent 60%);
     border-radius: var(--border-radius);
     pointer-events: none;
     z-index: -1;
@@ -417,10 +410,7 @@ p {
 }
 
 .modal-content {
-    background: linear-gradient(135deg, 
-        var(--deep-purple) 0%, 
-        var(--medium-purple) 50%, 
-        var(--deep-purple) 100%);
+    background: rgba(30, 30, 46, 0.95);
     border: 3px solid var(--primary-gold);
     border-radius: var(--border-radius);
     padding: 2.5rem;
