@@ -1,17 +1,23 @@
 const express = require('express');
 const TelegramBot = require('node-telegram-bot-api');
 const mongoose = require('mongoose');
+const fetch = require('node-fetch');
+require('dotenv').config();
 const app = express();
 
 app.use(express.json());
 app.use(express.static('public'));
 
-const TOKEN = '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
-const WEBHOOK_URL = 'https://thornridge.ru/bot' + TOKEN;
+const TOKEN = process.env.TELEGRAM_BOT_TOKEN || '8179863423:AAHzsQOTZ7MHkXpnYhGNf5coTugmR7rZwlE';
+const WEBHOOK_URL = process.env.WEBHOOK_URL || 'https://thornridge.ru/bot' + TOKEN;
 const bot = new TelegramBot(TOKEN, { polling: false });
 
+// HuggingFace Configuration
+const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
+const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'microsoft/DialoGPT-medium';
+
 // MongoDB connection
-mongoose.connect('mongodb://admin:Netskyline1996!@127.0.0.1:27017/thordridge?authSource=admin', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://admin:Netskyline1996!@127.0.0.1:27017/thordridge?authSource=admin', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -107,6 +113,229 @@ const characterSchema = new mongoose.Schema({
 });
 
 const Character = mongoose.model('Character', characterSchema);
+
+// Game Session schema
+const gameSessionSchema = new mongoose.Schema({
+    characterId: { type: Number, required: true },
+    messages: [{
+        role: { type: String, enum: ['system', 'user', 'assistant'], required: true },
+        content: { type: String, required: true },
+        timestamp: { type: Date, default: Date.now }
+    }],
+    currentScene: { type: String, default: '' },
+    currentActions: [{ type: String }],
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: Date.now }
+});
+
+const GameSession = mongoose.model('GameSession', gameSessionSchema);
+
+// AI Game Master Functions
+function createGamePrompt(character, action = null) {
+    const characterInfo = `${character.name} (${character.race} ${character.class}, уровень ${character.level})`;
+    
+    if (action) {
+        return `В тёмном фэнтези мире "Терновая гряда", ${characterInfo} выполняет действие: ${action}. Опиши что происходит и предложи 3 новых варианта действий.`;
+    } else {
+        return `В тёмном фэнтези мире "Терновая гряда", ${characterInfo} начинает приключение. Опиши начальную сцену и предложи 3 варианта действий.`;
+    }
+}
+
+async function callHuggingFaceAPI(prompt, maxLength = 200) {
+    if (!HUGGINGFACE_API_KEY) {
+        console.log('HuggingFace API key not provided, using fallback');
+        return null;
+    }
+
+    try {
+        const response = await fetch(`https://api-inference.huggingface.co/models/${HUGGINGFACE_MODEL}`, {
+            headers: {
+                Authorization: `Bearer ${HUGGINGFACE_API_KEY}`,
+                'Content-Type': 'application/json',
+            },
+            method: 'POST',
+            body: JSON.stringify({
+                inputs: prompt,
+                parameters: {
+                    max_length: maxLength,
+                    temperature: 0.8,
+                    do_sample: true,
+                    top_p: 0.9
+                }
+            }),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HuggingFace API error: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        if (result.error) {
+            console.error('HuggingFace API error:', result.error);
+            return null;
+        }
+
+        return result[0]?.generated_text || null;
+    } catch (error) {
+        console.error('Error calling HuggingFace API:', error);
+        return null;
+    }
+}
+
+function parseAIResponse(response) {
+    // Пытаемся извлечь сцену и действия из ответа ИИ
+    const lines = response.split('\n').filter(line => line.trim());
+    
+    let scene = '';
+    let actions = [];
+    let inActions = false;
+    
+    for (let line of lines) {
+        line = line.trim();
+        
+        if (line.toLowerCase().includes('действия') || line.toLowerCase().includes('варианты') || line.includes(':')) {
+            inActions = true;
+            continue;
+        }
+        
+        if (inActions) {
+            // Извлекаем действия (строки с цифрами, точками или дефисами)
+            if (line.match(/^[\d\-\*•]\s*\.?\s*/)) {
+                const action = line.replace(/^[\d\-\*•]\s*\.?\s*/, '').trim();
+                if (action && actions.length < 4) {
+                    actions.push(action);
+                }
+            }
+        } else {
+            // Добавляем к описанию сцены
+            if (line && !line.includes('персонаж') && !line.includes('уровень')) {
+                scene += line + ' ';
+            }
+        }
+    }
+    
+    return {
+        scene: scene.trim() || response.substring(0, 300),
+        actions: actions.length > 0 ? actions : null
+    };
+}
+
+function getClassBasedActions(characterClass) {
+    const actionsByClass = {
+        'Воин': ['Атаковать мечом', 'Защищаться щитом', 'Использовать боевую тактику'],
+        'Варвар': ['Войти в ярость', 'Сокрушающий удар', 'Угрожающий рык'],
+        'Монах': ['Ударить без оружия', 'Использовать ки', 'Уклониться'],
+        'Чародей': ['Применить магию', 'Использовать врождённые силы', 'Магический снаряд'],
+        'Друид': ['Превратиться в животное', 'Природная магия', 'Говорить с животными'],
+        'Волшебник': ['Изучить заклинание', 'Волшебная атака', 'Магический анализ'],
+        'Жрец': ['Молитва', 'Божественная магия', 'Исцеление'],
+        'Паладин': ['Священная клятва', 'Изгнание нежити', 'Божественное наказание'],
+        'Колдун': ['Магия покровителя', 'Тёмные силы', 'Проклятие'],
+        'Следопыт': ['Выследить', 'Стрельба из лука', 'Знания о природе'],
+        'Плут': ['Скрыться в тенях', 'Удар исподтишка', 'Вскрыть замок']
+    };
+    
+    return actionsByClass[characterClass] || ['Осмотреться', 'Продолжить путь', 'Подождать'];
+}
+
+function generateFallbackContent(character, action = null) {
+    const scenes = [
+        "Вы находитесь в тёмном лесу Терновой гряды. Древние деревья шепчут тайны прошлого, а туман скрывает опасности впереди.",
+        "Перед вами простирается заброшенная деревня. Пустые окна домов смотрят на вас как мёртвые глаза.",
+        "Вы стоите у входа в древнюю пещеру. Оттуда доносятся странные звуки и слабое свечение.",
+        "Дорога ведёт к мрачному замку на холме. Вороны кружат над его башнями.",
+        "Вы обнаруживаете руины старого храма. Магическая энергия пульсирует в воздухе."
+    ];
+    
+    const scene = action 
+        ? `После действия "${action}" обстановка изменилась. ${scenes[Math.floor(Math.random() * scenes.length)]}`
+        : scenes[Math.floor(Math.random() * scenes.length)];
+    
+    const baseActions = ['Осмотреться вокруг', 'Продолжить путь', 'Остановиться и подумать'];
+    const classActions = getClassBasedActions(character.class);
+    
+    return {
+        scene,
+        actions: [...baseActions, classActions[Math.floor(Math.random() * classActions.length)]]
+    };
+}
+
+async function generateGameContent(character, sessionMessages, userAction = null) {
+    try {
+        const prompt = createGamePrompt(character, userAction);
+        
+        // Пытаемся получить ответ от HuggingFace
+        const aiResponse = await callHuggingFaceAPI(prompt, 300);
+        
+        if (aiResponse) {
+            console.log('AI Response:', aiResponse);
+            const parsed = parseAIResponse(aiResponse);
+            
+            // Если удалось извлечь действия из ответа ИИ, используем их
+            if (parsed.actions && parsed.actions.length >= 3) {
+                return {
+                    scene: parsed.scene,
+                    actions: parsed.actions
+                };
+            }
+            
+            // Если сцена есть, но действий нет, добавляем свои
+            if (parsed.scene) {
+                const classActions = getClassBasedActions(character.class);
+                return {
+                    scene: parsed.scene,
+                    actions: [
+                        'Осмотреться вокруг',
+                        'Продолжить путь', 
+                        'Использовать навыки',
+                        classActions[Math.floor(Math.random() * classActions.length)]
+                    ]
+                };
+            }
+        }
+        
+        // Если ИИ не сработал, используем fallback
+        console.log('Using fallback content generation');
+        return generateFallbackContent(character, userAction);
+        
+    } catch (error) {
+        console.error('Error generating game content:', error);
+        return generateFallbackContent(character, userAction);
+    }
+}
+
+async function getOrCreateGameSession(characterId) {
+    try {
+        let session = await GameSession.findOne({ characterId });
+        
+        if (!session) {
+            const character = await Character.findOne({ id: characterId });
+            if (!character) {
+                throw new Error('Персонаж не найден');
+            }
+
+            // Создаём новую сессию с начальной сценой
+            const initialContent = await generateGameContent(character, []);
+            
+            session = new GameSession({
+                characterId,
+                messages: [
+                    { role: 'assistant', content: JSON.stringify(initialContent) }
+                ],
+                currentScene: initialContent.scene,
+                currentActions: initialContent.actions
+            });
+            
+            await session.save();
+        }
+        
+        return session;
+    } catch (error) {
+        console.error('Error getting or creating game session:', error);
+        throw error;
+    }
+}
 
 app.post('/bot' + TOKEN, (req, res) => {
     console.log('Received webhook update:', JSON.stringify(req.body, null, 2));
@@ -270,6 +499,73 @@ app.post('/api/roll', async (req, res) => {
     }
 });
 
+// Game Session endpoints
+app.get('/api/game-session/:characterId', async (req, res) => {
+    try {
+        const characterId = parseInt(req.params.characterId);
+        const session = await getOrCreateGameSession(characterId);
+        
+        res.json({
+            scene: session.currentScene,
+            actions: session.currentActions
+        });
+    } catch (err) {
+        console.error('Error getting game session:', JSON.stringify(err, null, 2));
+        res.status(500).json({ message: 'Ошибка сервера при загрузке игровой сессии' });
+    }
+});
+
+app.post('/api/perform-action', async (req, res) => {
+    try {
+        const { characterId, action } = req.body;
+        
+        if (!characterId || !action) {
+            return res.status(400).json({ message: 'Необходимо указать ID персонажа и действие' });
+        }
+        
+        const character = await Character.findOne({ id: characterId });
+        if (!character) {
+            return res.status(404).json({ message: 'Персонаж не найден' });
+        }
+        
+        const session = await getOrCreateGameSession(characterId);
+        
+        // Генерируем новую сцену на основе действия
+        const newContent = await generateGameContent(character, session.messages, action);
+        
+        // Обновляем сессию
+        session.messages.push(
+            { role: 'user', content: `Игрок выбирает действие: ${action}` },
+            { role: 'assistant', content: JSON.stringify(newContent) }
+        );
+        session.currentScene = newContent.scene;
+        session.currentActions = newContent.actions;
+        session.updatedAt = new Date();
+        
+        await session.save();
+        
+        res.json({
+            scene: newContent.scene,
+            actions: newContent.actions,
+            performedAction: action
+        });
+    } catch (err) {
+        console.error('Error performing action:', JSON.stringify(err, null, 2));
+        res.status(500).json({ message: 'Ошибка сервера при выполнении действия' });
+    }
+});
+
+app.delete('/api/game-session/:characterId', async (req, res) => {
+    try {
+        const characterId = parseInt(req.params.characterId);
+        await GameSession.deleteOne({ characterId });
+        res.json({ message: 'Игровая сессия сброшена' });
+    } catch (err) {
+        console.error('Error resetting game session:', JSON.stringify(err, null, 2));
+        res.status(500).json({ message: 'Ошибка сервера при сбросе игровой сессии' });
+    }
+});
+
 app.get('/api/test-local-mongo', async (req, res) => {
     try {
         const localMongoose = require('mongoose');
@@ -354,6 +650,8 @@ app.get('/api/test-mongo-no-auth', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log('Server running on port 3000');
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });

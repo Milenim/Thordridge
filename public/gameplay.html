@@ -534,17 +534,21 @@
             <div class="container scene scene-container">
                 <h2>Сцена</h2>
                 <div class="scene-content" id="sceneContent">
-                    <p>Вы стоите на краю тёмного леса Терновой гряды. Перед вами извилистая тропа, уходящая вглубь чащи, и заброшенная деревня, чьи дома поросли мхом. В воздухе витает запах сырости и чего-то зловещего. Что будете делать?</p>
+                    <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                        <div style="font-size: 1.5em; margin-bottom: 15px;">🏰 Создаём мир...</div>
+                        <div>Мастер игры готовит для вас уникальное приключение</div>
+                        <div style="font-size: 0.9em; margin-top: 10px; color: var(--primary-gold);">Это может занять несколько секунд</div>
+                    </div>
                 </div>
             </div>
             
             <div class="container actions actions-container">
                 <h2>Действия</h2>
                 <div class="actions-content">
-                    <button onclick="performAction('Осмотреть тропу')">Осмотреть тропу</button>
-                    <button onclick="performAction('Пойти в деревню')">Пойти в деревню</button>
-                    <button onclick="performAction('Остаться на месте')">Остаться на месте</button>
-                    <button onclick="performAction('Исследовать окрестности')">Исследовать окрестности</button>
+                    <div style="text-align: center; padding: 20px; color: var(--text-secondary);">
+                        <div>🎲 Загрузка действий...</div>
+                        <div style="font-size: 0.9em; margin-top: 10px;">Мастер готовит варианты для вас</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -565,6 +569,13 @@
                     <button onclick="rollDice()">Бросить</button>
                 </div>
                 <div id="diceResult" class="dice-result" style="display: none;"></div>
+                
+                <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border-color);">
+                    <h3>Управление игрой</h3>
+                    <button onclick="resetGameSession()" style="width: 100%; padding: 10px; background: var(--accent-gold); color: var(--dark-bg); border: 2px solid var(--accent-gold); border-radius: var(--border-radius); cursor: pointer; font-family: 'Cinzel', serif; font-size: 14px; margin-top: 10px;">
+                        🔄 Начать новую игру
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -615,11 +626,19 @@
                 <button onclick="rollDice(true)">Бросить</button>
             </div>
             <div id="mobileDiceResult" class="dice-result" style="display: none;"></div>
+            
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border-color);">
+                <h3>Управление игрой</h3>
+                <button onclick="resetGameSession()" style="width: 100%; padding: 12px; background: var(--accent-gold); color: var(--dark-bg); border: 2px solid var(--accent-gold); border-radius: var(--border-radius); cursor: pointer; font-family: 'Cinzel', serif; font-size: 14px; margin-top: 10px;">
+                    🔄 Начать новую игру
+                </button>
+            </div>
         </div>
     </div>
     
     <script>
         let currentCharacter = null;
+        let currentCharacterId = null;
         
         async function loadCharacter() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -629,7 +648,10 @@
                 return;
             }
             
+            currentCharacterId = characterId;
+            
             try {
+                // Загружаем данные персонажа
                 const response = await fetch(`/api/character/${characterId}`);
                 const character = await response.json();
                 if (!response.ok) {
@@ -639,8 +661,35 @@
                 currentCharacter = character;
                 updateCharacterDisplay();
                 
+                // Загружаем игровую сессию
+                await loadGameSession();
+                
             } catch (err) {
                 document.getElementById('error').textContent = err.message;
+            }
+        }
+        
+        async function loadGameSession() {
+            try {
+                showLoadingIndicator();
+                const response = await fetch(`/api/game-session/${currentCharacterId}`);
+                const gameData = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(gameData.message || 'Ошибка загрузки игровой сессии');
+                }
+                
+                // Обновляем сцену
+                document.getElementById('sceneContent').innerHTML = `<p>${gameData.scene}</p>`;
+                
+                // Обновляем действия
+                updateActions(gameData.actions);
+                
+            } catch (err) {
+                console.error('Error loading game session:', err);
+                document.getElementById('error').textContent = err.message;
+            } finally {
+                hideLoadingIndicator();
             }
         }
         
@@ -734,41 +783,118 @@
             });
         }
         
-        function performAction(action) {
-            const sceneContent = document.getElementById('sceneContent');
-            const actionResult = getActionResult(action);
+        async function performAction(action) {
+            if (!currentCharacterId) {
+                console.error('Character ID not found');
+                return;
+            }
             
-            // Добавляем новое действие с результатом
-            const actionElement = document.createElement('div');
-            actionElement.innerHTML = `<br><strong>Действие:</strong> ${action}<br><em>${actionResult}</em>`;
-            actionElement.style.animation = 'fadeIn 0.5s ease-out';
-            sceneContent.appendChild(actionElement);
-            
-            // Прокручиваем к последнему действию плавно
-            setTimeout(() => {
-                sceneContent.scrollTo({
-                    top: sceneContent.scrollHeight,
-                    behavior: 'smooth'
+            try {
+                showLoadingIndicator();
+                
+                // Добавляем выбранное действие в сцену
+                const sceneContent = document.getElementById('sceneContent');
+                const actionElement = document.createElement('div');
+                actionElement.innerHTML = `<br><strong>Ваше действие:</strong> ${action}<br><em>Мастер обдумывает последствия...</em>`;
+                actionElement.style.animation = 'fadeIn 0.5s ease-out';
+                sceneContent.appendChild(actionElement);
+                
+                // Отправляем действие на сервер
+                const response = await fetch('/api/perform-action', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ characterId: currentCharacterId, action })
                 });
-            }, 100);
-            
-            // Обеспечиваем, что кнопки действий остаются видимыми
-            const actionsContainer = document.querySelector('.actions-container');
-            if (actionsContainer) {
-                actionsContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.message || 'Ошибка при выполнении действия');
+                }
+                
+                // Обновляем сцену с результатом
+                setTimeout(() => {
+                    sceneContent.innerHTML = `<p>${result.scene}</p>`;
+                    
+                    // Обновляем действия
+                    updateActions(result.actions);
+                    
+                    // Прокручиваем к последнему действию плавно
+                    sceneContent.scrollTo({
+                        top: sceneContent.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                }, 500);
+                
+            } catch (err) {
+                console.error('Error performing action:', err);
+                document.getElementById('error').textContent = err.message;
+            } finally {
+                hideLoadingIndicator();
             }
         }
         
-        function getActionResult(action) {
-            const results = {
-                'Осмотреть тропу': 'Вы внимательно изучаете тропу. На земле видны следы различных существ, некоторые из которых кажутся очень большими...',
-                'Пойти в деревню': 'Вы направляетесь к заброшенной деревне. Приближаясь, вы замечаете, что двери домов приоткрыты, как будто жители покинули их в спешке...',
-                'Остаться на месте': 'Вы решаете остаться на месте и внимательно прислушаться. В тишине леса вы слышите далёкий звук - похоже на чьи-то шаги...',
-                'Исследовать окрестности': 'Вы осматриваете окрестности. За деревьями виднеется старая башня, а в воздухе чувствуется запах дыма...'
-            };
+        function updateActions(actions) {
+            const actionsContent = document.querySelector('.actions-content');
+            actionsContent.innerHTML = '';
             
-            return results[action] || 'Вы выполняете действие и ждёте результата...';
+            actions.forEach(action => {
+                const button = document.createElement('button');
+                button.textContent = action;
+                button.onclick = () => performAction(action);
+                actionsContent.appendChild(button);
+            });
         }
+        
+        function showLoadingIndicator() {
+            const actionsContent = document.querySelector('.actions-content');
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = 'loading-indicator';
+            loadingDiv.innerHTML = `
+                <div style="text-align: center; padding: 20px; color: var(--primary-gold);">
+                    <div style="font-size: 1.2em; margin-bottom: 10px;">🎲 Мастер думает...</div>
+                    <div style="font-size: 0.9em;">Генерируем новую сцену</div>
+                </div>
+            `;
+            actionsContent.appendChild(loadingDiv);
+        }
+        
+        function hideLoadingIndicator() {
+            const loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+                loadingIndicator.remove();
+            }
+        }
+        
+        async function resetGameSession() {
+            if (!currentCharacterId) {
+                console.error('Character ID not found');
+                return;
+            }
+            
+            const confirmed = confirm('Вы уверены, что хотите начать новую игру? Вся текущая история будет потеряна.');
+            if (!confirmed) return;
+            
+            try {
+                showLoadingIndicator();
+                
+                // Удаляем старую сессию
+                await fetch(`/api/game-session/${currentCharacterId}`, {
+                    method: 'DELETE'
+                });
+                
+                // Перезагружаем игровую сессию
+                await loadGameSession();
+                
+            } catch (err) {
+                console.error('Error resetting game session:', err);
+                document.getElementById('error').textContent = 'Ошибка при сбросе игры: ' + err.message;
+            } finally {
+                hideLoadingIndicator();
+            }
+        }
+        
+
         
         // Мобильные функции
         function switchTab(tab) {
