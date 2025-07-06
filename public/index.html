@@ -17,28 +17,23 @@
         
         .page-container {
             width: 100%;
-            max-width: 1400px;
+            max-width: 1800px;
             margin: 0 auto;
         }
         
         .main-container {
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 30px;
             align-items: flex-start;
-            gap: 20px;
-            flex-wrap: wrap;
         }
         
         .form-container {
-            flex: 1 1 400px;
-            max-width: 450px;
-            min-width: 350px;
+            min-width: 400px;
         }
         
         .race-info, .class-info {
-            flex: 1 1 400px;
-            max-width: 450px;
-            min-width: 350px;
+            min-width: 400px;
             max-height: 80vh;
             overflow-y: auto;
         }
@@ -47,46 +42,80 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            gap: 10px;
-            margin: 15px 0;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(42, 42, 42, 0.6);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+        
+        .stat-container:hover {
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
         }
         
         .stat-container label {
             flex: 1;
             text-align: left;
             margin-bottom: 0;
+            font-size: 1.1em;
         }
         
         .stat-container input {
             width: 80px;
             text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
         }
         
         .stat-container button {
-            width: 40px;
-            height: 40px;
+            width: 45px;
+            height: 45px;
             padding: 0;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             font-weight: bold;
-            min-width: 40px;
+            min-width: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .points {
-            font-size: 1.2rem;
-            margin: 15px 0;
+            font-size: 1.4rem;
+            margin: 20px 0;
             text-align: center;
             color: var(--primary-gold);
-            font-weight: 500;
+            font-weight: bold;
+            padding: 15px;
+            background: rgba(26, 26, 26, 0.8);
+            border-radius: var(--border-radius);
+            border: 2px solid var(--primary-gold);
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group input, .form-group select {
+            font-size: 1.1em;
+            padding: 15px;
+        }
+        
+        .form-group label {
+            font-size: 1.2em;
+            margin-bottom: 0.8rem;
         }
         
         .description-content {
             opacity: 0;
             transform: translateY(20px);
             animation: fadeIn 0.5s ease forwards;
+            padding: 20px;
+            background: rgba(26, 26, 26, 0.4);
+            border-radius: var(--border-radius);
+            margin-top: 10px;
         }
         
         .description-content.show {
@@ -94,36 +123,170 @@
             transform: translateY(0);
         }
         
-        @media (max-width: 1200px) {
+        .submit-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3em;
+            margin-top: 30px;
+        }
+        
+        /* Планшетная версия */
+        @media (max-width: 1400px) and (min-width: 769px) {
             .main-container {
-                flex-direction: column;
-                align-items: center;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
             }
             
-            .form-container, .race-info, .class-info {
-                max-width: 100%;
-                width: 100%;
+            .race-info {
+                grid-column: 1 / 3;
+                order: 3;
+            }
+            
+            .form-container {
+                order: 1;
+            }
+            
+            .class-info {
+                order: 2;
             }
         }
         
+        /* Мобильная версия */
         @media (max-width: 768px) {
             body {
-                padding: 10px;
+                padding: 15px;
+                align-items: flex-start;
+            }
+            
+            .main-container {
+                display: block;
+                gap: 20px;
+            }
+            
+            .form-container, .race-info, .class-info {
+                width: 100%;
+                min-width: auto;
+                margin-bottom: 20px;
+            }
+            
+            .race-info, .class-info {
+                max-height: 60vh;
+                overflow-y: auto;
             }
             
             .stat-container {
-                flex-wrap: wrap;
-                gap: 5px;
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+                padding: 15px;
             }
             
             .stat-container label {
                 width: 100%;
-                margin-bottom: 0.5rem;
+                margin-bottom: 10px;
+                text-align: center;
+                font-size: 1.1em;
             }
             
-            .stat-container input,
+            .stat-controls {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                justify-content: center;
+            }
+            
+            .stat-container input {
+                width: 70px;
+                font-size: 1.3em;
+            }
+            
             .stat-container button {
-                font-size: 0.9rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.5rem;
+            }
+            
+            .points {
+                font-size: 1.3rem;
+                padding: 15px;
+                margin: 20px 0;
+            }
+            
+            .form-group input, .form-group select {
+                font-size: 1rem;
+                padding: 12px;
+            }
+            
+            .submit-button {
+                padding: 15px;
+                font-size: 1.1em;
+            }
+        }
+        
+        /* Улучшенные описания */
+        .race-info h2, .class-info h2 {
+            position: sticky;
+            top: 0;
+            background: var(--dark-bg);
+            padding: 10px 0;
+            border-bottom: 2px solid var(--primary-gold);
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+        
+        .description-content strong {
+            color: var(--primary-gold);
+            font-size: 1.1em;
+        }
+        
+        .description-content br + strong {
+            display: block;
+            margin-top: 15px;
+        }
+        
+        /* Анимации */
+        .container {
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .stat-container {
+            animation: slideInLeft 0.4s ease-out;
+        }
+        
+        .stat-container:nth-child(even) {
+            animation: slideInRight 0.4s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
             }
         }
     </style>
@@ -183,48 +346,60 @@
                     
                     <div class="stat-container">
                         <label for="strength">Сила:</label>
-                        <button type="button" id="strengthDec" onclick="changeStat('strength', -1)" disabled>-</button>
-                        <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
-                        <button type="button" id="strengthInc" onclick="changeStat('strength', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="strengthDec" onclick="changeStat('strength', -1)" disabled>-</button>
+                            <input type="number" id="strength" name="strength" value="8" min="8" max="20" readonly>
+                            <button type="button" id="strengthInc" onclick="changeStat('strength', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div class="stat-container">
                         <label for="dexterity">Ловкость:</label>
-                        <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
-                        <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
-                        <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="dexterityDec" onclick="changeStat('dexterity', -1)" disabled>-</button>
+                            <input type="number" id="dexterity" name="dexterity" value="8" min="8" max="20" readonly>
+                            <button type="button" id="dexterityInc" onclick="changeStat('dexterity', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div class="stat-container">
                         <label for="constitution">Телосложение:</label>
-                        <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
-                        <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
-                        <button type="button" id="constitutionInc" onclick="changeStat('constitution', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="constitutionDec" onclick="changeStat('constitution', -1)" disabled>-</button>
+                            <input type="number" id="constitution" name="constitution" value="8" min="8" max="20" readonly>
+                            <button type="button" id="constitutionInc" onclick="changeStat('constitution', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div class="stat-container">
                         <label for="wisdom">Мудрость:</label>
-                        <button type="button" id="wisdomDec" onclick="changeStat('wisdom', -1)" disabled>-</button>
-                        <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
-                        <button type="button" id="wisdomInc" onclick="changeStat('wisdom', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="wisdomDec" onclick="changeStat('wisdom', -1)" disabled>-</button>
+                            <input type="number" id="wisdom" name="wisdom" value="8" min="8" max="20" readonly>
+                            <button type="button" id="wisdomInc" onclick="changeStat('wisdom', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div class="stat-container">
                         <label for="intelligence">Интеллект:</label>
-                        <button type="button" id="intelligenceDec" onclick="changeStat('intelligence', -1)" disabled>-</button>
-                        <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
-                        <button type="button" id="intelligenceInc" onclick="changeStat('intelligence', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="intelligenceDec" onclick="changeStat('intelligence', -1)" disabled>-</button>
+                            <input type="number" id="intelligence" name="intelligence" value="8" min="8" max="20" readonly>
+                            <button type="button" id="intelligenceInc" onclick="changeStat('intelligence', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div class="stat-container">
                         <label for="charisma">Харизма:</label>
-                        <button type="button" id="charismaDec" onclick="changeStat('charisma', -1)" disabled>-</button>
-                        <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
-                        <button type="button" id="charismaInc" onclick="changeStat('charisma', 1)" disabled>+</button>
+                        <div class="stat-controls">
+                            <button type="button" id="charismaDec" onclick="changeStat('charisma', -1)" disabled>-</button>
+                            <input type="number" id="charisma" name="charisma" value="8" min="8" max="20" readonly>
+                            <button type="button" id="charismaInc" onclick="changeStat('charisma', 1)" disabled>+</button>
+                        </div>
                     </div>
                     
                     <div id="error" class="error" style="display: none;"></div>
-                    <button type="submit" class="w-full mt-2">Создать персонажа</button>
+                    <button type="submit" class="submit-button">Создать персонажа</button>
                 </form>
             </div>
             
@@ -409,7 +584,7 @@
             `,
             'Паладин': `
                 <strong>Паладин</strong><br>
-                <strong>Описание:</strong> Паладины — святые воины, связывающие боевые навыки с божественной магией и клятвами.<br>
+                <strong>Описание:</strong> Паладины — святые воители, связывающие боевые навыки с божественной магией и клятвами.<br>
                 <strong>Ключевая характеристика:</strong> Сила и Харизма.<br>
                 <strong>Особенности:</strong> Божественная магия, Священная клятва на 3 уровне.<br>
                 <strong>Роль:</strong> Фронтовая линия, поддержка.<br>
