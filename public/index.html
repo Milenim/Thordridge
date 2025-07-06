@@ -168,12 +168,16 @@
             body {
                 padding: 15px;
                 align-items: flex-start;
+                min-height: 100vh;
+                height: auto;
             }
             
             .page-container {
                 width: 100%;
                 display: flex;
                 justify-content: center;
+                min-height: 100vh;
+                height: auto;
             }
             
             .main-container {
@@ -181,6 +185,8 @@
                 gap: 20px;
                 width: 100%;
                 max-width: 100%;
+                height: auto;
+                overflow: visible;
             }
             
             .form-container, .race-info, .class-info {
@@ -188,11 +194,14 @@
                 min-width: auto;
                 margin: 0 auto 20px auto;
                 max-width: 500px;
+                height: auto;
+                overflow: visible;
             }
             
             .race-info, .class-info {
-                max-height: 60vh;
-                overflow-y: auto;
+                max-height: none;
+                overflow-y: visible;
+                height: auto;
             }
             
             .stat-container {

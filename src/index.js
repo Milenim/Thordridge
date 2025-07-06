@@ -14,14 +14,15 @@ const bot = new TelegramBot(TOKEN, { polling: false });
 
 // HuggingFace Configuration
 const HUGGINGFACE_API_KEY = process.env.HUGGINGFACE_API_KEY || '';
-const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'microsoft/DialoGPT-large';
+const HUGGINGFACE_MODEL = process.env.HUGGINGFACE_MODEL || 'gpt2';
 const HUGGINGFACE_API_URL = process.env.HUGGINGFACE_API_URL || 'https://api-inference.huggingface.co/models/';
 
 // Альтернативные модели для генерации RPG контента
 const RPG_MODELS = {
-    primary: 'microsoft/DialoGPT-large',
-    alternative: 'gpt2',
-    creative: 'EleutherAI/gpt-neo-1.3B'
+    primary: 'gpt2',
+    alternative: 'distilgpt2', 
+    creative: 'facebook/opt-350m',
+    story: 'microsoft/DialoGPT-small'
 };
 
 // MongoDB connection
@@ -190,11 +191,14 @@ async function callHuggingFaceAPI(prompt, maxLength = 400, temperature = 0.7) {
         return null;
     }
 
-    // Пробуем разные модели по очереди
+    // Пробуем разные модели по очереди (от простых к сложным)
     const modelsToTry = [
         process.env.HUGGINGFACE_MODEL || RPG_MODELS.primary,
         RPG_MODELS.alternative,
-        RPG_MODELS.creative
+        RPG_MODELS.creative,
+        RPG_MODELS.story,
+        'microsoft/DialoGPT-medium',
+        'EleutherAI/gpt-neo-125M'
     ];
 
     for (const modelName of modelsToTry) {
@@ -210,24 +214,24 @@ async function callHuggingFaceAPI(prompt, maxLength = 400, temperature = 0.7) {
                 body: JSON.stringify({
                     inputs: prompt,
                     parameters: {
-                        max_length: maxLength,
+                        max_new_tokens: Math.min(maxLength, 500),
                         temperature: temperature,
                         do_sample: true,
                         top_p: 0.9,
                         top_k: 50,
                         repetition_penalty: 1.1,
-                        num_return_sequences: 1,
-                        pad_token_id: 50256,
                         return_full_text: false
                     },
                     options: {
-                        wait_for_model: true
+                        wait_for_model: true,
+                        use_cache: false
                     }
                 }),
             });
 
             if (!response.ok) {
-                console.error(`HuggingFace API error for ${modelName}: ${response.status}`);
+                const errorText = await response.text();
+                console.error(`❌ HuggingFace API error for ${modelName}: ${response.status} - ${errorText.substring(0, 200)}`);
                 continue;
             }
 
@@ -239,17 +243,19 @@ async function callHuggingFaceAPI(prompt, maxLength = 400, temperature = 0.7) {
             }
 
             if (result[0]?.generated_text) {
-                console.log(`Successfully generated content using ${modelName}`);
+                console.log(`✅ Successfully generated content using ${modelName}`);
+                console.log(`Generated content preview: ${result[0].generated_text.substring(0, 100)}...`);
                 return result[0].generated_text;
             }
 
-            console.log(`No generated text for ${modelName}, trying next model`);
+            console.log(`❌ No generated text for ${modelName}, trying next model`);
         } catch (error) {
-            console.error(`Error calling HuggingFace API for ${modelName}:`, error);
+            console.error(`🔥 Error calling HuggingFace API for ${modelName}:`, error.message || error);
             continue;
         }
     }
 
+    console.log('🚫 All HuggingFace models failed, using fallback content generation');
     return null;
 }
 
@@ -768,6 +774,82 @@ app.get('/api/test-mongo-no-auth', async (req, res) => {
     } catch (err) {
         res.status(500).json({ 
             error: 'No-auth test failed',
+            message: err.message
+        });
+    }
+});
+
+// Test HuggingFace API endpoint
+app.get('/api/test-huggingface', async (req, res) => {
+    try {
+        if (!HUGGINGFACE_API_KEY) {
+            return res.json({
+                status: 'no_api_key',
+                message: 'HuggingFace API key not configured',
+                models_to_test: Object.values(RPG_MODELS)
+            });
+        }
+
+        const testPrompt = "Привет, это тест нейросети.";
+        const results = [];
+
+        for (const modelName of Object.values(RPG_MODELS)) {
+            try {
+                console.log(`Testing model: ${modelName}`);
+                const response = await fetch(`${HUGGINGFACE_API_URL}${modelName}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        inputs: testPrompt,
+                        parameters: {
+                            max_new_tokens: 50,
+                            temperature: 0.7
+                        },
+                        options: {
+                            wait_for_model: true,
+                            use_cache: false
+                        }
+                    })
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    results.push({
+                        model: modelName,
+                        status: 'success',
+                        response: result[0]?.generated_text || result
+                    });
+                    break; // Если одна модель работает, останавливаемся
+                } else {
+                    results.push({
+                        model: modelName,
+                        status: 'failed',
+                        error: `HTTP ${response.status}`
+                    });
+                }
+            } catch (error) {
+                results.push({
+                    model: modelName,
+                    status: 'error',
+                    error: error.message
+                });
+            }
+        }
+
+        res.json({
+            status: 'tested',
+            api_key_configured: true,
+            results: results,
+            working_models: results.filter(r => r.status === 'success').length,
+            total_models: results.length
+        });
+
+    } catch (err) {
+        res.status(500).json({
+            status: 'error',
             message: err.message
         });
     }
