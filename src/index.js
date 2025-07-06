@@ -134,6 +134,17 @@ const gameSessionSchema = new mongoose.Schema({
     }],
     currentScene: { type: String, default: '' },
     currentActions: [{ type: String }],
+    currentLocation: { type: String, default: '' },
+    currentSublocation: { type: String, default: '' },
+    currentEvent: { type: String, default: null },
+    characterState: {
+        health: { type: Number, default: 100 },
+        mana: { type: Number, default: 50 },
+        stamina: { type: Number, default: 100 },
+        level: { type: Number, default: 1 },
+        xp: { type: Number, default: 0 }
+    },
+    activeQuests: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now }
 });
@@ -573,35 +584,34 @@ async function generateGameContent(character, sessionMessages, userAction = null
             .map(msg => msg.content)
             .join(' ');
         
-        const prompt = createDetailedGamePrompt(character, userAction, previousContext);
-        console.log('Generated prompt:', prompt.substring(0, 200) + '...');
+        // Используем новую расширенную систему генерации контента
+        const AdvancedGameMaster = require('./advancedGameMaster');
+        const gameMaster = new AdvancedGameMaster();
         
-        // Пытаемся получить ответ от HuggingFace
-        const aiResponse = await callHuggingFaceAPI(prompt, 500, 0.8);
+        console.log('Generating enhanced content with advanced game master...');
+        const enhancedContent = gameMaster.generateEnhancedContent(character, userAction, previousContext, sessionMessages);
         
-        if (aiResponse) {
-            console.log('AI Response received:', aiResponse.substring(0, 200) + '...');
-            const parsed = parseAIResponse(aiResponse);
-            
-            if (parsed && parsed.scene && parsed.actions && parsed.actions.length >= 3) {
-                console.log('Successfully parsed AI response');
-                return {
-                    scene: parsed.scene,
-                    actions: parsed.actions
-                };
-            }
-            
-            console.log('AI response parsing failed, using fallback');
+        if (enhancedContent && enhancedContent.scene && enhancedContent.actions && enhancedContent.actions.length >= 3) {
+            console.log('Successfully generated enhanced content');
+            return {
+                scene: enhancedContent.scene,
+                actions: enhancedContent.actions,
+                location: enhancedContent.location,
+                sublocation: enhancedContent.sublocation,
+                event: enhancedContent.event,
+                characterState: enhancedContent.characterState,
+                actionResults: enhancedContent.actionResults,
+                quests: enhancedContent.quests
+            };
         }
         
-        // Если ИИ не сработал, используем fallback
-        console.log('Using fallback content generation');
+        console.log('Enhanced content generation failed, using fallback');
         return generateFallbackContent(character, userAction, previousContext);
         
-            } catch (error) {
-            console.error('Error generating game content:', error);
-            return generateFallbackContent(character, userAction, '');
-        }
+    } catch (error) {
+        console.error('Error generating game content:', error);
+        return generateFallbackContent(character, userAction, '');
+    }
 }
 
 async function getOrCreateGameSession(characterId) {
@@ -623,7 +633,18 @@ async function getOrCreateGameSession(characterId) {
                     { role: 'assistant', content: JSON.stringify(initialContent) }
                 ],
                 currentScene: initialContent.scene,
-                currentActions: initialContent.actions
+                currentActions: initialContent.actions,
+                currentLocation: initialContent.location || 'Неизвестная локация',
+                currentSublocation: initialContent.sublocation || 'Неизвестная область',
+                currentEvent: initialContent.event || null,
+                characterState: initialContent.characterState || {
+                    health: 100,
+                    mana: 50,
+                    stamina: 100,
+                    level: character.level,
+                    xp: character.xp
+                },
+                activeQuests: initialContent.quests || []
             });
             
             await session.save();
@@ -806,7 +827,12 @@ app.get('/api/game-session/:characterId', async (req, res) => {
         
         res.json({
             scene: session.currentScene,
-            actions: session.currentActions
+            actions: session.currentActions,
+            location: session.currentLocation || 'Неизвестная локация',
+            sublocation: session.currentSublocation || 'Неизвестная область',
+            event: session.currentEvent || null,
+            characterState: session.characterState || null,
+            quests: session.activeQuests || []
         });
     } catch (err) {
         console.error('Error getting game session:', JSON.stringify(err, null, 2));
@@ -839,6 +865,11 @@ app.post('/api/perform-action', async (req, res) => {
         );
         session.currentScene = newContent.scene;
         session.currentActions = newContent.actions;
+        session.currentLocation = newContent.location || session.currentLocation;
+        session.currentSublocation = newContent.sublocation || session.currentSublocation;
+        session.currentEvent = newContent.event || null;
+        session.characterState = newContent.characterState || session.characterState;
+        session.activeQuests = newContent.quests || session.activeQuests;
         session.updatedAt = new Date();
         
         await session.save();
@@ -846,6 +877,12 @@ app.post('/api/perform-action', async (req, res) => {
         res.json({
             scene: newContent.scene,
             actions: newContent.actions,
+            location: newContent.location,
+            sublocation: newContent.sublocation,
+            event: newContent.event,
+            characterState: newContent.characterState,
+            actionResults: newContent.actionResults,
+            quests: newContent.quests,
             performedAction: action
         });
     } catch (err) {

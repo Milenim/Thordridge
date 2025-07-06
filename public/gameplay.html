@@ -503,6 +503,117 @@
             font-size: 1.2em;
             color: var(--primary-gold);
         }
+        
+        /* Стили для состояния персонажа */
+        .character-state {
+            margin: 15px 0;
+        }
+        
+        .state-bar {
+            margin: 10px 0;
+        }
+        
+        .state-label {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+        
+        .state-value {
+            font-size: 1.1em;
+            color: var(--primary-gold);
+            margin-bottom: 5px;
+        }
+        
+        .state-bar-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(42, 42, 42, 0.8);
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+        
+        .state-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+        
+        .health-bar {
+            background: linear-gradient(90deg, #ff4444, #ff6666);
+        }
+        
+        .mana-bar {
+            background: linear-gradient(90deg, #4444ff, #6666ff);
+        }
+        
+        .stamina-bar {
+            background: linear-gradient(90deg, #44ff44, #66ff66);
+        }
+        
+        /* Стили для информации о локации */
+        .location-info {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            margin: 15px 0;
+        }
+        
+        .location-name {
+            font-size: 1.2em;
+            color: var(--primary-gold);
+            margin-bottom: 5px;
+        }
+        
+        .sublocation-name {
+            font-size: 1em;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+        
+        .event-info {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-gold);
+            margin: 10px 0;
+        }
+        
+        .event-name {
+            font-size: 1em;
+            color: var(--primary-gold);
+            margin-bottom: 5px;
+        }
+        
+        /* Стили для квестов */
+        .quest-info {
+            background: rgba(26, 26, 26, 0.8);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            border: 2px solid var(--border-color);
+            margin: 15px 0;
+        }
+        
+        .quest-item {
+            background: rgba(42, 42, 42, 0.8);
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--primary-gold);
+        }
+        
+        .quest-name {
+            font-size: 1.1em;
+            color: var(--primary-gold);
+            margin-bottom: 5px;
+        }
+        
+        .quest-description {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
     </style>
 </head>
 <body>
@@ -514,6 +625,32 @@
                 <p><strong>Раса:</strong> <span id="characterRace">-</span></p>
                 <p><strong>Класс:</strong> <span id="characterClass">-</span></p>
                 <p><strong>Уровень:</strong> <span id="characterLevel">-</span> | <strong>Опыт:</strong> <span id="characterXP">-</span></p>
+                
+                <!-- Новая информация о состоянии персонажа -->
+                <h3>Состояние</h3>
+                <div class="character-state" id="characterState">
+                    <div class="state-bar">
+                        <div class="state-label">Здоровье:</div>
+                        <div class="state-value" id="healthValue">100/100</div>
+                        <div class="state-bar-container">
+                            <div class="state-bar-fill health-bar" id="healthBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="state-bar">
+                        <div class="state-label">Мана:</div>
+                        <div class="state-value" id="manaValue">50/50</div>
+                        <div class="state-bar-container">
+                            <div class="state-bar-fill mana-bar" id="manaBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                    <div class="state-bar">
+                        <div class="state-label">Выносливость:</div>
+                        <div class="state-value" id="staminaValue">100/100</div>
+                        <div class="state-bar-container">
+                            <div class="state-bar-fill stamina-bar" id="staminaBar" style="width: 100%"></div>
+                        </div>
+                    </div>
+                </div>
                 
                 <h3>Характеристики</h3>
                 <div class="stats-grid" id="characterStats">
@@ -533,6 +670,16 @@
         <div class="center-panel">
             <div class="container scene scene-container">
                 <h2>Сцена</h2>
+                
+                <!-- Информация о локации -->
+                <div class="location-info" id="locationInfo" style="display: none;">
+                    <div class="location-name" id="locationName">Неизвестная локация</div>
+                    <div class="sublocation-name" id="sublocationName">Неизвестная область</div>
+                    <div class="event-info" id="eventInfo" style="display: none;">
+                        <div class="event-name" id="eventName">Особое событие</div>
+                    </div>
+                </div>
+                
                 <div class="scene-content" id="sceneContent">
                     <div style="text-align: center; padding: 40px; color: var(--text-secondary);">
                         <div style="font-size: 1.5em; margin-bottom: 15px;">🏰 Создаём мир...</div>
@@ -577,6 +724,14 @@
                     </button>
                 </div>
             </div>
+            
+            <!-- Информация о квестах -->
+            <div class="container quest-info" id="questInfo" style="display: none;">
+                <h2>Активные квесты</h2>
+                <div id="questList">
+                    <!-- Квесты будут загружены здесь -->
+                </div>
+            </div>
         </div>
     </div>
     
@@ -601,6 +756,32 @@
             <h3>Характеристики</h3>
             <div class="stats-grid" id="mobileCharacterStats">
                 <!-- Характеристики будут загружены здесь -->
+            </div>
+            
+            <!-- Новая информация о состоянии персонажа -->
+            <h3>Состояние</h3>
+            <div class="character-state" id="mobileCharacterState">
+                <div class="state-bar">
+                    <div class="state-label">Здоровье:</div>
+                    <div class="state-value" id="mobileHealthValue">100/100</div>
+                    <div class="state-bar-container">
+                        <div class="state-bar-fill health-bar" id="mobileHealthBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="state-bar">
+                    <div class="state-label">Мана:</div>
+                    <div class="state-value" id="mobileManaValue">50/50</div>
+                    <div class="state-bar-container">
+                        <div class="state-bar-fill mana-bar" id="mobileManaBar" style="width: 100%"></div>
+                    </div>
+                </div>
+                <div class="state-bar">
+                    <div class="state-label">Выносливость:</div>
+                    <div class="state-value" id="mobileStaminaValue">100/100</div>
+                    <div class="state-bar-container">
+                        <div class="state-bar-fill stamina-bar" id="mobileStaminaBar" style="width: 100%"></div>
+                    </div>
+                </div>
             </div>
             
             <h3>Инвентарь</h3>
@@ -684,6 +865,15 @@
                 
                 // Обновляем действия
                 updateActions(gameData.actions);
+                
+                // Обновляем информацию о локации
+                updateLocationInfo(gameData.location, gameData.sublocation, gameData.event);
+                
+                // Обновляем состояние персонажа
+                updateCharacterState(gameData.characterState);
+                
+                // Обновляем квесты
+                updateQuests(gameData.quests);
                 
             } catch (err) {
                 console.error('Error loading game session:', err);
@@ -819,6 +1009,15 @@
                     // Обновляем действия
                     updateActions(result.actions);
                     
+                    // Обновляем информацию о локации
+                    updateLocationInfo(result.location, result.sublocation, result.event);
+                    
+                    // Обновляем состояние персонажа
+                    updateCharacterState(result.characterState);
+                    
+                    // Обновляем квесты
+                    updateQuests(result.quests);
+                    
                     // Прокручиваем к последнему действию плавно
                     sceneContent.scrollTo({
                         top: sceneContent.scrollHeight,
@@ -844,6 +1043,128 @@
                 button.onclick = () => performAction(action);
                 actionsContent.appendChild(button);
             });
+        }
+        
+        function updateLocationInfo(location, sublocation, event) {
+            const locationInfo = document.getElementById('locationInfo');
+            const locationName = document.getElementById('locationName');
+            const sublocationName = document.getElementById('sublocationName');
+            const eventInfo = document.getElementById('eventInfo');
+            const eventName = document.getElementById('eventName');
+            
+            if (location && sublocation) {
+                locationName.textContent = location;
+                sublocationName.textContent = sublocation;
+                locationInfo.style.display = 'block';
+                
+                if (event) {
+                    eventName.textContent = event;
+                    eventInfo.style.display = 'block';
+                } else {
+                    eventInfo.style.display = 'none';
+                }
+            } else {
+                locationInfo.style.display = 'none';
+            }
+        }
+        
+        function updateCharacterState(characterState) {
+            if (!characterState) return;
+            
+            // Обновляем здоровье
+            if (characterState.health !== undefined) {
+                const healthValue = document.getElementById('healthValue');
+                const healthBar = document.getElementById('healthBar');
+                const mobileHealthValue = document.getElementById('mobileHealthValue');
+                const mobileHealthBar = document.getElementById('mobileHealthBar');
+                const maxHealth = 100; // Можно сделать динамическим
+                
+                const healthText = `${characterState.health}/${maxHealth}`;
+                const healthWidth = `${(characterState.health / maxHealth) * 100}%`;
+                
+                healthValue.textContent = healthText;
+                healthBar.style.width = healthWidth;
+                mobileHealthValue.textContent = healthText;
+                mobileHealthBar.style.width = healthWidth;
+                
+                // Меняем цвет в зависимости от здоровья
+                let healthColor;
+                if (characterState.health < 20) {
+                    healthColor = 'linear-gradient(90deg, #ff1111, #ff4444)';
+                } else if (characterState.health < 50) {
+                    healthColor = 'linear-gradient(90deg, #ff4444, #ff6666)';
+                } else {
+                    healthColor = 'linear-gradient(90deg, #44ff44, #66ff66)';
+                }
+                
+                healthBar.style.background = healthColor;
+                mobileHealthBar.style.background = healthColor;
+            }
+            
+            // Обновляем ману
+            if (characterState.mana !== undefined) {
+                const manaValue = document.getElementById('manaValue');
+                const manaBar = document.getElementById('manaBar');
+                const mobileManaValue = document.getElementById('mobileManaValue');
+                const mobileManaBar = document.getElementById('mobileManaBar');
+                const maxMana = 50; // Можно сделать динамическим
+                
+                const manaText = `${characterState.mana}/${maxMana}`;
+                const manaWidth = `${(characterState.mana / maxMana) * 100}%`;
+                
+                manaValue.textContent = manaText;
+                manaBar.style.width = manaWidth;
+                mobileManaValue.textContent = manaText;
+                mobileManaBar.style.width = manaWidth;
+            }
+            
+            // Обновляем выносливость
+            if (characterState.stamina !== undefined) {
+                const staminaValue = document.getElementById('staminaValue');
+                const staminaBar = document.getElementById('staminaBar');
+                const mobileStaminaValue = document.getElementById('mobileStaminaValue');
+                const mobileStaminaBar = document.getElementById('mobileStaminaBar');
+                const maxStamina = 100; // Можно сделать динамическим
+                
+                const staminaText = `${characterState.stamina}/${maxStamina}`;
+                const staminaWidth = `${(characterState.stamina / maxStamina) * 100}%`;
+                
+                staminaValue.textContent = staminaText;
+                staminaBar.style.width = staminaWidth;
+                mobileStaminaValue.textContent = staminaText;
+                mobileStaminaBar.style.width = staminaWidth;
+            }
+            
+            // Обновляем уровень и опыт
+            if (characterState.level !== undefined) {
+                document.getElementById('characterLevel').textContent = characterState.level;
+            }
+            if (characterState.xp !== undefined) {
+                document.getElementById('characterXP').textContent = characterState.xp;
+            }
+        }
+        
+        function updateQuests(quests) {
+            const questInfo = document.getElementById('questInfo');
+            const questList = document.getElementById('questList');
+            
+            if (quests && quests.length > 0) {
+                questList.innerHTML = '';
+                
+                quests.forEach(quest => {
+                    const questItem = document.createElement('div');
+                    questItem.className = 'quest-item';
+                    questItem.innerHTML = `
+                        <div class="quest-name">${quest.name || 'Неизвестный квест'}</div>
+                        <div class="quest-description">${quest.description || 'Нет описания'}</div>
+                    `;
+                    questList.appendChild(questItem);
+                });
+                
+                questInfo.style.display = 'block';
+            } else {
+                questInfo.style.display = 'none';
+            }
         }
         
         function showLoadingIndicator() {
