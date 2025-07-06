@@ -57,20 +57,33 @@
         }
         
         .actions .container {
-            backdrop-filter: blur(15px);
-            border: 2px solid var(--primary-gold);
+            backdrop-filter: blur(20px);
+            border: 3px solid var(--primary-gold);
+            background: linear-gradient(135deg, 
+                rgba(45, 27, 61, 0.95) 0%, 
+                rgba(30, 30, 46, 0.95) 50%, 
+                rgba(45, 45, 77, 0.95) 100%);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.6),
+                0 8px 25px rgba(255, 215, 0, 0.2),
+                inset 0 2px 0 rgba(255, 215, 0, 0.1);
         }
         
         .ability {
             padding: 15px;
             margin: 10px 0;
-            background: rgba(44, 24, 16, 0.9);
-            border: 2px solid var(--accent-copper);
+            background: linear-gradient(135deg, 
+                rgba(45, 27, 61, 0.9) 0%, 
+                rgba(30, 30, 46, 0.95) 100%);
+            border: 2px solid var(--mystical-blue);
             border-radius: var(--border-radius);
             cursor: pointer;
             transition: var(--transition);
             position: relative;
             overflow: hidden;
+            box-shadow: 
+                0 4px 15px rgba(74, 144, 226, 0.2),
+                inset 0 1px 0 rgba(255, 215, 0, 0.1);
         }
         
         .ability::before {
@@ -82,17 +95,21 @@
             height: 100%;
             background: linear-gradient(90deg, 
                 transparent 0%, 
-                rgba(212, 160, 23, 0.1) 50%, 
+                rgba(255, 215, 0, 0.15) 50%, 
                 transparent 100%);
-            transition: left 0.6s ease;
+            transition: left 0.8s ease;
         }
         
         .ability:hover {
             transform: translateY(-3px);
             box-shadow: 
-                0 8px 25px rgba(184, 115, 51, 0.3),
-                0 4px 15px rgba(0, 0, 0, 0.3);
+                0 12px 30px rgba(74, 144, 226, 0.3),
+                0 6px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 215, 0, 0.2);
             border-color: var(--primary-gold);
+            background: linear-gradient(135deg, 
+                rgba(74, 44, 26, 0.9) 0%, 
+                rgba(45, 27, 61, 0.95) 100%);
         }
         
         .ability:hover::before {
@@ -104,29 +121,49 @@
             font-size: 1rem;
             position: relative;
             z-index: 1;
+            color: var(--text-light);
         }
         
         .ability strong {
             color: var(--primary-gold);
-            font-family: 'Cinzel', serif;
+            font-family: 'MedievalSharp', cursive;
+            font-size: 1.1rem;
+            text-shadow: 0 0 8px var(--glow-gold);
         }
         
         .character-stats {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            gap: 12px;
             margin: 15px 0;
         }
         
         .stat-item {
-            background: rgba(212, 160, 23, 0.1);
-            padding: 8px 12px;
-            border-radius: 8px;
-            border: 1px solid rgba(212, 160, 23, 0.3);
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.15) 0%, 
+                rgba(74, 144, 226, 0.1) 100%);
+            padding: 10px 15px;
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 215, 0, 0.4);
+            box-shadow: 
+                0 2px 8px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 215, 0, 0.2);
+            transition: var(--transition);
+        }
+        
+        .stat-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 4px 15px rgba(255, 215, 0, 0.3),
+                0 2px 8px rgba(0, 0, 0, 0.4);
+            border-color: var(--primary-gold);
         }
         
         .stat-item strong {
             color: var(--primary-gold);
+            font-family: 'Cinzel', serif;
+            font-weight: 600;
+            text-shadow: 0 0 5px var(--glow-gold);
         }
         
         @media (max-width: 1200px) {
@@ -159,6 +196,19 @@
             
             .character-stats {
                 grid-template-columns: 1fr;
+            }
+            
+            .ability {
+                padding: 12px;
+                margin: 8px 0;
+            }
+            
+            .ability p {
+                font-size: 0.9rem;
+            }
+            
+            .stat-item {
+                padding: 8px 12px;
             }
         }
     </style>
